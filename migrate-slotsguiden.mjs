@@ -108,6 +108,7 @@ async function buildBonus(wp, eng) {
     _id: `wp-bonus-${wp.id}`, _type: 'bonus',
     title, slug: { _type: 'slug', current: slug }, market: 'global',
     active: !!str(acf.offer_url),
+    ...(wp.date_gmt ? { publishedAt: new Date(wp.date_gmt + 'Z').toISOString() } : {}),
     ...(bookmaker ? { bookmaker } : {}),
     ...(str(acf.casino_navn) ? { casinoNavn: str(acf.casino_navn) } : {}),
     ...(casinoLogo ? { casinoLogo } : {}),

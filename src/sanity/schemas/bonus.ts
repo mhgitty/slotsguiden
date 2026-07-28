@@ -56,6 +56,13 @@ export const bonusType = defineType({
 
     // ── Bookmaker relation ────────────────────────────────────────────────────
     defineField({
+      name: 'publishedAt',
+      title: 'Published date',
+      type: 'datetime',
+      group: 'info',
+      description: 'Original publish date — used for "recently added" ordering.',
+    }),
+    defineField({
       name: 'bookmaker',
       title: 'Casino',
       type: 'reference',

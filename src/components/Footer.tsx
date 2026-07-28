@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getSiteSettings } from '@/lib/sanity'
 import { SocialLinks, type SocialLinkData } from './SocialLinks'
+import { LatestContentBlock } from './LatestContentBlock'
 
 function resolveUrl(item: {
   url?: string; pageSlug?: string; pageParentSlug?: string; pageParent2Slug?: string; pageParent3Slug?: string; pageParent4Slug?: string; pageMarket?: string;
@@ -84,6 +85,8 @@ export async function Footer({
   const socialLinks  = socialLinksProp  ?? settings?.socialLinks        ?? null
 
   return (
+    <>
+      <LatestContentBlock />
     <footer style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-footer)', marginTop: '80px' }}>
 
       {/* ════════════════════════════════════════
@@ -272,5 +275,6 @@ export async function Footer({
       </div>
 
     </footer>
+    </>
   )
 }

@@ -300,6 +300,16 @@ export async function getBonuses(limit = 50) {
 // Keep old name as alias for any existing usage
 export const getBonusser = getBonuses
 
+export async function getRecentBonuses(limit = 5) {
+  return client.fetch(
+    `*[_type == "bonus" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) [0...$limit] {
+      _id, title, "date": coalesce(publishedAt, _createdAt),
+      offerUrl, "bookmakerSlug": bookmaker->slug.current
+    }`,
+    { limit }
+  )
+}
+
 export async function getBonusBySlug(slug: string) {
   return client.fetch(
     `*[_type == "bonus" && slug.current == $slug && (market == "global" || !defined(market))][0] {
