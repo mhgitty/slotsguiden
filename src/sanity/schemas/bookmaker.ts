@@ -60,12 +60,30 @@ export const bookmakerType = defineType({
       ],
     }),
     defineField({
+      name: 'logoSquare',
+      title: 'Logo square',
+      type: 'image',
+      group: 'info',
+      description: 'Square version of the logo',
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: 'alt', title: 'Alt text', type: 'string' }),
+      ],
+    }),
+    defineField({
       name: 'score',
       title: 'Score (0–10)',
       type: 'number',
       group: 'info',
       description: 'Our overall rating of the casino',
       validation: (r) => r.min(0).max(10),
+    }),
+    defineField({
+      name: 'trustpilot',
+      title: 'Trustpilot',
+      type: 'string',
+      group: 'info',
+      description: 'Trustpilot score or profile URL, e.g. "4.6" or a link',
     }),
     defineField({
       name: 'usp',
@@ -82,6 +100,13 @@ export const bookmakerType = defineType({
       type: 'string',
       group: 'info',
       description: 'E.g. "100% up to $1,000"',
+    }),
+    defineField({
+      name: 'freeSpinsBonus',
+      title: 'Free spins bonus',
+      type: 'string',
+      group: 'info',
+      description: 'E.g. "200 free spins"',
     }),
     defineField({
       name: 'minIndbetaling',
@@ -119,6 +144,13 @@ export const bookmakerType = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: 'anmeldelseLink',
+      title: 'Review link (Anmeldelse)',
+      type: 'string',
+      group: 'info',
+      description: 'Link to the review page for this casino',
+    }),
+    defineField({
       name: 'terms',
       title: 'Terms',
       type: 'text',
@@ -147,6 +179,15 @@ export const bookmakerType = defineType({
       group: 'content',
       of: [{ type: 'reference', to: [{ type: 'software' }] }],
       description: 'Game software providers used by this casino',
+    }),
+
+    defineField({
+      name: 'aktuelleBonusser',
+      title: 'Current bonuses (Aktuelle bonusser)',
+      type: 'array',
+      group: 'content',
+      of: [{ type: 'reference', to: [{ type: 'bonus' }] }],
+      description: 'Active bonuses tied to this casino',
     }),
 
     // ── SEO ───────────────────────────────────────────────────────────────────

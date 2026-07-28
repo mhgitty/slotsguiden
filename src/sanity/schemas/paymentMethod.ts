@@ -49,6 +49,13 @@ export const paymentMethodType = defineType({
       ],
     }),
     defineField({
+      name: 'casinos',
+      title: 'Casinos',
+      type: 'array',
+      description: 'Casinos that support this payment method.',
+      of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
+    }),
+    defineField({
       name: 'paymentCategory',
       title: 'Payment Category',
       type: 'string',

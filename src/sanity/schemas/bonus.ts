@@ -79,6 +79,15 @@ export const bonusType = defineType({
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
     defineField({
+      name: 'casinoLogoSquare',
+      title: 'Casino logo square',
+      type: 'image',
+      group: 'info',
+      description: 'Square version of the casino logo',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+    }),
+    defineField({
       name: 'oddsBonusTitel',
       title: 'Bonus title',
       type: 'string',
