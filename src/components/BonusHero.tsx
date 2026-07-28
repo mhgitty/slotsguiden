@@ -157,7 +157,7 @@ export function BonusHero({
               rel="nofollow noopener noreferrer sponsored"
               style={{
                 display: 'block', width: '100%',
-                background: 'var(--green-dark)', color: '#fff',
+                background: 'var(--btn)', color: '#fff',
                 padding: '15px 28px', borderRadius: '10px',
                 fontSize: '16px', fontWeight: 700,
                 textDecoration: 'none', textAlign: 'center',

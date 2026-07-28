@@ -44,7 +44,7 @@ export function HowToBlock({ value }: HowToBlockProps) {
             <div style={{
               width: '52px',
               height: '52px',
-              background: 'var(--green)',
+              background: 'var(--btn)',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',

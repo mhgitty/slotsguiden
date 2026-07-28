@@ -219,7 +219,7 @@ export function WageringCalculator({ value }: WageringCalculatorProps) {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             gap: '16px', marginTop: '14px',
-            background: 'var(--green)', borderRadius: '10px', padding: '14px 16px',
+            background: 'var(--btn)', borderRadius: '10px', padding: '14px 16px',
           }}>
             <span style={{
               display: 'flex', alignItems: 'center', gap: '8px',

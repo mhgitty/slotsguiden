@@ -147,7 +147,7 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/review', title = 
                     {c.url && (
                       <a href={c.url} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                        background: 'var(--green)', color: '#fff',
+                        background: 'var(--btn)', color: '#fff',
                         padding: '10px 14px', borderRadius: '8px',
                         fontSize: '14px', fontWeight: 800, textDecoration: 'none',
                       }}>

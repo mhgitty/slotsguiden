@@ -142,7 +142,7 @@ export function BonusCard({
               rel="nofollow noopener noreferrer sponsored"
               style={{
                 display: 'block', textAlign: 'center',
-                background: 'var(--green)',
+                background: 'var(--btn)',
                 color: '#fff', fontWeight: 700, fontSize: '14px',
                 padding: '13px 16px', borderRadius: '10px',
                 textDecoration: 'none', letterSpacing: '0.03em',

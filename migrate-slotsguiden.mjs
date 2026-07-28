@@ -18,7 +18,7 @@
  */
 import {
   loadEnv, makeSanity, createEngine, fetchAllCPT,
-  str, num, text, cleanText, slugToName, refArray, singleRef,
+  str, num, text, cleanText, slugToName, refArray, singleRef, estimateReadingTime,
 } from './migrate-lib.mjs'
 
 const WP_BASE = 'https://slotsguiden.dk'
@@ -38,6 +38,13 @@ function pair(base, t, b) {
   return o
 }
 const featuredId = (wp) => wp.featured_media || wp?._embedded?.['wp:featuredmedia']?.[0]?.id || null
+
+// Split converted blocks at the first H2: everything before → intro, rest → body.
+function splitIntroBody(blocks) {
+  const i = blocks.findIndex(b => b._type === 'block' && b.style === 'h2')
+  if (i <= 0) return { intro: [], body: blocks }   // no H2, or H2 is already first
+  return { intro: blocks.slice(0, i), body: blocks.slice(i) }
+}
 
 // ─── document builders ─────────────────────────────────────────────────────────
 async function buildBookmaker(wp, eng) {
@@ -184,12 +191,98 @@ async function buildSoftware(wp, eng) {
   }
 }
 
+// ─── posts (blog) + categories + authors ────────────────────────────────────
+async function preparePosts(posts, { sanity, eng, dryRun }) {
+  // Categories — from the /categories endpoint (not _embedded)
+  const cats = await fetchAllCPT(WP_BASE, 'categories', 0, false)
+  const categoryMap = {}
+  for (const c of cats) {
+    const id = `wp-category-${c.id}`
+    categoryMap[c.id] = id
+    if (!dryRun) await sanity.createOrReplace({
+      _id: id, _type: 'category',
+      name: cleanText(c.name) || c.slug, slug: { _type: 'slug', current: c.slug },
+      ...(cleanText(c.description) ? { description: cleanText(c.description) } : {}),
+    })
+  }
+  // Authors — from the /users endpoint (may be restricted; falls back to none)
+  const authorMap = {}
+  let users = []
+  try { users = await fetchAllCPT(WP_BASE, 'users', 0, false) } catch { users = [] }
+  for (const u of users) {
+    const id = `wp-author-${u.id}`
+    authorMap[u.id] = id
+    if (!dryRun) {
+      const av = u.avatar_urls || {}
+      const avatar = av['96'] || av['48'] || Object.values(av).pop() || null
+      const image = avatar ? await eng.imageField(avatar) : null
+      await sanity.createOrReplace({
+        _id: id, _type: 'author',
+        name: cleanText(u.name) || u.slug || String(u.id),
+        slug: { _type: 'slug', current: u.slug || String(u.id) },
+        ...(image ? { image } : {}),
+        ...(cleanText(u.description) ? { bio: cleanText(u.description) } : {}),
+      })
+    }
+  }
+  console.log(`  → prepared ${cats.length} categories, ${users.length} authors`)
+  return { categoryMap, authorMap }
+}
+
+async function buildPost(wp, eng, ctx = {}) {
+  const slug = wp.slug
+  const title = cleanText(wp.title?.rendered || '') || slugToName(slug)
+  const body = await eng.htmlToPortableText(wp.content?.rendered || '')
+  const featuredImage = await eng.imageField(featuredId(wp))
+  const catId = (Array.isArray(wp.categories) && wp.categories.length) ? ctx.categoryMap?.[wp.categories[0]] : null
+  const authorId = ctx.authorMap?.[wp.author]
+  const yoast = wp.yoast_head_json || {}
+  return {
+    _id: `wp-post-${wp.id}`, _type: 'post',
+    title, slug: { _type: 'slug', current: slug },
+    ...(wp.excerpt?.rendered ? { excerpt: cleanText(wp.excerpt.rendered).slice(0, 300) } : {}),
+    ...(featuredImage ? { featuredImage, ogImage: featuredImage } : {}),
+    ...(catId ? { category: { _type: 'reference', _ref: catId, _weak: true } } : {}),
+    ...(authorId ? { author: { _type: 'reference', _ref: authorId, _weak: true } } : {}),
+    ...(body.length ? { body } : {}),
+    readingTime: estimateReadingTime(wp.content?.rendered || ''),
+    ...(wp.date_gmt ? { publishedAt: new Date(wp.date_gmt + 'Z').toISOString() } : {}),
+    ...(wp.modified_gmt ? { lastUpdated: new Date(wp.modified_gmt + 'Z').toISOString() } : {}),
+    ...(yoast.title ? { metaTitle: yoast.title } : {}),
+    ...(yoast.description ? { metaDescription: yoast.description } : {}),
+  }
+}
+
+async function buildPage(wp, eng) {
+  const slug = wp.slug
+  const title = cleanText(wp.title?.rendered || '') || slugToName(slug)
+  const allBlocks = await eng.htmlToPortableText(wp.content?.rendered || '')
+  const { intro, body } = splitIntroBody(allBlocks)   // lead text → intro, rest → body
+  const featuredImage = await eng.imageField(featuredId(wp))
+  const yoast = wp.yoast_head_json || {}
+  return {
+    _id: `wp-page-${wp.id}`, _type: 'page',
+    title, slug: { _type: 'slug', current: slug }, market: 'global',
+    // Preserve WordPress hierarchy → correct nested paths (/parent/this-page/)
+    ...(wp.parent ? { parent: { _type: 'reference', _ref: `wp-page-${wp.parent}`, _weak: true } } : {}),
+    ...(featuredImage ? { featuredImage } : {}),
+    ...(intro.length ? { intro } : {}),
+    ...(body.length ? { body } : {}),
+    ...(wp.modified_gmt ? { lastUpdated: new Date(wp.modified_gmt + 'Z').toISOString() } : {}),
+    ...(yoast.title ? { metaTitle: yoast.title } : {}),
+    ...(yoast.description ? { metaDescription: yoast.description } : {}),
+  }
+}
+
 const TYPES = {
   bookmakers: { restBase: 'casinoer', label: '🎰 Casinoer → bookmaker', build: buildBookmaker },
   bonuses: { restBase: 'casino-bonusser', label: '🎁 Casino bonusser → bonus', build: buildBonus },
   payment: { restBase: 'betalingsmetoder', label: '💳 Betalingsmetoder → paymentMethod', build: buildPayment },
   software: { restBase: 'spiludviklere', label: '🎮 Spiludviklere → software', build: buildSoftware },
+  posts: { restBase: 'posts', label: '📝 Posts → post (+ categories, authors)', build: buildPost, prepare: preparePosts },
+  pages: { restBase: 'pages', label: '📄 Pages → page', build: buildPage },
 }
+// Custom types run by default; posts/pages run explicitly (or with "all").
 const ORDER = ['bookmakers', 'payment', 'software', 'bonuses']
 
 // ─── runner ─────────────────────────────────────────────────────────────────
@@ -198,27 +291,28 @@ async function migrateType(key, sanity, eng) {
   console.log(`\n${'═'.repeat(60)}\n${cfg.label}   (${WP_BASE}/wp-json/wp/v2/${cfg.restBase})`)
   const posts = await fetchAllCPT(WP_BASE, cfg.restBase, LIMIT)
   console.log(`  Found ${posts.length} records${LIMIT ? ` (limited to ${LIMIT})` : ''}\n`)
+  const ctx = cfg.prepare ? await cfg.prepare(posts, { sanity, eng, dryRun }) : {}
   const acfKeysSeen = new Set()
-  let ok = 0, fail = 0, noLogo = 0, linked = 0
+  let ok = 0, fail = 0, noImg = 0, linked = 0
   for (const wp of posts) {
     Object.keys(wp.acf || {}).forEach(k => acfKeysSeen.add(k))
     try {
-      const doc = await cfg.build(wp, eng)
+      const doc = await cfg.build(wp, eng, ctx)
       if (!dryRun) await sanity.createOrReplace(doc)
       ok++
-      const hasLogo = !!(doc.logo || doc.casinoLogo)
-      if (!hasLogo) noLogo++
-      const refs = (doc.paymentMethods?.length || 0) + (doc.software?.length || 0) + (doc.aktuelleBonusser?.length || 0) + (doc.casinos?.length || 0) + (doc.bookmaker ? 1 : 0)
+      const hasImg = !!(doc.logo || doc.casinoLogo || doc.featuredImage || doc.ogImage)
+      if (!hasImg) noImg++
+      const refs = (doc.paymentMethods?.length || 0) + (doc.software?.length || 0) + (doc.aktuelleBonusser?.length || 0) + (doc.casinos?.length || 0) + (doc.bookmaker ? 1 : 0) + (doc.category ? 1 : 0) + (doc.author ? 1 : 0)
       if (refs) linked++
-      const flags = [hasLogo ? 'logo' : 'no-logo', refs ? `${refs} refs` : ''].filter(Boolean).join(' · ')
+      const flags = [hasImg ? 'img' : 'no-img', refs ? `${refs} refs` : ''].filter(Boolean).join(' · ')
       console.log(`  ${dryRun ? '·' : '✅'} ${doc._id}  ${doc.name || doc.title}  [${flags}]`)
     } catch (err) {
       fail++
       console.error(`  ❌ ${wp.slug}: ${err.message}`)
     }
   }
-  console.log(`\n  → ${ok} ${dryRun ? 'mapped' : 'written'}, ${fail} failed, ${noLogo} without logo, ${linked} with relationships`)
-  console.log(`  → ACF keys present on these records:\n     ${[...acfKeysSeen].sort().join(', ') || '(none)'}`)
+  console.log(`\n  → ${ok} ${dryRun ? 'mapped' : 'written'}, ${fail} failed, ${noImg} without image, ${linked} with relationships`)
+  if (acfKeysSeen.size) console.log(`  → ACF keys present on these records:\n     ${[...acfKeysSeen].sort().join(', ')}`)
   return { ok, fail }
 }
 
@@ -228,9 +322,9 @@ async function main() {
   const eng = createEngine({ sanity, wpBase: WP_BASE, dryRun })
   console.log(`\nSlotsguiden migration → project ${env['NEXT_PUBLIC_SANITY_PROJECT_ID']} / ${env['NEXT_PUBLIC_SANITY_DATASET'] || 'production'}`)
   console.log(dryRun ? '🧪 DRY RUN — nothing will be written to Sanity' : '✍️  LIVE — writing to Sanity')
-  const keys = typeArg ? [typeArg] : ORDER
+  const keys = !typeArg ? ORDER : (typeArg === 'all' ? [...ORDER, 'posts', 'pages'] : [typeArg])
   for (const k of keys) {
-    if (!TYPES[k]) { console.error(`Unknown type "${k}". Valid: ${Object.keys(TYPES).join(', ')}`); process.exit(1) }
+    if (!TYPES[k]) { console.error(`Unknown type "${k}". Valid: ${Object.keys(TYPES).join(', ')}, all`); process.exit(1) }
   }
   let totalOk = 0, totalFail = 0
   for (const k of keys) { const r = await migrateType(k, sanity, eng); totalOk += r.ok; totalFail += r.fail }

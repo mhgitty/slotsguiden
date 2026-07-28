@@ -170,7 +170,7 @@ export default async function HomePage() {
                       {featuredPost.category?.name && (
                         <span style={{
                           display: 'inline-block',
-                          background: 'var(--green)',
+                          background: 'var(--btn)',
                           color: '#fff',
                           fontSize: '11px',
                           fontWeight: 600,
@@ -226,7 +226,7 @@ export default async function HomePage() {
                           {post.category?.name && (
                             <span style={{
                               display: 'inline-block',
-                              background: 'var(--green)',
+                              background: 'var(--btn)',
                               color: '#fff',
                               fontSize: '10px',
                               fontWeight: 600,
@@ -344,7 +344,7 @@ export default async function HomePage() {
                             <a href={bm.url} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
                               display: 'inline-block',
                               padding: '5px 10px',
-                              background: 'var(--green)',
+                              background: 'var(--btn)',
                               color: '#fff',
                               fontSize: '11px',
                               fontWeight: 600,
@@ -420,7 +420,7 @@ export default async function HomePage() {
                             <a href={bm.url} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
                               display: 'inline-block',
                               padding: '5px 10px',
-                              background: 'var(--green)',
+                              background: 'var(--btn)',
                               color: '#fff',
                               fontSize: '11px',
                               fontWeight: 600,

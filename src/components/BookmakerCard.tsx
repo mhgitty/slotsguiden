@@ -134,7 +134,7 @@ export function BookmakerCard({
               rel="nofollow noopener noreferrer sponsored"
               style={{
                 display: 'inline-block',
-                background: 'var(--green)', color: '#fff',
+                background: 'var(--btn)', color: '#fff',
                 padding: '12px 20px', borderRadius: '8px',
                 fontSize: '14px', fontWeight: 600,
                 textDecoration: 'none', whiteSpace: 'nowrap',

@@ -80,7 +80,7 @@ export async function PageLinksBlock({ value }: PageLinksBlockProps) {
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  background: 'var(--green)',
+                  background: 'var(--btn)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

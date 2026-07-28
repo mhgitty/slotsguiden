@@ -258,6 +258,9 @@ export function createEngine({ sanity, wpBase, dryRun = false }) {
       }
       if (tag === 'table') { const t = parseTable(node); if (t) blocks.push(t); return }
       if (tag === 'div' || tag === 'section') {
+        // Skip GenerateBlocks dynamic loopers — the ranked casino/bonus card
+        // lists injected into page bodies (rendered instead via Sanity components).
+        if (hasClass(node, 'gb-looper', 'gb-loop-item', 'order_by_')) return
         if (hasClass(node, 'wp-block-ht-block-toc', 'htoc', 'wp-block-spacer', 'wp-block-separator')) return
         if (hasClass(node, 'wp-block-button', 'wp-block-buttons')) {
           for (const btnWrap of node.querySelectorAll('.wp-block-button')) {
@@ -286,12 +289,18 @@ export function createEngine({ sanity, wpBase, dryRun = false }) {
   return { htmlToPortableText, uploadImage, imageField, resolveImage, getMedia }
 }
 
-// ─── FETCH ALL RECORDS OF A CPT ───────────────────────────────────────────────
-export async function fetchAllCPT(wpBase, restBase, limit = 0) {
+// ─── READING TIME ───────────────────────────────────────────────────────────
+export const estimateReadingTime = (html) => {
+  const words = stripHtml(html || '').split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.round(words / 200))
+}
+
+// ─── FETCH ALL RECORDS OF A CPT (or taxonomy/users) ───────────────────────────
+export async function fetchAllCPT(wpBase, restBase, limit = 0, withStatus = true) {
   const posts = []
   let page = 1
   while (true) {
-    const url = `${wpBase}/wp-json/wp/v2/${restBase}?status=publish&per_page=100&page=${page}&_embed=1`
+    const url = `${wpBase}/wp-json/wp/v2/${restBase}?${withStatus ? 'status=publish&' : ''}per_page=100&page=${page}&_embed=1`
     const res = await fetch(url)
     if (!res.ok) break
     const data = await res.json()

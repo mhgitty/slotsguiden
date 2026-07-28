@@ -137,7 +137,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                   {casino.url && (
                     <a href={casino.url} target="_blank" rel="nofollow noopener noreferrer sponsored"
-                      style={{ background: 'var(--green)', color: '#fff', padding: '8px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
+                      style={{ background: 'var(--btn)', color: '#fff', padding: '8px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
                       Tilmeld dig
                     </a>
                   )}

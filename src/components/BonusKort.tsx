@@ -75,7 +75,7 @@ export function BonusKort({ value }: { value: BonusKortData }) {
         {/* CTA */}
         {bonus.offerUrl && (
           <a href={bonus.offerUrl} target="_blank" rel="nofollow noopener noreferrer sponsored"
-            style={{ display: 'block', background: 'var(--green-dark)', color: '#fff', padding: '13px 24px', borderRadius: '8px', fontSize: '15px', fontWeight: 600, textDecoration: 'none', textAlign: 'center', marginBottom: bonus.terms ? '10px' : '0' }}>
+            style={{ display: 'block', background: 'var(--btn)', color: '#fff', padding: '13px 24px', borderRadius: '8px', fontSize: '15px', fontWeight: 600, textDecoration: 'none', textAlign: 'center', marginBottom: bonus.terms ? '10px' : '0' }}>
             Hent bonus nu →
           </a>
         )}

@@ -13,7 +13,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { RelatedPages } from '@/components/RelatedPages'
 import { getPostBySlug, getPageByPath, getPosts, getSiteSettings, client } from '@/lib/sanity'
-import { replaceDateVars } from '@/lib/dateVars'
+import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getPageByPath([slug]).catch(() => null)
   if (page) {
     const title = replaceDateVars(page.metaTitle || page.title)
-    const description = replaceDateVars(page.metaDescription || page.intro || '')
+    const description = replaceDateVars(page.metaDescription || blocksToPlainText(page.intro))
     const canonical = `${BASE}/${slug}/`
     return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical } }
   }
@@ -200,7 +200,7 @@ export default async function SlugPage({ params }: Props) {
         '@id': `${canonical}#webpage`,
         url: canonical,
         name: page.title,
-        description: page.intro || '',
+        description: blocksToPlainText(page.intro),
         inLanguage: 'da-DK',
         publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
       },

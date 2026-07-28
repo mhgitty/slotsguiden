@@ -10,7 +10,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { HreflangHead } from '@/components/HreflangHead'
 import { RelatedPages } from '@/components/RelatedPages'
 import { getPageByPath, getSiteSettings, getHreflangScript } from '@/lib/sanity'
-import { replaceDateVars } from '@/lib/dateVars'
+import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getPageByPath(slug).catch(() => null)
   if (!page) return {}
   const title = replaceDateVars(page.metaTitle || page.title)
-  const description = replaceDateVars(page.metaDescription || page.intro || '')
+  const description = replaceDateVars(page.metaDescription || blocksToPlainText(page.intro))
   const canonical = `${BASE}${buildPath(slug)}`
   const ogImg = (page as any).ogImage
   return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: ogImg?.url ? [{ url: ogImg.url }] : [{ url: `${BASE}/og.png` }] } }
@@ -71,7 +71,7 @@ export default async function DynamicPage({ params }: Props) {
         '@id': `${canonical}#webpage`,
         url: canonical,
         name: page.title,
-        description: page.intro || '',
+        description: blocksToPlainText(page.intro),
         inLanguage: 'da-DK',
         publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
       },

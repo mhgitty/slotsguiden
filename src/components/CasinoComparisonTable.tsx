@@ -196,7 +196,7 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
         <span style={{
           position: 'absolute', top: '-11px', left: '18px',
           display: 'inline-flex', alignItems: 'center', gap: '5px',
-          background: 'var(--green)', color: '#fff',
+          background: 'var(--btn)', color: '#fff',
           fontSize: '11.5px', fontWeight: 600, lineHeight: 1.3,
           padding: '3px 12px', borderRadius: '20px',
           maxWidth: 'calc(100% - 36px)',
@@ -278,7 +278,7 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
           {casino.url && (
             <a href={casino.url} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              background: 'var(--green)', color: '#fff',
+              background: 'var(--btn)', color: '#fff',
               padding: '13px 24px', borderRadius: '9px',
               fontSize: '16px', fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap',
             }}>

@@ -133,7 +133,7 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
                 display: 'block',
                 width: '100%',
                 padding: '15px 24px',
-                background: 'linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%)',
+                background: 'linear-gradient(135deg, var(--btn) 0%, var(--btn-dark) 100%)',
                 color: '#fff',
                 fontWeight: 700,
                 fontSize: '16px',

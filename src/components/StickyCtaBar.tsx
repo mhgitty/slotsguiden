@@ -100,7 +100,7 @@ export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms }: Stic
             rel="nofollow noopener noreferrer sponsored"
             style={{
               flexShrink: 0,
-              background: 'var(--green)',
+              background: 'var(--btn)',
               color: '#fff',
               padding: '12px 22px',
               borderRadius: '8px',

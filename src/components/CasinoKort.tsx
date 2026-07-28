@@ -107,7 +107,7 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
         {/* CTA */}
         {bm.url && (
           <a href={bm.url} target="_blank" rel="nofollow noopener noreferrer sponsored"
-            style={{ display: 'block', background: 'var(--green-dark)', color: '#fff', padding: '13px 24px', borderRadius: '8px', fontSize: '15px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>
+            style={{ display: 'block', background: 'var(--btn)', color: '#fff', padding: '13px 24px', borderRadius: '8px', fontSize: '15px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>
             Besøg casino →
           </a>
         )}

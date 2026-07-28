@@ -8,7 +8,8 @@ const MONTHS_DA = [
  * Safe to call with null/undefined — returns the input unchanged.
  */
 export function replaceDateVars(str: string | null | undefined): string {
-  if (!str) return str ?? ''
+  if (typeof str !== 'string') return ''
+  if (!str) return ''
   const now = new Date()
   const year  = now.getFullYear().toString()
   const month = MONTHS_DA[now.getMonth()]
@@ -41,4 +42,15 @@ export function replaceDateVarsInBlocks(blocks: any[]): any[] {
     }
     return block
   })
+}
+
+/** Flatten a Portable Text array (or string) to plain text — for meta descriptions. */
+export function blocksToPlainText(v: any): string {
+  if (typeof v === 'string') return v
+  if (!Array.isArray(v)) return ''
+  return v
+    .filter((b: any) => b?._type === 'block' && Array.isArray(b.children))
+    .map((b: any) => b.children.filter((c: any) => c?._type === 'span').map((c: any) => c.text || '').join(''))
+    .join(' ')
+    .trim()
 }
