@@ -394,7 +394,8 @@ export const getSiteSettings = cache(async () => {
 export async function getHomepage() {
   return client.fetch(
     `*[_type == "homepage" && _id == "homepage"][0] {
-      heroHeading, heroGreenText, intro,
+      heroHeading, intro,
+      "heroCards": heroCards[] { _key, title, icon, href },
       "body": body[] {
         ...,
         _type == "casinoKortBlock" => {
@@ -422,12 +423,14 @@ export async function getHomepage() {
           }
         }
       },
-      howItWorksTitle, showHowItWorks, howItWorksItems,
-      latestSectionTitle, casinoReviewsTitle, topRatedTitle, featuredSectionTitle,
-      "trustItems": trustItems[] { _key, icon, title, body },
+      "sections": sections[] {
+        _type, _key,
+        title, count, body, icon, buttonLabel, buttonUrl, style,
+        intro,
+        "items": items[] { _key, title, description, icon, href, "bullets": bullets[] }
+      },
       metaTitle, metaDescription,
-      "featuredImage": featuredImage { "url": asset->url, alt },
-      ${COMPARISON_TABLE_FRAGMENT}
+      "featuredImage": featuredImage { "url": asset->url, alt }
     }`
   )
 }
