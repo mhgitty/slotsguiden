@@ -95,6 +95,13 @@ export const paymentMethodType = defineType({
       type: 'string',
       description: 'SEO meta description. 140–155 characters.',
     }),
+    defineField({
+      name: 'ogImage',
+      title: 'OG Image',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+    }),
   ],
   preview: {
     select: { title: 'name', subtitle: 'paymentCategory', media: 'logo' },

@@ -136,6 +136,14 @@ export const softwareType = defineType({
       group: 'seo',
       description: 'SEO meta description. 140–155 characters.',
     }),
+    defineField({
+      name: 'ogImage',
+      title: 'OG Image',
+      type: 'image',
+      group: 'seo',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+    }),
   ],
   preview: {
     select: { title: 'name', media: 'logo' },
