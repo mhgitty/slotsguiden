@@ -24,6 +24,7 @@ interface Casino {
   terms?: string
   market?: string
   logo?: { url?: string; alt?: string }
+  logoSquare?: { url?: string; alt?: string }
   paymentMethods?: LogoRef[]
   software?: LogoRef[]
 }
@@ -209,15 +210,21 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
       {/* Row 1 — fixed column tracks so the bonus column aligns across every row */}
       <div className="casino-cmp-r1" style={{
         display: 'grid',
-        gridTemplateColumns: '300px 132px minmax(0, 1fr) 190px',
+        gridTemplateColumns: '288px 172px minmax(0, 1fr) 190px',
         gridTemplateAreas: '"brand stats bonus cta"',
         alignItems: 'center', gap: '20px',
       }}>
         {/* logo + rating + name grouped together */}
         <div className="casino-cmp-brand" style={{ gridArea: 'brand', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
-          {/* logo (no box, rounded image) */}
-          <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '104px' }}>
-            {casino.logo?.url ? (
+          {/* logo — square version preferred */}
+          <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '72px' }}>
+            {casino.logoSquare?.url ? (
+              <div style={{ width: '64px', height: '64px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', flexShrink: 0 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={casino.logoSquare.url} alt={casino.logoSquare.alt || casino.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </div>
+            ) : casino.logo?.url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={casino.logo.url} alt={casino.logo.alt || casino.name}
                 style={{ maxWidth: '100%', maxHeight: '64px', objectFit: 'contain', display: 'block', borderRadius: '8px' }} />
@@ -242,19 +249,19 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
         {/* min dep / wager — always occupies its column so rows align */}
         <div className="casino-cmp-ministats" style={{
           gridArea: 'stats',
-          display: 'flex', flexDirection: 'column', gap: '6px',
+          display: 'flex', flexDirection: 'column', gap: '10px',
           ...(hasStats ? { borderLeft: '1px solid var(--border-faint)', borderRight: '1px solid var(--border-faint)', padding: '0 16px' } : {}),
         }}>
           {casino.minIndbetaling != null && (
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <span style={{ ...LABEL, width: '58px' }}>Min. indb.</span>
-              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{currency}{casino.minIndbetaling}</span>
+            <div>
+              <div style={{ ...LABEL, marginBottom: '2px' }}>Min. indbetaling</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{casino.minIndbetaling} {currency}</div>
             </div>
           )}
           {casino.gennemspilskrav && (
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <span style={{ ...LABEL, width: '58px' }}>Omsætn.</span>
-              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{casino.gennemspilskrav}</span>
+            <div>
+              <div style={{ ...LABEL, marginBottom: '2px' }}>Omsætningskrav</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{casino.gennemspilskrav}</div>
             </div>
           )}
         </div>
@@ -314,7 +321,7 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
 }
 
 // ─── Table ──────────────────────────────────────────────────────────────────────
-export function CasinoComparisonTable({ casinos, currency = '$', disclosure = DEFAULT_DISCLOSURE }: CasinoComparisonTableProps) {
+export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = DEFAULT_DISCLOSURE }: CasinoComparisonTableProps) {
   if (!casinos?.length) return null
   return (
     <div>

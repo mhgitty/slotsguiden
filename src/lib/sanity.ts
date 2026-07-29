@@ -496,6 +496,7 @@ const CASINO_CARD_FIELDS = `
   _id, name, slug, score, usp, url, terms, market,
   indbetalingsbonus, minIndbetaling, gennemspilskrav,
   "logo": logo { "url": asset->url, alt },
+  "logoSquare": logoSquare { "url": asset->url, alt },
   "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
   "software": software[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
 `
