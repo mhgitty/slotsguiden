@@ -263,8 +263,8 @@ h1, h2, h3, h4, h5, h6 {
   transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
   box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
-.nav-item-dropdown:hover .nav-dropdown,
-.nav-item-dropdown:focus-within .nav-dropdown {
+.nav-item-dropdown:hover > .nav-dropdown,
+.nav-item-dropdown:focus-within > .nav-dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);

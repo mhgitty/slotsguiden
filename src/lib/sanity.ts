@@ -492,19 +492,26 @@ export async function getPaymentMethods() {
   )
 }
 
+const CASINO_CARD_FIELDS = `
+  _id, name, slug, score, usp, url, terms, market,
+  indbetalingsbonus, minIndbetaling, gennemspilskrav,
+  "logo": logo { "url": asset->url, alt },
+  "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
+  "software": software[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
+`
+
 export async function getPaymentMethodBySlug(slug: string) {
   return client.fetch(
     `*[_type == "paymentMethod" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, name, titel, slug, withdrawalTime,
       paymentCategory, transactionFees, eligibleForBonuses,
       metaTitle, metaDescription,
+      showCasinoComparison, comparisonTitle,
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
-      "casinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) {
-        _id, name, slug, score, usp, url,
-        "logo": logo { "url": asset->url, alt }
-      }
+      "pinnedCasinos": casinos[]-> { ${CASINO_CARD_FIELDS} },
+      "autoCasinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) { ${CASINO_CARD_FIELDS} }
     }`,
     { slug }
   )
@@ -526,13 +533,12 @@ export async function getSoftwareBySlug(slug: string) {
     `*[_type == "software" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, name, titel, slug, metaTitle, metaDescription,
       rtp, amountOfSlots, licenses, gameCategories, highestRtpSlot, bonusBuys,
+      showCasinoComparison, comparisonTitle,
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
-      "casinos": casinos[]-> {
-        _id, name, slug, score, usp, url,
-        "logo": logo { "url": asset->url, alt }
-      },
+      "pinnedCasinos": casinos[]-> { ${CASINO_CARD_FIELDS} },
+      "autoCasinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) { ${CASINO_CARD_FIELDS} },
       ${COMPARISON_TABLE_FRAGMENT}
     }`,
     { slug }

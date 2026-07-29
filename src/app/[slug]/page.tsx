@@ -22,6 +22,9 @@ export const revalidate = 3600
 
 const BASE = 'https://slotsguiden.dk'
 
+// Breadcrumb label from a slug (not the long H1), e.g. "free-spins-uden-indbetaling" → "Free spins uden indbetaling"
+const slugLabel = (s: string) => (s || '').replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase())
+
 interface Props { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
@@ -97,7 +100,7 @@ export default async function SlugPage({ params }: Props) {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Hjem', item: BASE },
-          { '@type': 'ListItem', position: 2, name: post.title, item: canonical },
+          { '@type': 'ListItem', position: 2, name: slugLabel(slug), item: canonical },
         ],
       },
       {
@@ -139,7 +142,7 @@ export default async function SlugPage({ params }: Props) {
           <div style={{ maxWidth: '1250px', margin: '0 auto' }}>
             <Breadcrumbs crumbs={[
               { label: 'Hjem', href: '/' },
-              { label: post.title },
+              { label: slugLabel(slug) },
             ]} />
             {post.category && (
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(10,95,62,0.1)', color: 'var(--green)', fontSize: '12px', fontWeight: 500, padding: '3px 12px', borderRadius: '20px', marginBottom: '16px' }}>
@@ -183,9 +186,9 @@ export default async function SlugPage({ params }: Props) {
 
   const breadcrumbItems = [{ name: 'Hjem', item: BASE }]
   if (page.parentSlug && page.parentTitle) {
-    breadcrumbItems.push({ name: page.parentTitle, item: `${BASE}/${page.parentSlug}/` })
+    breadcrumbItems.push({ name: slugLabel(page.parentSlug), item: `${BASE}/${page.parentSlug}/` })
   }
-  breadcrumbItems.push({ name: page.title, item: canonical })
+  breadcrumbItems.push({ name: slugLabel(slug), item: canonical })
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -222,9 +225,9 @@ export default async function SlugPage({ params }: Props) {
         breadcrumbs={[
           { label: 'Hjem', href: '/' },
           ...(page.parentSlug && page.parentTitle
-            ? [{ label: page.parentTitle, href: `/${page.parentSlug}` }]
+            ? [{ label: slugLabel(page.parentSlug), href: `/${page.parentSlug}` }]
             : []),
-          { label: page.title },
+          { label: slugLabel(slug) },
         ]}
       />
 

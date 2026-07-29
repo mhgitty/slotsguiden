@@ -5,6 +5,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
 import { MobileToc } from '@/components/MobileToc'
 import { TableOfContents } from '@/components/TableOfContents'
+import { CasinoComparisonTable } from '@/components/CasinoComparisonTable'
 import { JsonLd } from '@/components/JsonLd'
 import { getPaymentMethodBySlug, client } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
@@ -39,6 +40,16 @@ export default async function PaymentMethodPage({ params }: Props) {
   if (!pm) notFound()
   const canonical = `${BASE}/betalingsmetoder/${slug}/`
   const heading = pm.titel || pm.name
+
+  // Comparison list: pinned casinos first (editor order), then any auto-matched
+  // casino that isn't already pinned — deduped by _id.
+  const seen = new Set<string>()
+  const comparisonCasinos: any[] = []
+  for (const c of [...(pm.pinnedCasinos ?? []), ...(pm.autoCasinos ?? [])]) {
+    if (c?._id && !seen.has(c._id)) { seen.add(c._id); comparisonCasinos.push(c) }
+  }
+  const showComparison = pm.showCasinoComparison !== false && comparisonCasinos.length > 0
+  const comparisonTitle = replaceDateVars(pm.comparisonTitle || `Bedste casinoer med ${pm.name}`)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -78,6 +89,16 @@ export default async function PaymentMethodPage({ params }: Props) {
         eligibleForBonuses={pm.eligibleForBonuses}
         intro={pm.intro}
       />
+
+      {/* Casino comparison list — casinos supporting this payment method */}
+      {showComparison && (
+        <div className="section" style={{ paddingBottom: pm.body ? '0' : undefined }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px' }}>
+            {comparisonTitle}
+          </h2>
+          <CasinoComparisonTable casinos={comparisonCasinos} />
+        </div>
+      )}
 
       {pm.body && (
         <div className="article-layout">

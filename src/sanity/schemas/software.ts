@@ -63,11 +63,26 @@ export const softwareType = defineType({
 
     // ── Casinos relationship ─────────────────────────────────────────────────────
     defineField({
+      name: 'showCasinoComparison',
+      title: 'Vis sammenligningsliste',
+      type: 'boolean',
+      group: 'general',
+      description: 'Vis automatisk en sammenligningsliste med casinoer, der bruger denne spiludvikler.',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'comparisonTitle',
+      title: 'Sammenligningsliste — titel',
+      type: 'string',
+      group: 'general',
+      description: 'Overskrift vist over sammenligningslisten. Efterlad tom for at bruge "Bedste casinoer med [navn]".',
+    }),
+    defineField({
       name: 'casinos',
-      title: 'Casino Reviews',
+      title: 'Casinoer i sammenligningslisten',
       type: 'array',
       group: 'general',
-      description: 'Casinos that use this software provider.',
+      description: 'Casinoer, der bruger denne spiludvikler, vises automatisk. Træk for at ændre rækkefølgen. Nye casinoer, der tilføjer denne spiludvikler, tilføjes automatisk nederst.',
       of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
     }),
 
