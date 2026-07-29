@@ -61,6 +61,14 @@ export const bonusType = defineType({
       description: 'When on, this bonus appears in the grid on /free-spins-til-eksisterende-kunder/. Automatically removed after the campaign end date.',
       initialValue: false,
     }),
+    defineField({
+      name: 'showInPopup',
+      title: 'Show in pop-up',
+      type: 'boolean',
+      group: 'info',
+      description: 'When on, this bonus is shown in the site-wide pop-up that appears after a few seconds on every page. If several are on, the most recently published one is used.',
+      initialValue: false,
+    }),
 
     // ── Bookmaker relation ────────────────────────────────────────────────────
     defineField({

@@ -4,6 +4,8 @@ import { draftMode } from 'next/headers'
 import { AdminBar } from '@/components/AdminBar'
 import { PreviewBanner } from '@/components/PreviewBanner'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { BonusPopup } from '@/components/BonusPopup'
+import { getPopupBonus } from '@/lib/sanity'
 import './globals.css'
 
 const figtree = Figtree({
@@ -47,12 +49,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled: isPreview } = await draftMode()
+  const popupBonus = await getPopupBonus().catch(() => null)
   return (
     <html lang="da" className={figtree.variable}>
       <body>
         {isPreview && <PreviewBanner />}
         <AdminBar />
         {children}
+        <BonusPopup bonus={popupBonus} />
         <GoogleAnalytics />
       </body>
     </html>

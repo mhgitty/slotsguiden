@@ -330,6 +330,19 @@ export async function getRecentBonuses(limit = 5) {
   )
 }
 
+export async function getPopupBonus() {
+  return client.fetch(
+    `*[_type == "bonus" && showInPopup == true && (market == "global" || !defined(market)) && (!defined(kampagneSlut) || kampagneSlut >= now())] | order(coalesce(publishedAt, _createdAt) desc)[0] {
+      _id,
+      "name": coalesce(casinoNavn, bookmaker->name),
+      "headline": coalesce(velkomstbonusTitel, indbetalingsbonusTitel, casinoBonusTitel, oddsBonusTitel, title),
+      minimumIndbetaling, gennemspilskrav, offerUrl, terms,
+      "slug": slug.current,
+      "logo": coalesce(casinoLogoSquare, casinoLogo) { "url": asset->url, alt }
+    }`
+  )
+}
+
 export async function getBonusBySlug(slug: string) {
   return client.fetch(
     `*[_type == "bonus" && slug.current == $slug && (market == "global" || !defined(market))][0] {

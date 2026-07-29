@@ -56,6 +56,70 @@ h1, h2, h3, h4, h5, h6 {
 .section         { max-width: 1250px; margin: 0 auto; padding: 48px 15px; }
 .section-narrow  { max-width: 760px;  margin: 0 auto; padding: 48px 15px; }
 
+/* ─── Bonus pop-up ───────────────────────────────────────────────────────── */
+@keyframes sg-popup-in { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+.bonus-popup-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.bonus-popup {
+  position: relative;
+  width: 100%; max-width: 1000px;
+  background: var(--bg-card);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  display: flex;
+  animation: sg-popup-in 0.3s ease;
+}
+.bonus-popup-badge {
+  flex-shrink: 0;
+  background: var(--green); color: #fff;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 32px 44px;
+  font-family: var(--font-display); font-size: 27px; line-height: 1.2; font-weight: 500;
+}
+.bonus-popup-badge strong { font-weight: 800; }
+.bonus-popup-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bonus-popup-main { display: flex; align-items: center; gap: 24px; padding: 24px 28px; }
+.bonus-popup-offer { margin-left: auto; flex-shrink: 0; width: 320px; max-width: 100%; }
+.bonus-popup-terms {
+  padding: 12px 28px 16px; font-size: 10.5px; color: var(--text-faint); line-height: 1.5;
+  border-top: 1px solid var(--border-faint);
+}
+.bonus-popup-close {
+  position: absolute; top: 12px; right: 14px;
+  background: transparent; border: none; cursor: pointer;
+  font-size: 26px; line-height: 1; color: var(--text-muted);
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+@media (max-width: 820px) {
+  .bonus-popup { flex-direction: column; }
+  .bonus-popup-badge { padding: 18px; flex-direction: row; justify-content: center; gap: 8px; font-size: 21px; }
+  .bonus-popup-main { flex-direction: column; text-align: center; gap: 16px; padding: 22px 18px; }
+  .bonus-popup-offer { margin-left: 0; width: 100%; }
+  .bonus-popup-terms { text-align: center; }
+}
+
+/* ─── Sticky CTA bar (review pages) ──────────────────────────────────────── */
+.sticky-cta-inner {
+  max-width: 1250px; margin: 0 auto; padding: 12px 15px;
+  display: flex; align-items: center; gap: 18px;
+}
+.sticky-cta-main { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.sticky-cta-terms {
+  flex: 1; min-width: 0; font-size: 11px; color: var(--text-faint); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+@media (max-width: 768px) {
+  .sticky-cta-inner { flex-wrap: wrap; gap: 10px 12px; padding: 10px 14px; }
+  .sticky-cta-main  { flex: 1 1 auto; order: 1; }
+  .sticky-cta-btn   { order: 2; }
+  .sticky-cta-terms { order: 3; flex-basis: 100%; -webkit-line-clamp: 4; }
+}
+
 /* ─── Casino review hero ─────────────────────────────────────────────────── */
 .cr-grid       { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
 .cr-left       { display: flex; flex-direction: column; gap: 20px; min-width: 0; }

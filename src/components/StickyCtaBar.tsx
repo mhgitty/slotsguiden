@@ -40,61 +40,57 @@ export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms }: Stic
         boxShadow: '0 -4px 32px rgba(0,0,0,0.18)',
       }}>
         {/* Inner — matches body max-width */}
-        <div style={{
-          maxWidth: '1250px',
-          margin: '0 auto',
-          padding: '12px 15px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-        }}>
+        <div className="sticky-cta-inner">
 
-          {/* Logo */}
-          {logoUrl && (
-            <div style={{
-              width: '44px', height: '44px',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              background: '#1a1a2e',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <img
-                src={logoUrl}
-                alt={logoAlt || name}
-                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              />
-            </div>
-          )}
-
-          {/* Name + bonus + terms — stacked */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontSize: '12px', fontWeight: 600,
-              color: 'var(--text-muted)',
-              marginBottom: '1px',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              {name}
-            </div>
-            {bonus && (
+          {/* Logo + name + bonus */}
+          <div className="sticky-cta-main">
+            {logoUrl && (
               <div style={{
-                fontSize: '15px', fontWeight: 800,
+                width: '52px', height: '52px',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                background: '#1a1a2e',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <img
+                  src={logoUrl}
+                  alt={logoAlt || name}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                />
+              </div>
+            )}
+
+            <div style={{ minWidth: 0 }}>
+              <div style={{
+                fontSize: '16px', fontWeight: 700,
                 color: 'var(--text)',
-                letterSpacing: '-0.02em',
                 lineHeight: 1.2,
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               }}>
-                {bonus}
+                {name}
               </div>
-            )}
-            <div style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '1px' }}>
-              {terms || '18+ | Kun nye spillere | Vilkår gælder'}
+              {bonus && (
+                <div style={{
+                  fontSize: 'clamp(20px, 5.5vw, 24px)', fontWeight: 800,
+                  color: 'var(--green)',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.15,
+                }}>
+                  {bonus}
+                </div>
+              )}
             </div>
+          </div>
+
+          {/* Terms */}
+          <div className="sticky-cta-terms">
+            {terms || '18+ | Kun nye spillere | Vilkår gælder'}
           </div>
 
           {/* CTA button */}
           <a
+            className="sticky-cta-btn"
             href={url}
             target="_blank"
             rel="nofollow noopener noreferrer sponsored"
@@ -102,17 +98,17 @@ export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms }: Stic
               flexShrink: 0,
               background: 'var(--btn)',
               color: '#fff',
-              padding: '12px 22px',
-              borderRadius: '8px',
-              fontSize: '14px',
+              padding: '13px 26px',
+              borderRadius: '9px',
+              fontSize: '15px',
               fontWeight: 800,
               textDecoration: 'none',
               whiteSpace: 'nowrap',
-              letterSpacing: '0.02em',
+              letterSpacing: '0.03em',
               boxShadow: '0 2px 12px rgba(10,95,62,0.3)',
             }}
           >
-SPIL NU
+            SPIL NU
           </a>
         </div>
       </div>
