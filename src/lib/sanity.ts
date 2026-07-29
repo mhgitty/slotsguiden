@@ -271,11 +271,16 @@ export async function getBookmakers() {
 export async function getBookmakerBySlug(slug: string) {
   return clientNoCdn.fetch(
     `*[_type == "bookmaker" && slug.current == $slug && (market == "global" || !defined(market))][0] {
-      _id, titel, name, slug, usp, score,
+      _id, titel, name, slug, usp, score, trustpilot, freeSpinsBonus,
       indbetalingsbonus, minIndbetaling, gennemspilskrav,
       url, terms, lanceringsdato, license, body,
       "logo": logo { "url": asset->url, alt },
+      "logoSquare": logoSquare { "url": asset->url, alt },
       "ogImage": ogImage { "url": asset->url, alt },
+      "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
+      "software": software[]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
+      "aktBonuses": aktuelleBonusser[]->{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
+      "refBonuses": *[_type == "bonus" && references(^._id) && (market == "global" || !defined(market))]{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
       metaTitle, metaDescription
     }`,
     { slug }
