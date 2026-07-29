@@ -738,6 +738,20 @@ export const pageType = defineType({
       description: 'Shown below the author name in hero',
     }),
     defineField({
+      name: 'showBonusGrid',
+      title: 'Show free-spins bonus grid',
+      type: 'boolean',
+      group: 'content',
+      initialValue: false,
+      description: 'Renders the grid of bonuses that have "Show in free-spins grid" enabled.',
+    }),
+    defineField({
+      name: 'bonusGridTitle',
+      title: 'Bonus grid heading (optional)',
+      type: 'string',
+      group: 'content',
+    }),
+    defineField({
       name: 'hideAuthor',
       title: 'Hide author',
       type: 'boolean',

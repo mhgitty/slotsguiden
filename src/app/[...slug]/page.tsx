@@ -9,6 +9,7 @@ import { MobileToc } from '@/components/MobileToc'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangHead } from '@/components/HreflangHead'
 import { RelatedPages } from '@/components/RelatedPages'
+import { BonusGrid } from '@/components/BonusGrid'
 import { getPageByPath, getSiteSettings, getHreflangScript } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
@@ -100,6 +101,8 @@ export default async function DynamicPage({ params }: Props) {
       />
 
       {/* Comparison table — configured per page in Sanity Studio */}
+      {page.showBonusGrid && <BonusGrid title={page.bonusGridTitle} />}
+
       {page.showComparisonTable && page.comparisonTable && (
         <div className="section" style={{ paddingBottom: page.body ? '0' : undefined }}>
           {page.comparisonTableTitle && (

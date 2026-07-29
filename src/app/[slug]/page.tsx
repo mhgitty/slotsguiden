@@ -12,6 +12,7 @@ import { AuthorMeta } from '@/components/AuthorMeta'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { RelatedPages } from '@/components/RelatedPages'
+import { BonusGrid } from '@/components/BonusGrid'
 import { getPostBySlug, getPageByPath, getPosts, getSiteSettings, client } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
@@ -226,6 +227,8 @@ export default async function SlugPage({ params }: Props) {
           { label: page.title },
         ]}
       />
+
+      {page.showBonusGrid && <BonusGrid title={page.bonusGridTitle} />}
 
       {page.showComparisonTable && page.comparisonTable && (
         <div className="section" style={{ paddingBottom: page.body ? '0' : undefined }}>

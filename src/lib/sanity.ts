@@ -164,6 +164,7 @@ const COMPARISON_TABLE_FRAGMENT = `
 // Page fields shared by single and nested lookups
 const PAGE_FIELDS = `
   _id, title, slug, intro, metaTitle, metaDescription,
+  showBonusGrid, bonusGridTitle,
   "body": body[] {
     ...,
     _type == "casinoKortBlock" => {
@@ -298,6 +299,20 @@ export async function getBonuses(limit = 50) {
 }
 
 // Keep old name as alias for any existing usage
+export async function getFreeSpinsGridBonuses() {
+  return client.fetch(
+    `*[_type == "bonus" && showInFreeSpinsGrid == true && (!defined(kampagneSlut) || kampagneSlut >= now())] | order(kampagneSlut asc) {
+      _id, offerUrl,
+      "title": freeSpinsEksisterendeTitel,
+      "description": freeSpinsEksisterendeBeskrivelse,
+      kampagneSlut,
+      "campaignImage": kampagneBillede { "url": asset->url, alt },
+      "logoSquare": casinoLogoSquare { "url": asset->url, alt },
+      minimumIndbetaling, spinVaerdi, gennemspilskrav, maksGevinst, terms
+    }`
+  )
+}
+
 export const getBonusser = getBonuses
 
 export async function getRecentBonuses(limit = 5) {

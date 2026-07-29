@@ -53,6 +53,14 @@ export const bonusType = defineType({
       description: 'Only active bonuses are shown in comparison lists',
       initialValue: false,
     }),
+    defineField({
+      name: 'showInFreeSpinsGrid',
+      title: 'Show in free-spins grid (existing customers)',
+      type: 'boolean',
+      group: 'info',
+      description: 'When on, this bonus appears in the grid on /free-spins-til-eksisterende-kunder/. Automatically removed after the campaign end date.',
+      initialValue: false,
+    }),
 
     // ── Bookmaker relation ────────────────────────────────────────────────────
     defineField({
