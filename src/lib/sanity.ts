@@ -306,7 +306,7 @@ export async function getFreeSpinsGridBonuses() {
       "title": freeSpinsEksisterendeTitel,
       "description": freeSpinsEksisterendeBeskrivelse,
       kampagneSlut,
-      "campaignImage": kampagneBillede { "url": asset->url, alt },
+      "campaignImage": kampagneBillede { "url": asset->url, alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
       "logoSquare": casinoLogoSquare { "url": asset->url, alt },
       minimumIndbetaling, spinVaerdi, gennemspilskrav, maksGevinst, terms
     }`

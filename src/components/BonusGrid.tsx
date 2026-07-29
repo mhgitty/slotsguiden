@@ -12,7 +12,7 @@ export async function BonusGrid({ title, label }: { title?: string; label?: stri
           {title}
         </h2>
       )}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
         {bonuses.map((b) => (
           <BonusGridCard key={b._id} bonus={b} {...(label ? { label } : {})} />
         ))}

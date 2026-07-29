@@ -7,7 +7,7 @@ export interface GridBonus {
   description?: string
   offerUrl?: string
   kampagneSlut?: string
-  campaignImage?: { url?: string; alt?: string }
+  campaignImage?: { url?: string; alt?: string; w?: number; h?: number }
   logoSquare?: { url?: string; alt?: string }
   minimumIndbetaling?: number
   spinVaerdi?: string
@@ -37,15 +37,20 @@ function InfoRow({ icon, label, value }: { icon: string; label: string; value: R
 
 export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kunder' }: { bonus: GridBonus; label?: string }) {
   const expiry = formatExpiry(bonus.kampagneSlut)
-  const hasInfo = bonus.minimumIndbetaling != null || bonus.spinVaerdi || bonus.gennemspilskrav || bonus.maksGevinst || bonus.terms
+  const hasStats = bonus.minimumIndbetaling != null || bonus.spinVaerdi || bonus.gennemspilskrav || bonus.maksGevinst
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden', background: 'var(--bg-card)' }}>
-      {/* Campaign image */}
-      {bonus.campaignImage?.url && (
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9' }}>
-          <Image src={bonus.campaignImage.url} alt={bonus.campaignImage.alt ?? bonus.title ?? ''} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 380px" />
-        </div>
+      {/* Campaign image — full image at natural height (not cropped) */}
+      {bonus.campaignImage?.url && bonus.campaignImage.w && bonus.campaignImage.h && (
+        <Image
+          src={bonus.campaignImage.url}
+          alt={bonus.campaignImage.alt ?? bonus.title ?? ''}
+          width={bonus.campaignImage.w}
+          height={bonus.campaignImage.h}
+          sizes="(max-width: 768px) 100vw, 400px"
+          style={{ width: '100%', height: 'auto', display: 'block' }}
+        />
       )}
 
       <div style={{ padding: '18px 18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -73,9 +78,12 @@ export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kund
           <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: 1.6, margin: '14px 0 0' }}>{bonus.description}</p>
         )}
 
+        {/* Spacer — bottom-aligns the action area so every card is the same height */}
+        <div style={{ flexGrow: 1, minHeight: '14px' }} />
+
         {/* Expiry */}
         {expiry && (
-          <div style={{ fontSize: '13px', color: 'var(--text-faint)', marginTop: '14px' }}>Udløber d. {expiry}</div>
+          <div style={{ fontSize: '13px', color: 'var(--text-faint)' }}>Udløber d. {expiry}</div>
         )}
 
         {/* CTA */}
@@ -83,13 +91,13 @@ export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kund
           href={bonus.offerUrl || '#'}
           target="_blank"
           rel="nofollow sponsored noopener"
-          style={{ display: 'block', textAlign: 'center', background: 'var(--btn)', color: '#fff', fontWeight: 700, fontSize: '15px', textTransform: 'uppercase', letterSpacing: '0.02em', padding: '14px', borderRadius: '8px', textDecoration: 'none', marginTop: '16px' }}
+          style={{ display: 'block', textAlign: 'center', background: 'var(--btn)', color: '#fff', fontWeight: 700, fontSize: '15px', textTransform: 'uppercase', letterSpacing: '0.02em', padding: '14px', borderRadius: '8px', textDecoration: 'none', marginTop: '12px' }}
         >
           Få bonus nu
         </a>
 
         {/* Bonus info dropdown (native, no JS) */}
-        {hasInfo && (
+        {hasStats && (
           <details style={{ marginTop: '10px' }}>
             <summary style={{ listStyle: 'none', cursor: 'pointer', textAlign: 'center', border: '1px solid var(--btn)', color: 'var(--text)', fontWeight: 600, fontSize: '14px', padding: '12px', borderRadius: '8px' }}>
               Bonus info
@@ -99,11 +107,13 @@ export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kund
               {bonus.spinVaerdi && <InfoRow icon="refresh" label="Spin værdi" value={bonus.spinVaerdi} />}
               {bonus.gennemspilskrav && <InfoRow icon="refresh-circle" label="Gennemspilskrav" value={bonus.gennemspilskrav} />}
               {bonus.maksGevinst && <InfoRow icon="cup-star" label="Max gevinst" value={bonus.maksGevinst} />}
-              {bonus.terms && (
-                <p style={{ fontSize: '11.5px', color: 'var(--text-faint)', lineHeight: 1.6, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-faint)' }}>{bonus.terms}</p>
-              )}
             </div>
           </details>
+        )}
+
+        {/* Terms — always visible */}
+        {bonus.terms && (
+          <p style={{ fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.55, marginTop: '14px' }}>{bonus.terms}</p>
         )}
       </div>
     </div>
