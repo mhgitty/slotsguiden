@@ -17,7 +17,7 @@ import type { Metadata } from 'next'
 export const revalidate = 3600
 
 const BASE = 'https://slotsguiden.dk'
-const CANONICAL = `${BASE}/online-casino/review/`
+const CANONICAL = `${BASE}/online-casino/`
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug('review').catch(() => null)
@@ -174,7 +174,7 @@ export default async function ReviewPage() {
                         Registrer dig →
                       </a>
                     )}
-                    <Link href={`/review/${bm.slug.current}`}
+                    <Link href={`/online-casino/${bm.slug.current}`}
                       style={{ fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                       Læs anmeldelse
                     </Link>

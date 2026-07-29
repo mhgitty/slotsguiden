@@ -32,7 +32,7 @@ export function BonusCard({
 
   // Bookmaker page link
   const reviewUrl = bookmaker?.slug?.current
-    ? `/review/${bookmaker.slug.current}`
+    ? `/online-casino/${bookmaker.slug.current}`
     : null
 
   const displayName = casinoNavn || bookmaker?.name || title

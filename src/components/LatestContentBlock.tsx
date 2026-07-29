@@ -78,7 +78,7 @@ export async function LatestContentBlock() {
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {bonusList.map((b) => {
-                const href = b.bookmakerSlug ? `/review/${b.bookmakerSlug}/` : (b.offerUrl || '#')
+                const href = b.slug ? `/casino-kampagner/${b.slug}/` : (b.offerUrl || '#')
                 return (
                   <div key={b._id} style={{ borderTop: '1px solid var(--border-faint)', padding: '14px 0' }}>
                     <Link href={href} style={{ fontSize: '15.5px', fontWeight: 600, color: 'var(--text)', textDecoration: 'none', lineHeight: 1.35, display: 'block' }}>
@@ -89,7 +89,7 @@ export async function LatestContentBlock() {
                 )
               })}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: 'auto', paddingTop: '20px' }}>
               <Link href={FREE_SPINS_URL} style={btn}>Se alle free spins tilbud</Link>
               <Link href={INDBETALINGSBONUS_URL} style={btn}>Indbetalingsbonusser</Link>
             </div>

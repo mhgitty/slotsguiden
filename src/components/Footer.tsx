@@ -12,9 +12,9 @@ function resolveUrl(item: {
     const segments = [item.pageParent4Slug, item.pageParent3Slug, item.pageParent2Slug, item.pageParentSlug, item.pageSlug].filter(Boolean)
     return `/${segments.join('/')}/`
   }
-  if (item.bookmakerSlug) return `/review/${item.bookmakerSlug}/`
-  if (item.softwareSlug) return `/online-casino/software/${item.softwareSlug}/`
-  if (item.paymentMethodSlug) return `/online-casino/payment/${item.paymentMethodSlug}/`
+  if (item.bookmakerSlug) return `/online-casino/${item.bookmakerSlug}/`
+  if (item.softwareSlug) return `/spiludviklere/${item.softwareSlug}/`
+  if (item.paymentMethodSlug) return `/betalingsmetoder/${item.paymentMethodSlug}/`
   if (item.postSlug) return `/${item.postSlug}/`
   if (item.casinoGuideSlug) return `/casino-guides/${item.casinoGuideSlug}/`
   return item.url || '/'
@@ -33,7 +33,7 @@ const DEFAULT_COLUMNS = [
   {
     title: 'Casinoanmeldelser',
     items: [
-      { label: 'Alle casinoer', url: '/review/' },
+      { label: 'Alle casinoer', url: '/online-casino/' },
       { label: 'Bonusser',      url: '/online-casino/bonus/' },
     ],
   },

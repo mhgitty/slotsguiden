@@ -50,7 +50,7 @@ const linkFields = [
     name: 'url',
     title: 'URL (custom / external)',
     type: 'string',
-    description: 'Only used if you don\'t select a reference above. E.g. /review/ or https://...',
+    description: 'Only used if you don\'t select a reference above. E.g. /online-casino/ or https://...',
   }),
 ]
 
@@ -88,9 +88,9 @@ const navItemFields = [
         },
         prepare({ title, pageRef, bookmakerRef, softwareRef, paymentMethodRef, postRef, url }: any) {
           const resolved = pageRef ? `/${pageRef}/`
-            : bookmakerRef ? `/review/${bookmakerRef}/`
+            : bookmakerRef ? `/online-casino/${bookmakerRef}/`
             : softwareRef ? `/software/${softwareRef}/`
-            : paymentMethodRef ? `/online-casino/payment/${paymentMethodRef}/`
+            : paymentMethodRef ? `/betalingsmetoder/${paymentMethodRef}/`
             : postRef ? `/${postRef}/`
             : url
           return { title, subtitle: resolved }
@@ -174,9 +174,9 @@ export const siteSettingsType = defineType({
           },
           prepare({ title, isHighlighted, pageRef, bookmakerRef, softwareRef, paymentMethodRef, postRef, url, children }: any) {
             const resolvedUrl = pageRef ? `/${pageRef}/`
-              : bookmakerRef ? `/review/${bookmakerRef}/`
+              : bookmakerRef ? `/online-casino/${bookmakerRef}/`
               : softwareRef ? `/software/${softwareRef}/`
-              : paymentMethodRef ? `/online-casino/payment/${paymentMethodRef}/`
+              : paymentMethodRef ? `/betalingsmetoder/${paymentMethodRef}/`
               : postRef ? `/${postRef}/`
               : url
             const hasChildren = children?.length > 0
@@ -249,9 +249,9 @@ export const siteSettingsType = defineType({
                 },
                 prepare({ title, pageRef, bookmakerRef, softwareRef, paymentMethodRef, postRef, url }: any) {
                   const resolved = pageRef ? `/${pageRef}/`
-                    : bookmakerRef ? `/review/${bookmakerRef}/`
+                    : bookmakerRef ? `/online-casino/${bookmakerRef}/`
                     : softwareRef ? `/software/${softwareRef}/`
-                    : paymentMethodRef ? `/online-casino/payment/${paymentMethodRef}/`
+                    : paymentMethodRef ? `/betalingsmetoder/${paymentMethodRef}/`
                     : postRef ? `/${postRef}/`
                     : url
                   return { title, subtitle: resolved }

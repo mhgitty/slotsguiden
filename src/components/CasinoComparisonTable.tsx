@@ -178,8 +178,8 @@ function LogoStack({ label, items, max = 4 }: { label: string; items: LogoRef[];
 
 // ─── One casino row ─────────────────────────────────────────────────────────────
 function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
-  // All casinos live under /review/.
-  const reviewHref = `/review/${casino.slug.current}/`
+  // All casinos live under /online-casino/.
+  const reviewHref = `/online-casino/${casino.slug.current}/`
   const hasStats = casino.minIndbetaling != null || !!casino.gennemspilskrav
   const terms = casino.terms || DEFAULT_TERMS
 

@@ -32,7 +32,7 @@ export const bookmakerType = defineType({
       type: 'slug',
       group: 'info',
       options: { source: 'name' },
-      description: 'Used in URL: /review/[slug]',
+      description: 'Used in URL: /online-casino/[slug]',
       validation: (r) => r.required(),
     }),
     defineField({

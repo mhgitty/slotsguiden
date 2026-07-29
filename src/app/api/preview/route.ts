@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 // Enables Next.js Draft Mode and redirects to the requested page, which will
 // then render unpublished draft content. Opened by the "Preview" button in the
-// Sanity Studio: /api/preview?secret=…&slug=/online-casino/review/foo/
+// Sanity Studio: /api/preview?secret=…&slug=/online-casino/foo/
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const secret = searchParams.get('secret')

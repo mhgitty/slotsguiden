@@ -19,8 +19,8 @@ function resolveEditUrl(pathname: string): string | null {
   const postMatch = p.match(/^\/([^/]+)$/)
   if (postMatch) return `${s}/type=post,slug.current=="${postMatch[1]}"/`
 
-  // Review  /review/[slug]
-  const reviewMatch = p.match(/^\/review\/([^/]+)$/)
+  // Review  /online-casino/[slug]
+  const reviewMatch = p.match(/^\/online-casino\/([^/]+)$/)
   if (reviewMatch) return `${s}/type=bookmaker,slug.current=="${reviewMatch[1]}"/`
 
   // Page  /[slug] or /[parent]/[slug]
@@ -37,7 +37,7 @@ function resolveEditUrl(pathname: string): string | null {
 function pageLabel(pathname: string): string {
   const p = pathname.replace(/\/$/, '') || '/'
   if (p === '/')   return 'Forside'
-  if (p.match(/\/review\//)) return 'Casinoanmeldelse'
+  if (p.match(/\/online-casino\//)) return 'Casinoanmeldelse'
   if (p.match(/\/news\//))   return 'Nyheder'
   if (p.match(/^\/[^/]+$/)) return 'Indlæg / Side'
   return 'Side'

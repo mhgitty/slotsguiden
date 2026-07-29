@@ -1,3 +1,7 @@
+// This static route takes priority over [...slug] for /betalingsmetoder/.
+// It renders the Sanity page at that path (same as [...slug] would) but injects
+// the payment methods grid between the hero and body content.
+
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { HeroSection } from '@/components/HeroSection'
@@ -8,9 +12,9 @@ import { TableOfContents } from '@/components/TableOfContents'
 import { MobileToc } from '@/components/MobileToc'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
-import { SoftwareProvidersGrid } from '@/components/SoftwareProvidersGrid'
+import { PaymentMethodsGrid } from '@/components/PaymentMethodsGrid'
 import { RelatedPages } from '@/components/RelatedPages'
-import { getPageByPath, getSoftwareProviders, getSiteSettings } from '@/lib/sanity'
+import { getPageByPath, getPaymentMethods, getSiteSettings } from '@/lib/sanity'
 import { replaceDateVars } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -18,8 +22,8 @@ import type { Metadata } from 'next'
 export const revalidate = 3600
 
 const BASE = 'https://slotsguiden.dk'
-const SLUG = ['online-casino', 'software']
-const CANONICAL = `${BASE}/online-casino/software/`
+const SLUG = ['betalingsmetoder']
+const CANONICAL = `${BASE}/betalingsmetoder/`
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageByPath(SLUG).catch(() => null)
@@ -29,10 +33,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title, description, alternates: { canonical: CANONICAL } }
 }
 
-export default async function SoftwareIndexPage() {
-  const [page, providers, settings] = await Promise.all([
+export default async function PaymentMethodsIndexPage() {
+  const [page, methods, settings] = await Promise.all([
     getPageByPath(SLUG).catch(() => null),
-    getSoftwareProviders().catch(() => []),
+    getPaymentMethods().catch(() => []),
     getSiteSettings().catch(() => null),
   ])
   if (!page) notFound()
@@ -44,15 +48,15 @@ export default async function SoftwareIndexPage() {
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Hjem',     item: BASE },
-          { '@type': 'ListItem', position: 2, name: page.title, item: CANONICAL },
+          { '@type': 'ListItem', position: 1, name: 'Hjem',            item: BASE },
+          { '@type': 'ListItem', position: 2, name: page.title,        item: CANONICAL },
         ],
       },
       {
         '@type': 'WebPage',
         '@id': `${CANONICAL}#webpage`,
         url: CANONICAL,
-        name: replaceDateVars(page.title),
+        name: page.title,
         description: page.intro || '',
         inLanguage: 'da-DK',
         publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
@@ -78,12 +82,12 @@ export default async function SoftwareIndexPage() {
         ]}
       />
 
-      {/* Software providers grid */}
-      {(providers as any[]).length > 0 && (
+      {/* Payment methods overview grid */}
+      {(methods as any[]).length > 0 && (
         <div className="section" style={{ paddingBottom: page.body ? '0' : undefined }}>
-          <SoftwareProvidersGrid
-            providers={providers as any[]}
-            hrefPrefix="/online-casino/software"
+          <PaymentMethodsGrid
+            methods={methods as any[]}
+            hrefPrefix="/betalingsmetoder"
           />
         </div>
       )}

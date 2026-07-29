@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!provider) return {}
   const title = replaceDateVars(provider.metaTitle || `${provider.name} onlinecasinoer — bedste ${provider.name}-casinoer`)
   const description = replaceDateVars(provider.metaDescription || `Find de bedste onlinecasinoer, der drives af ${provider.name}. Sammenlign bonusser og vurderinger.`)
-  const canonical = `${BASE}/online-casino/software/${slug}/`
+  const canonical = `${BASE}/spiludviklere/${slug}/`
   const logo = provider.logo
   return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: logo?.url ? [{ url: logo.url }] : [{ url: `${BASE}/og.png` }] } }
 }
@@ -43,14 +43,14 @@ export default async function SoftwareSlugPage({ params }: Props) {
   const provider = await getSoftwareBySlug(slug).catch(() => null)
   if (!provider) notFound()
 
-  const canonical = `${BASE}/online-casino/software/${slug}/`
+  const canonical = `${BASE}/spiludviklere/${slug}/`
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Hjem',     item: BASE },
-      { '@type': 'ListItem', position: 2, name: 'Spiludviklere', item: `${BASE}/online-casino/software/` },
+      { '@type': 'ListItem', position: 2, name: 'Spiludviklere', item: `${BASE}/spiludviklere/` },
       { '@type': 'ListItem', position: 3, name: provider.name, item: canonical },
     ],
   }
@@ -65,7 +65,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
         <div style={{ maxWidth: '1250px', margin: '0 auto', padding: '0 15px' }}>
           <Breadcrumbs crumbs={[
             { label: 'Hjem',     href: '/' },
-            { label: 'Spiludviklere', href: '/online-casino/software/' },
+            { label: 'Spiludviklere', href: '/spiludviklere/' },
             { label: provider.name },
           ]} />
         </div>
@@ -141,7 +141,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
                       Tilmeld dig
                     </a>
                   )}
-                  <Link href={`/review/${casino.slug.current}/`}
+                  <Link href={`/online-casino/${casino.slug.current}/`}
                     style={{ background: 'var(--bg-raised)', color: 'var(--text-muted)', padding: '8px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, textDecoration: 'none', border: '1px solid var(--border)' }}>
                     Anmeldelse
                   </Link>

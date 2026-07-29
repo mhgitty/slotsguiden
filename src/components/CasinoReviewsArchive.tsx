@@ -16,7 +16,7 @@ interface Casino {
 
 interface Props {
   casinos?: Casino[]
-  /** Prefix for the review link, e.g. "/review". */
+  /** Prefix for the review link, e.g. "/online-casino". */
   hrefPrefix?: string
   title?: string
   /** Optional rich text rendered between the heading and the list. */
@@ -39,7 +39,7 @@ function ScoreBadge({ score }: { score: number }) {
   )
 }
 
-export function CasinoReviewsArchive({ casinos, hrefPrefix = '/review', title = 'Alle casinoanmeldelser', intro, seeAllHref, seeAllLabel = 'Se alle anmeldelser' }: Props) {
+export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', title = 'Alle casinoanmeldelser', intro, seeAllHref, seeAllLabel = 'Se alle anmeldelser' }: Props) {
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {

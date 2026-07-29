@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ── Bookmaker review URLs ──────────────────────────────────────────────────────
   const bookmakerEntries: MetadataRoute.Sitemap = bookmakers.map((b) => ({
-    url: `${BASE}/review/${b.slug.current}/`,
+    url: `${BASE}/online-casino/${b.slug.current}/`,
     ...lastMod(b._updatedAt),
   }))
 
@@ -59,13 +59,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ── Payment method URLs ───────────────────────────────────────────────────────
   const paymentEntries: MetadataRoute.Sitemap = paymentMethods.map((m) => ({
-    url: `${BASE}/online-casino/payment/${m.slug.current}/`,
+    url: `${BASE}/betalingsmetoder/${m.slug.current}/`,
     ...lastMod(m._updatedAt),
   }))
 
   // ── Software URLs ──────────────────────────────────────────────────────────────
   const softwareEntries: MetadataRoute.Sitemap = software.map((s) => ({
-    url: `${BASE}/online-casino/software/${s.slug.current}/`,
+    url: `${BASE}/spiludviklere/${s.slug.current}/`,
     ...lastMod(s._updatedAt),
   }))
 
@@ -78,9 +78,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     // ── Root index pages (no fake lastmod) ──
     { url: `${BASE}/` },
-    { url: `${BASE}/review/` },
-    { url: `${BASE}/online-casino/payment/` },
-    { url: `${BASE}/online-casino/software/` },
+    { url: `${BASE}/online-casino/` },
+    { url: `${BASE}/betalingsmetoder/` },
+    { url: `${BASE}/spiludviklere/` },
     { url: `${BASE}/casino-guides/` },
 
     // ── Dynamic content (real lastmod from Sanity _updatedAt) ──

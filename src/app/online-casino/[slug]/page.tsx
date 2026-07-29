@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!bm) return {}
   const title = replaceDateVars(bm.metaTitle || `${bm.name} Anmeldelse — bonus & tilbud`)
   const description = replaceDateVars(bm.metaDescription || `Læs vores anmeldelse af ${bm.name}. Se bonus, gennemspilskrav og vores vurdering.`)
-  const canonical = `${BASE}/review/${slug}/`
+  const canonical = `${BASE}/online-casino/${slug}/`
   const img = bm.ogImage?.url ? bm.ogImage : bm.logo?.url ? bm.logo : null
   return {
     title,
@@ -64,7 +64,7 @@ export default async function ReviewPage({ params }: Props) {
   const hreflangScript = await getHreflangScript(bm._id).catch(() => null)
   const author = settings?.defaultAuthor ?? null
 
-  const canonical = `${BASE}/review/${slug}/`
+  const canonical = `${BASE}/online-casino/${slug}/`
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -73,7 +73,7 @@ export default async function ReviewPage({ params }: Props) {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Hjem', item: BASE },
-          { '@type': 'ListItem', position: 2, name: 'Casinoanmeldelser', item: `${BASE}/review/` },
+          { '@type': 'ListItem', position: 2, name: 'Casinoanmeldelser', item: `${BASE}/online-casino/` },
           { '@type': 'ListItem', position: 3, name: bm.name, item: canonical },
         ],
       },
@@ -98,7 +98,7 @@ export default async function ReviewPage({ params }: Props) {
         <div style={{ maxWidth: '1250px', margin: '0 auto' }}>
           <Breadcrumbs crumbs={[
             { label: 'Hjem', href: '/' },
-            { label: 'Casinoanmeldelser', href: '/review/' },
+            { label: 'Casinoanmeldelser', href: '/online-casino/' },
             { label: bm.name },
           ]} />
 

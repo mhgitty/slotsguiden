@@ -439,10 +439,10 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
       : Promise.resolve([]),
   ])
 
-  const reviewBase = '/review'
-  const listBase   = '/review/'
-  const payBase    = '/online-casino/payment'
-  const softBase   = '/online-casino/software'
+  const reviewBase = '/online-casino'
+  const listBase   = '/online-casino/'
+  const payBase    = '/betalingsmetoder'
+  const softBase   = '/spiludviklere'
   const guideBase  = '/casino-guides'
 
   return (

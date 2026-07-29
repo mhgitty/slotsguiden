@@ -318,7 +318,7 @@ export const getBonusser = getBonuses
 export async function getRecentBonuses(limit = 5) {
   return client.fetch(
     `*[_type == "bonus" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) [0...$limit] {
-      _id, title, "date": coalesce(publishedAt, _createdAt),
+      _id, title, "slug": slug.current, "date": coalesce(publishedAt, _createdAt),
       offerUrl, "bookmakerSlug": bookmaker->slug.current
     }`,
     { limit }
@@ -332,9 +332,11 @@ export async function getBonusBySlug(slug: string) {
       minimumOdds, minimumIndbetaling, gennemspilskrav,
       maksGevinst, bonuskode, spinVaerdi,
       offerUrl, terms, casinoNavn,
-      "casinoLogo":      casinoLogo      { "url": asset->url, alt },
-      "kampagneBillede": kampagneBillede { "url": asset->url, alt },
-      "ogImage":         ogImage         { "url": asset->url, alt },
+      "casinoLogo":       casinoLogo       { "url": asset->url, alt },
+      "casinoLogoSquare": casinoLogoSquare { "url": asset->url, alt },
+      "kampagneBillede":  kampagneBillede  { "url": asset->url, alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
+      kampagneSlut,
+      "ogImage":          ogImage          { "url": asset->url, alt },
       "bookmaker": bookmaker-> {
         name, slug,
         "logo": logo { "url": asset->url, alt }
@@ -661,13 +663,13 @@ export function relatedItemHref(item: RelatedItem): string {
     case 'casinoGuide':
       return `/casino-guides/${slug}/`
     case 'paymentMethod':
-      return `/online-casino/payment/${slug}/`
+      return `/betalingsmetoder/${slug}/`
     case 'software':
-      return `/online-casino/software/${slug}/`
+      return `/spiludviklere/${slug}/`
     case 'bonus':
       return `/online-casino/bonus/${slug}/`
     case 'bookmaker':
-      return `/review/${slug}/`
+      return `/online-casino/${slug}/`
     case 'casinoGame':
       return `/casino-games/${slug}/`
     case 'post':

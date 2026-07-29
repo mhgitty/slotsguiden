@@ -119,7 +119,7 @@ export default async function CasinoGamePage({ params }: Props) {
                         Tilmeld dig
                       </a>
                     )}
-                    <Link href={`/review/${casino.slug.current}/`}
+                    <Link href={`/online-casino/${casino.slug.current}/`}
                       style={{ background: 'var(--bg-raised)', color: 'var(--text-muted)', padding: '8px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, textDecoration: 'none', border: '1px solid var(--border)' }}>
                       Anmeldelse
                     </Link>

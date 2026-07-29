@@ -50,18 +50,18 @@ export const previewAction: DocumentActionComponent = (
       if (slug) url = `${BASE}/${ancestorPath}${slug}/`
       break
     case 'bookmaker':
-      url = slug ? `${BASE}/review/${slug}/` : `${BASE}/review/`
+      url = slug ? `${BASE}/online-casino/${slug}/` : `${BASE}/online-casino/`
       break
     case 'bonus':
       url = slug ? `${BASE}/online-casino/bonus/${slug}/` : `${BASE}/online-casino/bonus/`
       break
     case 'paymentMethod':
-      url = slug ? `${BASE}/online-casino/payment/${slug}/` : `${BASE}/online-casino/payment/`
+      url = slug ? `${BASE}/betalingsmetoder/${slug}/` : `${BASE}/betalingsmetoder/`
       break
     case 'software':
       url = slug
-        ? `${BASE}/online-casino/software/${slug}/`
-        : `${BASE}/online-casino/software/`
+        ? `${BASE}/spiludviklere/${slug}/`
+        : `${BASE}/spiludviklere/`
       break
     case 'casinoGame':
       url = slug ? `${BASE}/casino-games/${slug}/` : `${BASE}/casino-games/`
