@@ -55,8 +55,8 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
   const headline = replaceDateVars(bonus.headline || '')
 
   return (
-    <div className="bonus-popup-overlay" onClick={close} role="dialog" aria-modal="true">
-      <div className="bonus-popup" onClick={(e) => e.stopPropagation()}>
+    <div className="bonus-popup-overlay" role="complementary" aria-label="Kampagnetilbud">
+      <div className="bonus-popup">
         <button className="bonus-popup-close" onClick={close} aria-label="Luk">×</button>
 
         {/* Left green badge */}
@@ -71,7 +71,7 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
 
             {/* Logo */}
             {bonus.logo?.url && (
-              <div style={{ width: '72px', height: '72px', borderRadius: '12px', overflow: 'hidden', background: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div className="bonus-popup-logo">
                 <Image src={bonus.logo.url} alt={bonus.logo.alt || name} width={72} height={72} style={{ objectFit: 'contain', width: '100%', height: '100%', display: 'block' }} />
               </div>
             )}
@@ -90,9 +90,7 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
             {/* Offer box */}
             <div className="bonus-popup-offer" style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', borderRadius: '12px', padding: '20px' }}>
               {headline && (
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 800, color: 'var(--text)', textAlign: 'center', marginBottom: '14px', lineHeight: 1.2 }}>
-                  {headline}
-                </div>
+                <div className="bonus-popup-headline">{headline}</div>
               )}
               <a href={bonus.offerUrl || '#'} target="_blank" rel="nofollow sponsored noopener noreferrer"
                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--btn)', color: '#fff', fontWeight: 700, fontSize: '16px', padding: '14px', borderRadius: '9px', textDecoration: 'none' }}>
