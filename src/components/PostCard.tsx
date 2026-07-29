@@ -26,7 +26,7 @@ export function PostCard({ title, slug, excerpt, publishedAt, readingTime, categ
         {category && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '5px',
-            background: 'rgba(28,127,192,0.12)', color: 'var(--green)', fontSize: '11.5px', fontWeight: 500,
+            background: 'rgba(10,95,62,0.12)', color: 'var(--green)', fontSize: '11.5px', fontWeight: 500,
             padding: '3px 10px', borderRadius: '20px', marginBottom: '12px',
           }}>
             {category.emoji} {category.name}

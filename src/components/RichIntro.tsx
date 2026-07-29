@@ -15,7 +15,7 @@ const components = {
           href={value?.href}
           target={value?.blank ? '_blank' : undefined}
           rel={rel}
-          style={{ color: 'var(--green)', textDecoration: 'underline', textDecorationColor: 'rgba(28,127,192,0.4)' }}
+          style={{ color: 'var(--green)', textDecoration: 'underline', textDecorationColor: 'rgba(10,95,62,0.4)' }}
         >
           {children}
         </a>

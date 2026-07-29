@@ -9,8 +9,8 @@ function StatBox({ label, value }: { label: string; value: string }) {
       flexDirection: 'column',
       gap: '4px',
       padding: '16px 20px',
-      background: 'rgba(28,127,192,0.07)',
-      border: '1px solid rgba(28,127,192,0.15)',
+      background: 'rgba(10,95,62,0.07)',
+      border: '1px solid rgba(10,95,62,0.15)',
       borderRadius: '12px',
     }}>
       <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
@@ -112,7 +112,7 @@ export function SoftwareHero({
             {/* Eyebrow */}
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
-              background: 'rgba(28,127,192,0.1)', color: 'var(--green)',
+              background: 'rgba(10,95,62,0.1)', color: 'var(--green)',
               fontSize: '11px', fontWeight: 700,
               padding: '3px 10px', borderRadius: '20px',
               marginBottom: '10px',

@@ -1,6 +1,8 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
+import { MobileToc } from '@/components/MobileToc'
+import { TableOfContents } from '@/components/TableOfContents'
 import { JsonLd } from '@/components/JsonLd'
 import { Icon } from '@/components/Icon'
 import { getBonusBySlug, client } from '@/lib/sanity'
@@ -143,8 +145,12 @@ export default async function BonusPage({ params }: Props) {
       {b.body && (
         <div className="article-layout">
           <article className="article-content">
+            <MobileToc body={b.body} />
             <PortableTextRenderer value={b.body} />
           </article>
+          <aside className="toc-sidebar">
+            <TableOfContents body={b.body} />
+          </aside>
         </div>
       )}
 

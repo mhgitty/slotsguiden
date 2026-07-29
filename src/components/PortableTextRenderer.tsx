@@ -64,8 +64,8 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
         <blockquote style={{ margin: '28px 0', padding: 0, border: 'none' }}>
           <div style={{
             position: 'relative',
-            background: 'rgba(28,127,192,0.06)',
-            border: '1px solid rgba(28,127,192,0.18)',
+            background: 'rgba(10,95,62,0.06)',
+            border: '1px solid rgba(10,95,62,0.18)',
             borderRadius: '10px',
             padding: '20px 22px 18px 52px',
           }}>
@@ -141,7 +141,7 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
                 borderRadius: '12px',
                 textDecoration: 'none',
                 letterSpacing: '-0.01em',
-                boxShadow: '0 4px 14px rgba(28,127,192,0.25)',
+                boxShadow: '0 4px 14px rgba(10,95,62,0.25)',
                 transition: 'opacity .15s',
               }}
             >

@@ -1,11 +1,14 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { PaymentMethodHero } from '@/components/PaymentMethodHero'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
+import { MobileToc } from '@/components/MobileToc'
+import { TableOfContents } from '@/components/TableOfContents'
 import { JsonLd } from '@/components/JsonLd'
 import { getPaymentMethodBySlug, client } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import type { Metadata } from 'next'
 
 export const revalidate = 3600
@@ -54,25 +57,37 @@ export default async function PaymentMethodPage({ params }: Props) {
       <JsonLd data={jsonLd} />
       <Navbar />
 
-      <div className="section">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
-          {pm.logo?.url && (
-            <div style={{ position: 'relative', width: '56px', height: '56px', flexShrink: 0, borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-              <Image src={pm.logo.url} alt={pm.logo.alt ?? heading} fill style={{ objectFit: 'contain' }} sizes="56px" />
-            </div>
-          )}
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3.4vw, 36px)', fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, margin: 0 }}>
-            {replaceDateVars(heading)}
-          </h1>
+      {/* Breadcrumbs */}
+      <div style={{ background: 'var(--bg-hero)', paddingTop: '32px', paddingBottom: '0' }}>
+        <div style={{ maxWidth: '1250px', margin: '0 auto', padding: '0 15px' }}>
+          <Breadcrumbs crumbs={[
+            { label: 'Hjem', href: '/' },
+            { label: 'Betalingsmetoder', href: '/betalingsmetoder/' },
+            { label: heading },
+          ]} />
         </div>
-        {pm.intro && <PortableTextRenderer value={pm.intro} />}
       </div>
+
+      <PaymentMethodHero
+        name={pm.name}
+        titel={replaceDateVars(heading)}
+        logo={pm.logo}
+        paymentCategory={pm.paymentCategory}
+        withdrawalTime={pm.withdrawalTime}
+        transactionFees={pm.transactionFees}
+        eligibleForBonuses={pm.eligibleForBonuses}
+        intro={pm.intro}
+      />
 
       {pm.body && (
         <div className="article-layout">
           <article className="article-content">
+            <MobileToc body={pm.body} />
             <PortableTextRenderer value={pm.body} />
           </article>
+          <aside className="toc-sidebar">
+            <TableOfContents body={pm.body} />
+          </aside>
         </div>
       )}
 

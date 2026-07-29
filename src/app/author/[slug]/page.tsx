@@ -107,7 +107,7 @@ export default async function AuthorPage({ params }: Props) {
               ) : (
                 <div style={{
                   width: '160px', height: '160px', borderRadius: '50%',
-                  background: 'rgba(28,127,192,0.12)', border: '3px solid var(--green)',
+                  background: 'rgba(10,95,62,0.12)', border: '3px solid var(--green)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '60px', fontWeight: 800, color: 'var(--green)',
                   fontFamily: 'var(--font-display)', flexShrink: 0,

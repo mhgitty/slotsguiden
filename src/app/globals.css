@@ -567,7 +567,7 @@ footer {
 
 .country-hero-card:hover {
   border-color: var(--green);
-  box-shadow: 0 4px 20px rgba(28,127,192,0.12);
+  box-shadow: 0 4px 20px rgba(10,95,62,0.12);
   transform: translateY(-2px);
 }
 
@@ -592,7 +592,7 @@ footer {
 
 .provider-card:hover {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(28,127,192,0.08);
+  box-shadow: 0 0 0 3px rgba(10,95,62,0.08);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -791,7 +791,7 @@ footer {
   margin: 0;
 }
 .wcalc input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
-.wcalc input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(28,127,192,0.12); }
+.wcalc input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(10,95,62,0.12); }
 
 @media (max-width: 820px) {
   .wcalc-fields { grid-template-columns: repeat(2, 1fr); }

@@ -1,3 +1,5 @@
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
@@ -59,6 +61,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
     <>
       <JsonLd data={jsonLd} />
       <HreflangLinks docId={(provider as any)._id} />
+      <Navbar />
 
       {/* Breadcrumbs */}
       <div style={{ background: 'var(--bg-hero)', paddingTop: '32px', paddingBottom: '0' }}>
@@ -152,6 +155,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
         </div>
       )}
 
+      <Footer />
       <RelatedPages docId={provider?._id} />
     </>
   )

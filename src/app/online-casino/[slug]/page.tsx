@@ -166,7 +166,7 @@ export default async function ReviewPage({ params }: Props) {
           </div>
 
           {(bm.indbetalingsbonus || bm.url) && (
-            <div style={{ marginTop: '24px', background: 'rgba(28,127,192,0.08)', border: '1px solid rgba(28,127,192,0.2)', borderRadius: '12px', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ marginTop: '24px', background: 'rgba(10,95,62,0.08)', border: '1px solid rgba(10,95,62,0.2)', borderRadius: '12px', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {bm.indbetalingsbonus && (
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Velkomstbonus</div>

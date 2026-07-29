@@ -76,7 +76,7 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
         {(hasPros || hasCons) && (
           <div className="pros-cons-grid">
             {hasPros && (
-              <div style={{ flex: 1, minWidth: '140px', border: '1px solid rgba(28,127,192,0.35)', borderRadius: '8px', padding: '12px 14px' }}>
+              <div style={{ flex: 1, minWidth: '140px', border: '1px solid rgba(10,95,62,0.35)', borderRadius: '8px', padding: '12px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                   <Icon name="check-circle" size={14} color="var(--green)" />
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--green)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Fordele</span>

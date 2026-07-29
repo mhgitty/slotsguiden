@@ -142,7 +142,7 @@ export default async function SlugPage({ params }: Props) {
               { label: post.title },
             ]} />
             {post.category && (
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(28,127,192,0.1)', color: 'var(--green)', fontSize: '12px', fontWeight: 500, padding: '3px 12px', borderRadius: '20px', marginBottom: '16px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(10,95,62,0.1)', color: 'var(--green)', fontSize: '12px', fontWeight: 500, padding: '3px 12px', borderRadius: '20px', marginBottom: '16px' }}>
                 {post.category.emoji} {post.category.name}
               </div>
             )}

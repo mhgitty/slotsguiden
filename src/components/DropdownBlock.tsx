@@ -31,7 +31,7 @@ const innerComponents = {
         href={value?.href}
         target={value?.blank ? '_blank' : undefined}
         rel={value?.blank ? 'noopener noreferrer' : undefined}
-        style={{ color: 'var(--green)', textDecoration: 'underline', textDecorationColor: 'rgba(28,127,192,0.4)' }}
+        style={{ color: 'var(--green)', textDecoration: 'underline', textDecorationColor: 'rgba(10,95,62,0.4)' }}
       >
         {children}
       </a>
@@ -92,8 +92,8 @@ export function DropdownBlock({ value }: DropdownBlockProps) {
           width: '28px',
           height: '28px',
           borderRadius: '50%',
-          background: open ? 'rgba(28,127,192,0.12)' : 'var(--bg-raised)',
-          border: `1px solid ${open ? 'rgba(28,127,192,0.3)' : 'var(--border)'}`,
+          background: open ? 'rgba(10,95,62,0.12)' : 'var(--bg-raised)',
+          border: `1px solid ${open ? 'rgba(10,95,62,0.3)' : 'var(--border)'}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

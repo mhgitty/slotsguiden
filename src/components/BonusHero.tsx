@@ -118,8 +118,8 @@ export function BonusHero({
           {/* Bonuskode — spans full width if present, otherwise a normal greyed box */}
           {bonuskode ? (
             <div style={{
-              background: 'rgba(28,127,192,0.08)',
-              border: '1px dashed rgba(28,127,192,0.5)',
+              background: 'rgba(10,95,62,0.08)',
+              border: '1px dashed rgba(10,95,62,0.5)',
               borderRadius: '10px', padding: '10px 14px',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px',
             }}>

@@ -78,12 +78,9 @@ export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kund
           <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: 1.6, margin: '14px 0 0' }}>{bonus.description}</p>
         )}
 
-        {/* Spacer — bottom-aligns the action area so every card is the same height */}
-        <div style={{ flexGrow: 1, minHeight: '14px' }} />
-
         {/* Expiry */}
         {expiry && (
-          <div style={{ fontSize: '13px', color: 'var(--text-faint)' }}>Udløber d. {expiry}</div>
+          <div style={{ fontSize: '13px', color: 'var(--text-faint)', marginTop: '16px' }}>Udløber d. {expiry}</div>
         )}
 
         {/* CTA */}

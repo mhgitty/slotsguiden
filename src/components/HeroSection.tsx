@@ -33,7 +33,7 @@ export function HeroSection({ title, intro, eyebrow, updatedAt, narrow = false, 
         {eyebrow && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'rgba(28,127,192,0.12)', color: 'var(--green)',
+            background: 'rgba(10,95,62,0.12)', color: 'var(--green)',
             fontSize: '12px', fontWeight: 600,
             padding: '4px 12px', borderRadius: '20px',
             marginBottom: '16px',

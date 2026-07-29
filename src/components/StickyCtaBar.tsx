@@ -109,7 +109,7 @@ export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms }: Stic
               textDecoration: 'none',
               whiteSpace: 'nowrap',
               letterSpacing: '0.02em',
-              boxShadow: '0 2px 12px rgba(28,127,192,0.3)',
+              boxShadow: '0 2px 12px rgba(10,95,62,0.3)',
             }}
           >
 SPIL NU
