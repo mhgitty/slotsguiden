@@ -111,6 +111,35 @@ h1, h2, h3, h4, h5, h6 {
   .bonus-popup-headline { font-size: 18px; margin-bottom: 12px; }
 }
 
+/* ─── Email flyout (Klaviyo) ─────────────────────────────────────────────── */
+.email-flyout {
+  position: fixed; right: 20px; bottom: 20px; z-index: 90;
+  width: 420px; max-width: calc(100vw - 32px);
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+  display: flex;
+  animation: sg-popup-in 0.3s ease;
+}
+.email-flyout-img {
+  flex-shrink: 0; width: 130px;
+  background: linear-gradient(160deg, var(--green) 0%, var(--green-dark) 100%);
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.email-flyout-body { flex: 1; min-width: 0; padding: 22px 22px 20px; }
+.email-flyout-close {
+  position: absolute; top: 10px; right: 12px;
+  background: transparent; border: none; cursor: pointer;
+  font-size: 24px; line-height: 1; color: var(--text-muted);
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; z-index: 2;
+}
+@media (max-width: 520px) {
+  .email-flyout { right: 8px; left: 8px; bottom: 8px; width: auto; }
+  .email-flyout-img { width: 96px; }
+  .email-flyout-body { padding: 18px 16px 16px; }
+}
+
 /* ─── Sticky CTA bar (review pages) ──────────────────────────────────────── */
 .sticky-cta-inner {
   max-width: 1250px; margin: 0 auto; padding: 12px 15px;

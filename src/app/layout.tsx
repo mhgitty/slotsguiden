@@ -5,6 +5,7 @@ import { AdminBar } from '@/components/AdminBar'
 import { PreviewBanner } from '@/components/PreviewBanner'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import { BonusPopup } from '@/components/BonusPopup'
+import { EmailFlyout } from '@/components/EmailFlyout'
 import { getPopupBonus } from '@/lib/sanity'
 import './globals.css'
 
@@ -57,6 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <AdminBar />
         {children}
         <BonusPopup bonus={popupBonus} />
+        <EmailFlyout />
         <GoogleAnalytics />
       </body>
     </html>
