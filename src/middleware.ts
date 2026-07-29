@@ -41,6 +41,18 @@ async function getRedirects(): Promise<RedirectMap> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // ── Indexing guard ─────────────────────────────────────────────────────────
+  // Only the canonical domain may be indexed. Every other host — the Vercel
+  // *.vercel.app production URL and all preview deploys — gets X-Robots-Tag:
+  // noindex, so migrated content is never indexed as a duplicate of the live
+  // WordPress site. (Keep this even after go-live: only slotsguiden.dk indexes.)
+  const host = (request.headers.get('host') || '').toLowerCase()
+  const isCanonicalHost = host === 'slotsguiden.dk' || host === 'www.slotsguiden.dk'
+  const guard = (res: NextResponse) => {
+    if (!isCanonicalHost) res.headers.set('X-Robots-Tag', 'noindex, nofollow')
+    return res
+  }
+
   // Skip studio, API routes, static files, and Next.js internals
   if (
     pathname.startsWith('/studio') ||
@@ -49,7 +61,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/favicon') ||
     /\.\w+$/.test(pathname)
   ) {
-    return NextResponse.next()
+    return guard(NextResponse.next())
   }
 
   const redirects = await getRedirects()
@@ -63,10 +75,10 @@ export async function middleware(request: NextRequest) {
     const target = destination.startsWith('http')
       ? destination
       : new URL(destination, request.url).toString()
-    return NextResponse.redirect(target, { status: 301 })
+    return guard(NextResponse.redirect(target, { status: 301 }))
   }
 
-  return NextResponse.next()
+  return guard(NextResponse.next())
 }
 
 export const config = {
