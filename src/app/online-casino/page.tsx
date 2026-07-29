@@ -40,6 +40,9 @@ export default async function OnlineCasinoPage() {
   if (!page) notFound()
   const author = (page as any).author ?? settings?.defaultAuthor ?? null
 
+  // Breadcrumb label from the slug (not the long H1), e.g. "online-casino" → "Online casino"
+  const crumbLabel = ((page.slug as any)?.current || 'online-casino').replace(/-/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -47,7 +50,7 @@ export default async function OnlineCasinoPage() {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Hjem', item: BASE },
-          { '@type': 'ListItem', position: 2, name: page.title, item: CANONICAL },
+          { '@type': 'ListItem', position: 2, name: crumbLabel, item: CANONICAL },
         ],
       },
       {
@@ -73,7 +76,7 @@ export default async function OnlineCasinoPage() {
         author={author}
         factChecker={page.factChecker}
         updatedAt={page.lastUpdated}
-        breadcrumbs={[{ label: 'Hjem', href: '/' }, { label: page.title }]}
+        breadcrumbs={[{ label: 'Hjem', href: '/' }, { label: crumbLabel }]}
       />
 
       {page.showBonusGrid && <BonusGrid title={page.bonusGridTitle} />}

@@ -46,7 +46,7 @@ export default async function PaymentMethodPage({ params }: Props) {
       { '@type': 'BreadcrumbList', itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Hjem', item: BASE },
         { '@type': 'ListItem', position: 2, name: 'Betalingsmetoder', item: `${BASE}/betalingsmetoder/` },
-        { '@type': 'ListItem', position: 3, name: heading, item: canonical },
+        { '@type': 'ListItem', position: 3, name: pm.name || heading, item: canonical },
       ] },
       { '@type': 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: heading, inLanguage: 'da-DK', publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE } },
     ],
@@ -63,7 +63,7 @@ export default async function PaymentMethodPage({ params }: Props) {
           <Breadcrumbs crumbs={[
             { label: 'Hjem', href: '/' },
             { label: 'Betalingsmetoder', href: '/betalingsmetoder/' },
-            { label: heading },
+            { label: pm.name || heading },
           ]} />
         </div>
       </div>
