@@ -54,8 +54,62 @@ const linkFields = [
   }),
 ]
 
-// ── Sub-menu item ─────────────────────────────────────────────────────────────
-const subNavItemFields = [...linkFields]
+// ── Shared preview for every nav / sub-nav item ─────────────────────────────────
+const navPreview = {
+  select: {
+    title: 'label',
+    pageRef: 'pageRef.slug.current',
+    bookmakerRef: 'bookmakerRef.slug.current',
+    softwareRef: 'softwareRef.slug.current',
+    paymentMethodRef: 'paymentMethodRef.slug.current',
+    postRef: 'postRef.slug.current',
+    casinoGuideRef: 'casinoGuideRef.slug.current',
+    url: 'url',
+    children: 'children',
+  },
+  prepare({ title, pageRef, bookmakerRef, softwareRef, paymentMethodRef, postRef, casinoGuideRef, url, children }: any) {
+    const resolved = pageRef ? `/${pageRef}/`
+      : bookmakerRef ? `/online-casino/${bookmakerRef}/`
+      : softwareRef ? `/spiludviklere/${softwareRef}/`
+      : paymentMethodRef ? `/betalingsmetoder/${paymentMethodRef}/`
+      : postRef ? `/${postRef}/`
+      : casinoGuideRef ? `/casino-guides/${casinoGuideRef}/`
+      : url
+    const hasChildren = children?.length > 0
+    return { title: `${hasChildren ? '▾ ' : ''}${title || 'Uden titel'}`, subtitle: resolved }
+  },
+}
+
+// ── Sub-menu items ──────────────────────────────────────────────────────────────
+// Explicit levels give up to 3 dropdown depths (top item → sub → sub-sub → sub-sub-sub),
+// which matches the depth the header query + renderer already support.
+const subNavItem3 = {
+  type: 'object',
+  name: 'subNavItem3',
+  title: 'Menupunkt',
+  fields: [...linkFields],
+  preview: navPreview,
+}
+const subNavItem2 = {
+  type: 'object',
+  name: 'subNavItem2',
+  title: 'Menupunkt',
+  fields: [
+    ...linkFields,
+    defineField({ name: 'children', title: 'Undermenu', type: 'array', description: 'Tilføj punkter for at lave en dybere undermenu', of: [subNavItem3] }),
+  ],
+  preview: navPreview,
+}
+const subNavItem = {
+  type: 'object',
+  name: 'subNavItem',
+  title: 'Menupunkt',
+  fields: [
+    ...linkFields,
+    defineField({ name: 'children', title: 'Undermenu', type: 'array', description: 'Tilføj punkter for at lave en dybere undermenu', of: [subNavItem2] }),
+  ],
+  preview: navPreview,
+}
 
 // ── Top-level nav item ─────────────────────────────────────────────────────────
 const navItemFields = [
@@ -71,32 +125,8 @@ const navItemFields = [
     name: 'children',
     title: 'Dropdown',
     type: 'array',
-    description: 'Add sub-items to create a dropdown menu',
-    of: [{
-      type: 'object',
-      name: 'subNavItem',
-      fields: subNavItemFields,
-      preview: {
-        select: {
-          title: 'label',
-          pageRef: 'pageRef.slug.current',
-          bookmakerRef: 'bookmakerRef.slug.current',
-          softwareRef: 'softwareRef.slug.current',
-          paymentMethodRef: 'paymentMethodRef.slug.current',
-          postRef: 'postRef.slug.current',
-          url: 'url',
-        },
-        prepare({ title, pageRef, bookmakerRef, softwareRef, paymentMethodRef, postRef, url }: any) {
-          const resolved = pageRef ? `/${pageRef}/`
-            : bookmakerRef ? `/online-casino/${bookmakerRef}/`
-            : softwareRef ? `/software/${softwareRef}/`
-            : paymentMethodRef ? `/betalingsmetoder/${paymentMethodRef}/`
-            : postRef ? `/${postRef}/`
-            : url
-          return { title, subtitle: resolved }
-        },
-      },
-    }],
+    description: 'Add sub-items to create a dropdown menu (sub-items can have their own sub-menus)',
+    of: [subNavItem],
   }),
 ]
 

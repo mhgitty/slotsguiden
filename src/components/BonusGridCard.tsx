@@ -41,25 +41,27 @@ export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kund
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden', background: 'var(--bg-card)' }}>
-      {/* Campaign image — full image at natural height (not cropped) */}
+      {/* Campaign image — full image at natural height (not cropped), links to offer */}
       {bonus.campaignImage?.url && bonus.campaignImage.w && bonus.campaignImage.h && (
-        <Image
-          src={bonus.campaignImage.url}
-          alt={bonus.campaignImage.alt ?? bonus.title ?? ''}
-          width={bonus.campaignImage.w}
-          height={bonus.campaignImage.h}
-          sizes="(max-width: 768px) 100vw, 400px"
-          style={{ width: '100%', height: 'auto', display: 'block' }}
-        />
+        <a href={bonus.offerUrl || '#'} target="_blank" rel="nofollow sponsored noopener" style={{ display: 'block' }}>
+          <Image
+            src={bonus.campaignImage.url}
+            alt={bonus.campaignImage.alt ?? bonus.title ?? ''}
+            width={bonus.campaignImage.w}
+            height={bonus.campaignImage.h}
+            sizes="(max-width: 768px) 100vw, 400px"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
+        </a>
       )}
 
       <div style={{ padding: '18px 18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
         {/* Logo + title */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {bonus.logoSquare?.url && (
-            <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0, borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+            <a href={bonus.offerUrl || '#'} target="_blank" rel="nofollow sponsored noopener" style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0, borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border)', display: 'block' }}>
               <Image src={bonus.logoSquare.url} alt={bonus.logoSquare.alt ?? bonus.title ?? ''} fill style={{ objectFit: 'cover' }} sizes="48px" />
-            </div>
+            </a>
           )}
           <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '17px', fontWeight: 700, color: 'var(--text)', lineHeight: 1.3, margin: 0 }}>
             {bonus.title}
