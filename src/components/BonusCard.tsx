@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { LogoStack, type LogoRef } from './CasinoComparisonTable'
 
 interface BonusCardProps {
   _id: string
@@ -13,8 +14,15 @@ interface BonusCardProps {
   terms?: string
   casinoNavn?: string
   casinoLogo?: { url: string; alt?: string }
+  casinoLogoSquare?: { url: string; alt?: string }
   kampagneBillede?: { url: string; alt?: string }
-  bookmaker?: { name: string; slug: { current: string } }
+  bookmaker?: {
+    name: string
+    slug: { current: string }
+    logoSquare?: { url?: string; alt?: string }
+    paymentMethods?: LogoRef[]
+    software?: LogoRef[]
+  }
   rank?: number
 }
 
@@ -22,13 +30,20 @@ export function BonusCard({
   title, slug,
   oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
   offerUrl, terms, casinoNavn,
-  casinoLogo, kampagneBillede, bookmaker,
+  casinoLogo, casinoLogoSquare, kampagneBillede, bookmaker,
   rank,
 }: BonusCardProps) {
   const bonusTitle = oddsBonusTitel || title
 
-  // Banner image — prefer casino logo, fall back to campaign image
-  const bannerImage = casinoLogo?.url ? casinoLogo : kampagneBillede
+  // Image — prefer the square casino logo (shown as a logo tile), then the wide
+  // logo, then the campaign banner image (shown full-bleed).
+  const squareLogo = casinoLogoSquare?.url ? casinoLogoSquare : (bookmaker?.logoSquare?.url ? bookmaker.logoSquare : null)
+  const bannerImage = squareLogo || (casinoLogo?.url ? casinoLogo : kampagneBillede)
+  const isLogo = !!(squareLogo || casinoLogo?.url)
+
+  const paymentMethods = bookmaker?.paymentMethods || []
+  const software = bookmaker?.software || []
+  const hasLogos = paymentMethods.length > 0 || software.length > 0
 
   // Bookmaker page link
   const reviewUrl = bookmaker?.slug?.current
@@ -46,15 +61,18 @@ export function BonusCard({
       position: 'relative',
     }}>
 
-      {rank === 1 && (
+      {/* Rank badge — numbered, top-left corner (gold for #1, green for the rest) */}
+      {rank != null && (
         <div style={{
-          position: 'absolute', top: 0, left: '20px',
-          background: 'var(--gold)', color: '#111827',
-          fontSize: '10.5px', fontWeight: 700, letterSpacing: '0.5px',
-          padding: '3px 12px', borderRadius: '0 0 8px 8px',
-          zIndex: 1,
+          position: 'absolute', top: '10px', left: '10px', zIndex: 2,
+          minWidth: '26px', height: '26px', padding: '0 7px',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          background: rank === 1 ? 'var(--gold)' : 'var(--green)',
+          color: rank === 1 ? '#1a1a1a' : '#fff',
+          fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 800,
+          borderRadius: '13px', boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
         }}>
-          🏆 Højst rangeret
+          {rank}
         </div>
       )}
 
@@ -65,21 +83,31 @@ export function BonusCard({
         minHeight: '130px',
       }} className="bonus-card-grid">
 
-        {/* ── Left: campaign image ── */}
-        <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+        {/* ── Left: square logo (as a tile) or campaign banner ── */}
+        <div style={{
+          position: 'relative', overflow: 'hidden', flexShrink: 0, minHeight: '130px',
+          background: isLogo ? '#12121e' : 'var(--bg-raised)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
           {bannerImage?.url ? (
-            <Image
-              src={bannerImage.url}
-              alt={bannerImage.alt || displayName}
-              fill
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
-              sizes="260px"
-            />
+            isLogo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={bannerImage.url}
+                alt={bannerImage.alt || displayName}
+                style={{ maxWidth: '70%', maxHeight: '76%', objectFit: 'contain', display: 'block' }}
+              />
+            ) : (
+              <Image
+                src={bannerImage.url}
+                alt={bannerImage.alt || displayName}
+                fill
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                sizes="260px"
+              />
+            )
           ) : (
             <div style={{
-              width: '100%', height: '100%', minHeight: '130px',
-              background: 'var(--bg-raised)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '13px', color: 'var(--text-faint)', fontWeight: 600,
               padding: '16px', textAlign: 'center',
             }}>
@@ -171,14 +199,20 @@ LÆS ANMELDELSE
         </div>
       </div>
 
-      {/* Terms row */}
-      {terms && (
-        <div style={{
-          padding: '8px 24px',
-          borderTop: '1px solid var(--border)',
-          fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.6,
-        }}>
-          {terms}
+      {/* Payment methods + software + terms */}
+      {(hasLogos || terms) && (
+        <div style={{ padding: '12px 24px 14px', borderTop: '1px solid var(--border)' }}>
+          {hasLogos && (
+            <div style={{ display: 'flex', gap: '28px', flexWrap: 'wrap', marginBottom: terms ? '10px' : 0 }}>
+              <LogoStack label="Betalingsmetoder" items={paymentMethods} />
+              <LogoStack label="Spiludviklere" items={software} />
+            </div>
+          )}
+          {terms && (
+            <div style={{ fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.6 }}>
+              {terms}
+            </div>
+          )}
         </div>
       )}
     </div>

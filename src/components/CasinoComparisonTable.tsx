@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Icon } from './Icon'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
-interface LogoRef {
+export interface LogoRef {
   _id: string
   name: string
   slug?: string
@@ -92,7 +92,7 @@ function LogoTile({ item, size = 28 }: { item: LogoRef; size?: number }) {
 }
 
 // ─── Logo stack: overlapping logos + "+N" → tooltip listing all ──────────────────
-function LogoStack({ label, items, max = 4 }: { label: string; items: LogoRef[]; max?: number }) {
+export function LogoStack({ label, items, max = 4 }: { label: string; items: LogoRef[]; max?: number }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 

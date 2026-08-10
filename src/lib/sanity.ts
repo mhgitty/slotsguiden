@@ -138,9 +138,15 @@ const COMPARISON_TABLE_FRAGMENT = `
       _id, title, slug, active,
       oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
       offerUrl, terms, casinoNavn,
-      "casinoLogo":      casinoLogo      { "url": asset->url, alt },
-      "kampagneBillede": kampagneBillede { "url": asset->url, alt },
-      "bookmaker": bookmaker-> { name, slug }
+      "casinoLogo":       casinoLogo       { "url": asset->url, alt },
+      "casinoLogoSquare": casinoLogoSquare { "url": asset->url, alt },
+      "kampagneBillede":  kampagneBillede  { "url": asset->url, alt },
+      "bookmaker": bookmaker-> {
+        name, slug,
+        "logoSquare": logoSquare { "url": asset->url, alt },
+        "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
+        "software": software[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
+      }
     },
     bookmakers[]-> {
       _id, name, slug, usp, score,
