@@ -83,6 +83,13 @@ export default defineConfig({
                   .title('Casino Games')
               ),
             S.listItem()
+              .title('🎰 Online Spillemaskiner')
+              .schemaType('spillemaskine')
+              .child(
+                S.documentTypeList('spillemaskine')
+                  .title('Online Spillemaskiner')
+              ),
+            S.listItem()
               .title('📚 Casino Guides')
               .schemaType('casinoGuide')
               .child(
