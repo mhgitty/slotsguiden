@@ -142,8 +142,9 @@ const COMPARISON_TABLE_FRAGMENT = `
       "casinoLogoSquare": casinoLogoSquare { "url": asset->url, alt },
       "kampagneBillede":  kampagneBillede  { "url": asset->url, alt },
       "bookmaker": bookmaker-> {
-        name, slug,
+        name, slug, score,
         "logoSquare": logoSquare { "url": asset->url, alt },
+        "logo": logo { "url": asset->url, alt },
         "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
         "software": software[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
       }

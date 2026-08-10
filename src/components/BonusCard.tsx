@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { LogoStack, type LogoRef } from './CasinoComparisonTable'
+import { Icon } from './Icon'
+import { LogoStack, ScoreBadge, LABEL, type LogoRef } from './CasinoComparisonTable'
 
 interface BonusCardProps {
   _id: string
@@ -13,222 +13,184 @@ interface BonusCardProps {
   offerUrl?: string
   terms?: string
   casinoNavn?: string
-  casinoLogo?: { url: string; alt?: string }
-  casinoLogoSquare?: { url: string; alt?: string }
-  kampagneBillede?: { url: string; alt?: string }
+  casinoLogo?: { url?: string; alt?: string }
+  casinoLogoSquare?: { url?: string; alt?: string }
+  kampagneBillede?: { url?: string; alt?: string }
   bookmaker?: {
     name: string
-    slug: { current: string }
+    slug?: { current: string }
+    score?: number
     logoSquare?: { url?: string; alt?: string }
+    logo?: { url?: string; alt?: string }
     paymentMethods?: LogoRef[]
     software?: LogoRef[]
   }
   rank?: number
 }
 
+const DEFAULT_TERMS =
+  'Alle bonusser og kampagner er underlagt vilkår, herunder gennemspilskrav, berettigelsesbegrænsninger og udløbsdatoer. Læs de fuldstændige vilkår på casinoets hjemmeside, før du gør krav på dem. 18+ | Spil ansvarligt.'
+
 export function BonusCard({
-  title, slug,
+  title,
   oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
   offerUrl, terms, casinoNavn,
   casinoLogo, casinoLogoSquare, kampagneBillede, bookmaker,
   rank,
 }: BonusCardProps) {
   const bonusTitle = oddsBonusTitel || title
+  const displayName = casinoNavn || bookmaker?.name || title
+  const score = bookmaker?.score
 
-  // Image — prefer the square casino logo (shown as a logo tile), then the wide
-  // logo, then the campaign banner image (shown full-bleed).
-  const squareLogo = casinoLogoSquare?.url ? casinoLogoSquare : (bookmaker?.logoSquare?.url ? bookmaker.logoSquare : null)
-  const bannerImage = squareLogo || (casinoLogo?.url ? casinoLogo : kampagneBillede)
-  const isLogo = !!(squareLogo || casinoLogo?.url)
+  // Square logo preferred (bonus → casino), then wide logo, then campaign image.
+  const square = casinoLogoSquare?.url ? casinoLogoSquare : (bookmaker?.logoSquare?.url ? bookmaker.logoSquare : null)
+  const wide = casinoLogo?.url ? casinoLogo : (bookmaker?.logo?.url ? bookmaker.logo : kampagneBillede)
+  const logo = square || wide
+  const isSquare = !!square
 
+  const reviewHref = bookmaker?.slug?.current ? `/online-casino/${bookmaker.slug.current}/` : null
   const paymentMethods = bookmaker?.paymentMethods || []
   const software = bookmaker?.software || []
-  const hasLogos = paymentMethods.length > 0 || software.length > 0
-
-  // Bookmaker page link
-  const reviewUrl = bookmaker?.slug?.current
-    ? `/online-casino/${bookmaker.slug.current}`
-    : null
-
-  const displayName = casinoNavn || bookmaker?.name || title
+  const hasStats = minimumIndbetaling != null || !!gennemspilskrav || !!minimumOdds
+  const shownTerms = terms || DEFAULT_TERMS
 
   return (
     <div style={{
+      position: 'relative',
       background: 'var(--bg-card)',
       border: '1px solid var(--border)',
-      borderRadius: '14px',
-      overflow: 'hidden',
-      position: 'relative',
+      borderRadius: '12px',
+      padding: '16px 20px 14px',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
     }}>
-
-      {/* Rank badge — numbered, top-left corner (gold for #1, green for the rest) */}
+      {/* Rank badge — top-left corner */}
       {rank != null && (
         <div style={{
-          position: 'absolute', top: '10px', left: '10px', zIndex: 2,
+          position: 'absolute', top: '-12px', left: '14px', zIndex: 2,
           minWidth: '26px', height: '26px', padding: '0 7px',
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
           background: rank === 1 ? 'var(--gold)' : 'var(--green)',
           color: rank === 1 ? '#1a1a1a' : '#fff',
           fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 800,
-          borderRadius: '13px', boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+          borderRadius: '13px', boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
         }}>
           {rank}
         </div>
       )}
 
-      {/* Main card row */}
-      <div style={{
+      {/* Row 1 — same column tracks as the casino comparison rows */}
+      <div className="casino-cmp-r1" style={{
         display: 'grid',
-        gridTemplateColumns: '260px 1fr auto',
-        minHeight: '130px',
-      }} className="bonus-card-grid">
-
-        {/* ── Left: square logo (as a tile) or campaign banner ── */}
-        <div style={{
-          position: 'relative', overflow: 'hidden', flexShrink: 0, minHeight: '130px',
-          background: isLogo ? '#12121e' : 'var(--bg-raised)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          {bannerImage?.url ? (
-            isLogo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={bannerImage.url}
-                alt={bannerImage.alt || displayName}
-                style={{ maxWidth: '70%', maxHeight: '76%', objectFit: 'contain', display: 'block' }}
-              />
+        gridTemplateColumns: '288px 172px minmax(0, 1fr) 190px',
+        gridTemplateAreas: '"brand stats bonus cta"',
+        alignItems: 'center', gap: '20px',
+      }}>
+        {/* Brand: logo + rating + name */}
+        <div className="casino-cmp-brand" style={{ gridArea: 'brand', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '72px' }}>
+            {logo?.url ? (
+              isSquare ? (
+                <div style={{ width: '64px', height: '64px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', flexShrink: 0 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={logo.url} alt={logo.alt || displayName} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </div>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logo.url} alt={logo.alt || displayName} style={{ maxWidth: '100%', maxHeight: '64px', objectFit: 'contain', display: 'block', borderRadius: '8px' }} />
+              )
             ) : (
-              <Image
-                src={bannerImage.url}
-                alt={bannerImage.alt || displayName}
-                fill
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
-                sizes="260px"
-              />
-            )
-          ) : (
-            <div style={{
-              fontSize: '13px', color: 'var(--text-faint)', fontWeight: 600,
-              padding: '16px', textAlign: 'center',
-            }}>
-              {displayName}
+              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-muted)' }}>{displayName}</span>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px', minWidth: 0 }}>
+            {score != null && <ScoreBadge score={score} />}
+            {reviewHref ? (
+              <Link href={reviewHref} style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)', textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'var(--font-display)', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {displayName}
+              </Link>
+            ) : (
+              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap', fontFamily: 'var(--font-display)', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {displayName}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="casino-cmp-ministats" style={{
+          gridArea: 'stats',
+          display: 'flex', flexDirection: 'column', gap: '10px',
+          ...(hasStats ? { borderLeft: '1px solid var(--border-faint)', borderRight: '1px solid var(--border-faint)', padding: '0 16px' } : {}),
+        }}>
+          {minimumIndbetaling != null && (
+            <div>
+              <div style={{ ...LABEL, marginBottom: '2px' }}>Min. indbetaling</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{minimumIndbetaling} kr.</div>
+            </div>
+          )}
+          {gennemspilskrav && (
+            <div>
+              <div style={{ ...LABEL, marginBottom: '2px' }}>Omsætningskrav</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{gennemspilskrav}</div>
+            </div>
+          )}
+          {minimumOdds && (
+            <div>
+              <div style={{ ...LABEL, marginBottom: '2px' }}>Min. odds</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{minimumOdds}</div>
             </div>
           )}
         </div>
 
-        {/* ── Middle: stats + bonus title ── */}
-        <div className="bonus-card-middle" style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto 1px 1fr',
-          alignItems: 'stretch',
-        }}>
-          {/* Stats */}
-          <div className="bonus-card-stats" style={{
-            padding: '20px 28px',
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '10px',
-          }}>
-            <StatRow label="Gennemspilskrav" value={gennemspilskrav} />
-            <StatRow label="Min. indbetaling"          value={minimumIndbetaling != null ? `${minimumIndbetaling} kr.` : undefined} />
-            <StatRow label="Min. odds"             value={minimumOdds} />
-          </div>
-
-          {/* Vertical divider — hidden on mobile */}
-          <div className="bonus-card-vdivider" style={{ background: 'var(--border)', margin: '20px 0' }} />
-
-          {/* Bonus title */}
-          <div className="bonus-card-title-cell" style={{
-            padding: '20px 32px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <p style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(18px, 2vw, 26px)',
-              fontWeight: 800,
-              color: 'var(--text)',
-              lineHeight: 1.2,
-              letterSpacing: '-0.03em',
-              textAlign: 'center',
-              margin: 0,
-            }}>
-              {bonusTitle}
-            </p>
-          </div>
+        {/* Bonus */}
+        <div className="casino-cmp-bonus" style={{ gridArea: 'bonus', minWidth: 0 }}>
+          {bonusTitle && (
+            <>
+              <div style={{ ...LABEL, marginBottom: '3px' }}>Bonus</div>
+              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text)', lineHeight: 1.15, overflowWrap: 'anywhere' }}>
+                {bonusTitle}
+              </div>
+            </>
+          )}
         </div>
 
-        {/* ── Right: CTA buttons ── */}
-        <div className="bonus-card-cta" style={{
-          borderLeft: '1px solid var(--border)',
-          padding: '20px 24px',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'stretch', justifyContent: 'center',
-          gap: '10px', minWidth: '190px',
-        }}>
+        {/* CTA */}
+        <div className="casino-cmp-cta" style={{ gridArea: 'cta', display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '6px' }}>
           {offerUrl && (
-            <a
-              href={offerUrl}
-              target="_blank"
-              rel="nofollow noopener noreferrer sponsored"
-              style={{
-                display: 'block', textAlign: 'center',
-                background: 'var(--btn)',
-                color: '#fff', fontWeight: 700, fontSize: '14px',
-                padding: '13px 16px', borderRadius: '10px',
-                textDecoration: 'none', letterSpacing: '0.03em',
-                whiteSpace: 'nowrap',
-              }}
-            >
-HENT BONUS
+            <a href={offerUrl} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              background: 'var(--btn)', color: '#fff', padding: '13px 24px', borderRadius: '9px',
+              fontSize: '16px', fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap',
+            }}>
+              Hent bonus <Icon name="arrow-right" size={18} color="#fff" />
             </a>
           )}
-          {reviewUrl && (
-            <Link
-              href={reviewUrl}
-              style={{
-                display: 'block', textAlign: 'center',
-                background: 'transparent',
-                color: 'var(--green)', fontWeight: 700, fontSize: '14px',
-                padding: '12px 16px', borderRadius: '10px',
-                textDecoration: 'none', letterSpacing: '0.03em',
-                border: '2px solid var(--green)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-LÆS ANMELDELSE
+          {reviewHref && (
+            <Link href={reviewHref} style={{ textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'none' }}>
+              Læs casinoanmeldelse
             </Link>
           )}
         </div>
       </div>
 
-      {/* Payment methods + software + terms */}
-      {(hasLogos || terms) && (
-        <div style={{ padding: '12px 24px 14px', borderTop: '1px solid var(--border)' }}>
-          {hasLogos && (
-            <div style={{ display: 'flex', gap: '28px', flexWrap: 'wrap', marginBottom: terms ? '10px' : 0 }}>
-              <LogoStack label="Betalingsmetoder" items={paymentMethods} />
-              <LogoStack label="Spiludviklere" items={software} />
-            </div>
-          )}
-          {terms && (
-            <div style={{ fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.6 }}>
-              {terms}
-            </div>
-          )}
+      {/* Row 2 — terms · payments · software */}
+      <div className="casino-cmp-r2" style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr) 165px 165px',
+        gridTemplateAreas: '"terms payments software"',
+        alignItems: 'center', columnGap: '18px', rowGap: '14px',
+        marginTop: '12px', paddingTop: '11px', borderTop: '1px solid var(--border-faint)',
+      }}>
+        <div className="casino-cmp-terms" style={{ gridArea: 'terms', minWidth: 0, fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.45 }}>
+          {shownTerms}
         </div>
-      )}
-    </div>
-  )
-}
-
-function StatRow({ label, value }: { label: string; value?: string }) {
-  if (!value) return null
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '24px' }}>
-      <span style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-        {label}
-      </span>
-      <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>
-        {value}
-      </span>
+        <div style={{ gridArea: 'payments', minWidth: 0 }}>
+          <LogoStack label="Betalingsmetoder" items={paymentMethods} />
+        </div>
+        <div style={{ gridArea: 'software', minWidth: 0 }}>
+          <LogoStack label="Spiludviklere" items={software} />
+        </div>
+      </div>
     </div>
   )
 }

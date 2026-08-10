@@ -44,13 +44,13 @@ const DEFAULT_DISCLOSURE = 'Vi kan modtage provision fra disse casinoer · 18+ �
 const DEFAULT_TERMS =
   'Alle bonusser og kampagner er underlagt vilkår, herunder gennemspilskrav, berettigelsesbegrænsninger og udløbsdatoer. Læs de fuldstændige vilkår på casinoets hjemmeside, før du gør krav på dem. 18+ | Spil ansvarligt.'
 
-const LABEL: React.CSSProperties = {
+export const LABEL: React.CSSProperties = {
   fontSize: '12px', color: 'var(--text-faint)', textTransform: 'uppercase',
   letterSpacing: '0.5px', fontWeight: 600,
 }
 
 // ─── Score badge ──────────────────────────────────────────────────────────────
-function ScoreBadge({ score }: { score: number }) {
+export function ScoreBadge({ score }: { score: number }) {
   const color = score >= 8 ? 'var(--green)' : score >= 6 ? '#ca8a04' : '#dc2626'
   return (
     <span style={{
