@@ -11,10 +11,12 @@
  *   node migrate-slotsguiden.mjs --dry-run       # fetch + map + report, write NOTHING
  *   node migrate-slotsguiden.mjs --limit=3       # only first 3 of each type (safe test)
  *   node migrate-slotsguiden.mjs bookmakers --limit=3
+ *   node migrate-slotsguiden.mjs posts --new-only # import ONLY records not already in Sanity
  *
  * Dependencies:  npm install @sanity/client node-html-parser
  * Idempotent: each record gets a fixed _id (wp-<type>-<wpId>), so re-running
- * simply overwrites — safe to run as many times as needed.
+ * simply overwrites — safe to run as many times as needed. Use --new-only to
+ * import just the new records and leave existing (manually edited) docs untouched.
  */
 import {
   loadEnv, makeSanity, createEngine, fetchAllCPT,
@@ -27,6 +29,9 @@ const WP_BASE = 'https://slotsguiden.dk'
 // ─── args ─────────────────────────────────────────────────────────────────────
 const argv = process.argv.slice(2)
 const dryRun = argv.includes('--dry-run')
+// Import ONLY records that don't already exist in Sanity — never touches
+// existing documents, so manual edits (comparison order, popup flags, …) survive.
+const newOnly = argv.includes('--new-only') || argv.includes('--skip-existing')
 const limitArg = argv.find(a => a.startsWith('--limit='))
 const LIMIT = limitArg ? parseInt(limitArg.split('=')[1], 10) || 0 : 0
 const typeArg = argv.find(a => !a.startsWith('--'))
@@ -342,13 +347,13 @@ async function buildSpillemaskine(wp, eng) {
 }
 
 const TYPES = {
-  bookmakers: { restBase: 'casinoer', label: '🎰 Casinoer → bookmaker', build: buildBookmaker },
-  spillemaskiner: { restBase: 'unit', label: '🎰 Spillemaskiner → spillemaskine', build: buildSpillemaskine },
-  bonuses: { restBase: 'casino-bonusser', label: '🎁 Casino bonusser → bonus', build: buildBonus },
-  payment: { restBase: 'betalingsmetoder', label: '💳 Betalingsmetoder → paymentMethod', build: buildPayment },
-  software: { restBase: 'spiludviklere', label: '🎮 Spiludviklere → software', build: buildSoftware },
-  posts: { restBase: 'posts', label: '📝 Posts → post (+ categories, authors)', build: buildPost, prepare: preparePosts },
-  pages: { restBase: 'pages', label: '📄 Pages → page', build: buildPage },
+  bookmakers: { restBase: 'casinoer', sanityType: 'bookmaker', label: '🎰 Casinoer → bookmaker', build: buildBookmaker },
+  spillemaskiner: { restBase: 'unit', sanityType: 'spillemaskine', label: '🎰 Spillemaskiner → spillemaskine', build: buildSpillemaskine },
+  bonuses: { restBase: 'casino-bonusser', sanityType: 'bonus', label: '🎁 Casino bonusser → bonus', build: buildBonus },
+  payment: { restBase: 'betalingsmetoder', sanityType: 'paymentMethod', label: '💳 Betalingsmetoder → paymentMethod', build: buildPayment },
+  software: { restBase: 'spiludviklere', sanityType: 'software', label: '🎮 Spiludviklere → software', build: buildSoftware },
+  posts: { restBase: 'posts', sanityType: 'post', label: '📝 Posts → post (+ categories, authors)', build: buildPost, prepare: preparePosts },
+  pages: { restBase: 'pages', sanityType: 'page', label: '📄 Pages → page', build: buildPage },
 }
 // Custom types run by default; posts/pages run explicitly (or with "all").
 const ORDER = ['bookmakers', 'payment', 'software', 'bonuses']
@@ -358,12 +363,25 @@ async function migrateType(key, sanity, eng) {
   const cfg = TYPES[key]
   console.log(`\n${'═'.repeat(60)}\n${cfg.label}   (${WP_BASE}/wp-json/wp/v2/${cfg.restBase})`)
   const posts = await fetchAllCPT(WP_BASE, cfg.restBase, LIMIT)
-  console.log(`  Found ${posts.length} records${LIMIT ? ` (limited to ${LIMIT})` : ''}\n`)
+  console.log(`  Found ${posts.length} records${LIMIT ? ` (limited to ${LIMIT})` : ''}`)
+
+  // In --new-only mode, pre-fetch the IDs already in Sanity so we can skip them
+  // (and avoid re-uploading their images) without overwriting existing docs.
+  let existingIds = new Set()
+  if (newOnly) {
+    existingIds = new Set(await sanity.fetch('*[_type == $t]._id', { t: cfg.sanityType }))
+    console.log(`  ${existingIds.size} already in Sanity — importing NEW records only`)
+  }
+  console.log('')
+
   const ctx = cfg.prepare ? await cfg.prepare(posts, { sanity, eng, dryRun }) : {}
   const acfKeysSeen = new Set()
-  let ok = 0, fail = 0, noImg = 0, linked = 0, demo = 0
+  let ok = 0, fail = 0, noImg = 0, linked = 0, demo = 0, skipped = 0
   for (const wp of posts) {
     Object.keys(wp.acf || {}).forEach(k => acfKeysSeen.add(k))
+    // Deterministic ID (wp-<type>-<wpId>) lets us skip existing docs before the
+    // expensive build/image-upload step.
+    if (newOnly && existingIds.has(`wp-${cfg.sanityType}-${wp.id}`)) { skipped++; continue }
     try {
       const doc = await cfg.build(wp, eng, ctx)
       if (!dryRun) await sanity.createOrReplace(doc)
@@ -381,9 +399,9 @@ async function migrateType(key, sanity, eng) {
       console.error(`  ❌ ${wp.slug}: ${err.message}`)
     }
   }
-  console.log(`\n  → ${ok} ${dryRun ? 'mapped' : 'written'}, ${fail} failed, ${noImg} without image, ${demo} with demo widget, ${linked} with relationships`)
+  console.log(`\n  → ${ok} ${dryRun ? 'mapped' : 'written'}${newOnly ? ` (new)` : ''}, ${skipped} skipped (already existed), ${fail} failed, ${noImg} without image, ${demo} with demo widget, ${linked} with relationships`)
   if (acfKeysSeen.size) console.log(`  → ACF keys present on these records:\n     ${[...acfKeysSeen].sort().join(', ')}`)
-  return { ok, fail }
+  return { ok, fail, skipped }
 }
 
 async function main() {
@@ -392,13 +410,14 @@ async function main() {
   const eng = createEngine({ sanity, wpBase: WP_BASE, dryRun })
   console.log(`\nSlotsguiden migration → project ${env['NEXT_PUBLIC_SANITY_PROJECT_ID']} / ${env['NEXT_PUBLIC_SANITY_DATASET'] || 'production'}`)
   console.log(dryRun ? '🧪 DRY RUN — nothing will be written to Sanity' : '✍️  LIVE — writing to Sanity')
+  if (newOnly) console.log('🆕 NEW-ONLY — existing documents are skipped, never overwritten')
   const keys = !typeArg ? ORDER : (typeArg === 'all' ? [...ORDER, 'posts', 'pages'] : [typeArg])
   for (const k of keys) {
     if (!TYPES[k]) { console.error(`Unknown type "${k}". Valid: ${Object.keys(TYPES).join(', ')}, all`); process.exit(1) }
   }
-  let totalOk = 0, totalFail = 0
-  for (const k of keys) { const r = await migrateType(k, sanity, eng); totalOk += r.ok; totalFail += r.fail }
-  console.log(`\n${'═'.repeat(60)}\n✨ Done. ${totalOk} records ${dryRun ? 'mapped' : 'imported'}, ${totalFail} failed.`)
+  let totalOk = 0, totalFail = 0, totalSkipped = 0
+  for (const k of keys) { const r = await migrateType(k, sanity, eng); totalOk += r.ok; totalFail += r.fail; totalSkipped += (r.skipped || 0) }
+  console.log(`\n${'═'.repeat(60)}\n✨ Done. ${totalOk} records ${dryRun ? 'mapped' : 'imported'}, ${totalSkipped} skipped, ${totalFail} failed.`)
   if (dryRun) console.log('Re-run without --dry-run to write to Sanity.')
 }
 

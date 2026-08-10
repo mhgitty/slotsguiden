@@ -96,7 +96,7 @@ export default async function PaymentMethodPage({ params }: Props) {
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px' }}>
             {comparisonTitle}
           </h2>
-          <CasinoComparisonTable casinos={comparisonCasinos} />
+          <CasinoComparisonTable casinos={comparisonCasinos} maxVisible={pm.comparisonLimit} />
         </div>
       )}
 

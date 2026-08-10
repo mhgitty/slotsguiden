@@ -35,6 +35,8 @@ interface CasinoComparisonTableProps {
   currency?: string
   /** Advertiser disclosure shown above the table. Pass null to hide. */
   disclosure?: string | null
+  /** Show only this many casinos; hide the rest behind a "Vis flere" button. */
+  maxVisible?: number
 }
 
 const DEFAULT_DISCLOSURE = 'Vi kan modtage provision fra disse casinoer · 18+ · Spil ansvarligt'
@@ -178,7 +180,7 @@ function LogoStack({ label, items, max = 4 }: { label: string; items: LogoRef[];
 }
 
 // ─── One casino row ─────────────────────────────────────────────────────────────
-function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
+function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: string; rank?: number }) {
   // All casinos live under /online-casino/.
   const reviewHref = `/online-casino/${casino.slug.current}/`
   const hasStats = casino.minIndbetaling != null || !!casino.gennemspilskrav
@@ -193,14 +195,29 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
       padding: '16px 20px 14px',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
     }}>
+      {/* Rank badge — top-left corner */}
+      {rank != null && (
+        <div style={{
+          position: 'absolute', top: '-12px', left: '14px', zIndex: 2,
+          minWidth: '26px', height: '26px', padding: '0 7px',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          background: rank === 1 ? 'var(--gold)' : 'var(--green)',
+          color: rank === 1 ? '#1a1a1a' : '#fff',
+          fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 800,
+          borderRadius: '13px', boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+        }}>
+          {rank}
+        </div>
+      )}
+
       {casino.usp && (
         <span style={{
-          position: 'absolute', top: '-11px', left: '18px',
+          position: 'absolute', top: '-11px', left: '52px',
           display: 'inline-flex', alignItems: 'center', gap: '5px',
           background: 'var(--btn)', color: '#fff',
           fontSize: '11.5px', fontWeight: 600, lineHeight: 1.3,
           padding: '3px 12px', borderRadius: '20px',
-          maxWidth: 'calc(100% - 36px)',
+          maxWidth: 'calc(100% - 70px)',
         }}>
           <Icon name="cup-star" size={12} color="#fff" />
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{casino.usp}</span>
@@ -321,8 +338,14 @@ function CasinoRow({ casino, currency }: { casino: Casino; currency: string }) {
 }
 
 // ─── Table ──────────────────────────────────────────────────────────────────────
-export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = DEFAULT_DISCLOSURE }: CasinoComparisonTableProps) {
+export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = DEFAULT_DISCLOSURE, maxVisible }: CasinoComparisonTableProps) {
+  const [expanded, setExpanded] = useState(false)
   if (!casinos?.length) return null
+
+  const limit = maxVisible && maxVisible > 0 ? maxVisible : casinos.length
+  const visible = expanded ? casinos : casinos.slice(0, limit)
+  const hidden = casinos.length - visible.length
+
   return (
     <div>
       {disclosure && (
@@ -341,10 +364,25 @@ export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = 
         </div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-        {casinos.map((c) => (
-          <CasinoRow key={c._id} casino={c} currency={currency} />
+        {visible.map((c, i) => (
+          <CasinoRow key={c._id} casino={c} currency={currency} rank={i + 1} />
         ))}
       </div>
+      {hidden > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '22px' }}>
+          <button
+            onClick={() => setExpanded(true)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              background: 'var(--bg-card)', border: '1px solid var(--btn)',
+              color: 'var(--green-dark)', fontWeight: 700, fontSize: '15px',
+              padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
+            }}
+          >
+            Vis flere ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
+          </button>
+        </div>
+      )}
     </div>
   )
 }

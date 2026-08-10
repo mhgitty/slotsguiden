@@ -93,7 +93,7 @@ export default async function SoftwareIndexPage() {
         <div className="section" style={{ paddingBottom: page.body ? '0' : undefined }}>
           {page.comparisonTableTitle && (
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px' }}>
-              {page.comparisonTableTitle}
+              {replaceDateVars(page.comparisonTableTitle)}
             </h2>
           )}
           <ComparisonTable data={page.comparisonTable} />

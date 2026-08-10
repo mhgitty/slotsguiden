@@ -147,6 +147,7 @@ const COMPARISON_TABLE_FRAGMENT = `
       indbetalingsbonus, minIndbetaling, gennemspilskrav,
       url, terms, market,
       "logo": logo { "url": asset->url, alt },
+      "logoSquare": logoSquare { "url": asset->url, alt },
       "paymentMethods": paymentMethods[]-> {
         _id, name, "slug": slug.current,
         "logo": logo { "url": asset->url, alt }
@@ -507,7 +508,7 @@ export async function getPaymentMethodBySlug(slug: string) {
       _id, name, titel, slug, withdrawalTime,
       paymentCategory, transactionFees, eligibleForBonuses,
       metaTitle, metaDescription,
-      showCasinoComparison, comparisonTitle,
+      showCasinoComparison, comparisonTitle, comparisonLimit,
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
@@ -559,7 +560,7 @@ export async function getSoftwareBySlug(slug: string) {
     `*[_type == "software" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, name, titel, slug, metaTitle, metaDescription,
       rtp, amountOfSlots, licenses, gameCategories, highestRtpSlot, bonusBuys,
-      showCasinoComparison, comparisonTitle,
+      showCasinoComparison, comparisonTitle, comparisonLimit,
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },

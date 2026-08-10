@@ -60,12 +60,12 @@ export function PaymentMethodHero({
     <div style={{
       background: 'var(--bg-hero)',
       borderBottom: '1px solid var(--border)',
-      padding: '40px 15px 36px',
+      padding: '16px 15px 36px',
     }}>
       <div style={{ maxWidth: '1250px', margin: '0 auto' }}>
 
         {/* Card */}
-        <div style={{
+        <div className="dochero-card" style={{
           background: 'var(--bg-card)',
           border: '1px solid var(--border)',
           borderRadius: '16px',
@@ -78,7 +78,7 @@ export function PaymentMethodHero({
 
           {/* Logo */}
           {logo?.url && (
-            <div style={{
+            <div className="dochero-logo" style={{
               width: '100px',
               height: '100px',
               background: '#fff',
@@ -102,7 +102,7 @@ export function PaymentMethodHero({
           )}
 
           {/* Info */}
-          <div style={{ flex: 1, minWidth: '240px' }}>
+          <div className="dochero-info" style={{ flex: 1, minWidth: '240px' }}>
             {/* Eyebrow */}
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',

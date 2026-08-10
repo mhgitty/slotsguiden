@@ -55,10 +55,10 @@ export function MobileMenu({ items }: { items: NavNode[] }) {
   // Close menu on route change
   useEffect(() => { setOpen(false) }, [pathname])
 
-  // Lock body scroll when open
+  // Lock body scroll + pin the navbar while open (see .menu-open in globals.css)
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    document.body.classList.toggle('menu-open', open)
+    return () => { document.body.classList.remove('menu-open') }
   }, [open])
 
   return (

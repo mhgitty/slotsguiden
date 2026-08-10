@@ -140,6 +140,14 @@ h1, h2, h3, h4, h5, h6 {
   .email-flyout-body { padding: 18px 16px 16px; }
 }
 
+/* ─── Payment/Software hero card — logo inline with title on mobile ───────── */
+@media (max-width: 640px) {
+  .dochero-card { padding: 18px !important; gap: 14px !important; flex-wrap: nowrap !important; }
+  .dochero-logo { width: 60px !important; height: 60px !important; padding: 8px !important; border-radius: 12px !important; }
+  .dochero-logo img { max-width: 100% !important; max-height: 100% !important; }
+  .dochero-info { min-width: 0 !important; }
+}
+
 /* ─── Sticky CTA bar (review pages) ──────────────────────────────────────── */
 .sticky-cta-inner {
   max-width: 1250px; margin: 0 auto; padding: 12px 15px;
@@ -518,10 +526,15 @@ footer {
   padding: 13px 4px;
   font-size: 15px;
   font-weight: 500;
-  color: var(--text);
+  color: #fff;
   text-decoration: none;
 }
 .mobile-menu-link:active { opacity: 0.7; }
+
+/* Keep the header (logo + close) visible while the menu is open, even when the
+   page is scrolled — body:overflow:hidden otherwise breaks position:sticky. */
+body.menu-open { overflow: hidden; }
+body.menu-open .navbar { position: fixed; top: 0; left: 0; right: 0; }
 
 /* Row with separate link + chevron toggle */
 .mobile-menu-link-row {
@@ -547,7 +560,7 @@ footer {
 
 .mobile-menu-chevron {
   flex-shrink: 0;
-  color: var(--text-muted);
+  color: rgba(255,255,255,0.75);
   transition: transform 0.2s ease;
 }
 .mobile-menu-chevron.open { transform: rotate(180deg); }
@@ -766,10 +779,11 @@ footer {
     gap: 16px !important;
   }
 
-  /* Casino comparison — compact layout on mobile */
+  /* Casino comparison — compact layout on mobile: stack everything so the
+     full casino title is visible (stats drop below the logo + title). */
   .casino-cmp-r1 {
-    grid-template-columns: 1fr auto !important;
-    grid-template-areas: "brand stats" "bonus bonus" "cta cta" !important;
+    grid-template-columns: 1fr !important;
+    grid-template-areas: "brand" "stats" "bonus" "cta" !important;
   }
   .casino-cmp-ministats {
     border-left: none !important;

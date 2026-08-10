@@ -62,6 +62,13 @@ export const paymentMethodType = defineType({
       description: 'Overskrift vist over sammenligningslisten. Efterlad tom for at bruge "Bedste casinoer med [navn]".',
     }),
     defineField({
+      name: 'comparisonLimit',
+      title: 'Antal casinoer før "Vis flere"',
+      type: 'number',
+      description: 'Vis kun dette antal casinoer i sammenligningslisten. Resten skjules bag en "Vis flere"-knap. Efterlad tom for at vise alle.',
+      validation: (r) => r.min(1).integer(),
+    }),
+    defineField({
       name: 'casinos',
       title: 'Casinoer i sammenligningslisten',
       type: 'array',
