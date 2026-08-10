@@ -518,6 +518,31 @@ export async function getPaymentMethodBySlug(slug: string) {
   )
 }
 
+// ─── Spillemaskiner (online slots) ─────────────────────────────────────────────
+
+export async function getSpillemaskiner() {
+  return client.fetch(
+    `*[_type == "spillemaskine" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) {
+      _id, name, titel, "slug": slug.current,
+      "date": coalesce(publishedAt, _createdAt),
+      "featuredImage": featuredImage { "url": asset->url, alt }
+    }`
+  )
+}
+
+export async function getSpillemaskineBySlug(slug: string) {
+  return client.fetch(
+    `*[_type == "spillemaskine" && slug.current == $slug && (market == "global" || !defined(market))][0] {
+      _id, name, titel, slug, metaTitle, metaDescription, publishedAt, lastUpdated,
+      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
+      "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
+      "featuredImage": featuredImage { "url": asset->url, alt },
+      "ogImage": ogImage { "url": asset->url, alt }
+    }`,
+    { slug }
+  )
+}
+
 // ─── Software ─────────────────────────────────────────────────────────────────
 
 export async function getSoftwareProviders() {

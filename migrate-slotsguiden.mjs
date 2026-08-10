@@ -18,8 +18,9 @@
  */
 import {
   loadEnv, makeSanity, createEngine, fetchAllCPT,
-  str, num, text, cleanText, slugToName, refArray, singleRef, estimateReadingTime,
+  str, num, text, cleanText, slugToName, refArray, singleRef, estimateReadingTime, uid,
 } from './migrate-lib.mjs'
+import { parse } from 'node-html-parser'
 
 const WP_BASE = 'https://slotsguiden.dk'
 
@@ -275,8 +276,74 @@ async function buildPage(wp, eng) {
   }
 }
 
+// ─── Spillemaskiner (game / unit) ───────────────────────────────────────────
+// These pages embed a self-contained game-demo widget (a <div id="...-wrapper">
+// with inline <style>/<script> + a Pragmatic Play demo <iframe>). The normal
+// HTML→Portable Text conversion drops scripts/iframes, so we lift that widget
+// OUT as raw HTML (an htmlBlock) and convert the rest of the article normally.
+function extractDemoHtml(html) {
+  let root
+  try { root = parse(html, { comment: false }) } catch { return { demoHtml: null, restHtml: html } }
+
+  const all = root.querySelectorAll('*')
+  let demoNode = null
+
+  // 1) Preferred: a container whose id ends in "-wrapper" (the demo widget root).
+  for (const el of all) {
+    const id = el.getAttribute && el.getAttribute('id')
+    if (id && /-wrapper$/i.test(id)) { demoNode = el; break }
+  }
+  // 2) Fallback: first block-level element that directly holds an <iframe> or a
+  //    non-JSON-LD <script> (the click-to-load demo player).
+  if (!demoNode) {
+    for (const el of all) {
+      if (!/^(DIV|SECTION)$/i.test(el.tagName || '')) continue
+      const iframe = el.querySelector('iframe')
+      const script = el.querySelector('script')
+      const isJsonLd = script && (script.getAttribute('type') || '') === 'application/ld+json'
+      if (iframe || (script && !isJsonLd)) { demoNode = el; break }
+    }
+  }
+
+  if (!demoNode) return { demoHtml: null, restHtml: html }
+
+  const demoHtml = demoNode.outerHTML
+  demoNode.remove()
+  // Drop any stray <script> left behind (e.g. standalone JSON-LD) — the route
+  // generates its own structured data.
+  root.querySelectorAll('script').forEach((s) => s.remove())
+  return { demoHtml, restHtml: root.toString() }
+}
+
+async function buildSpillemaskine(wp, eng) {
+  const slug = wp.slug
+  const name = cleanText(wp.title?.rendered || '') || slugToName(slug)
+  const content = wp.content?.rendered || ''
+  const { demoHtml, restHtml } = extractDemoHtml(content)
+
+  const articleBlocks = await eng.htmlToPortableText(restHtml)
+  const body = []
+  if (demoHtml) body.push({ _type: 'htmlBlock', _key: uid(), html: demoHtml })
+  body.push(...articleBlocks)
+
+  const featuredImage = await eng.imageField(featuredId(wp))
+  const yoast = wp.yoast_head_json || {}
+  return {
+    _id: `wp-spillemaskine-${wp.id}`, _type: 'spillemaskine',
+    name, titel: name,
+    slug: { _type: 'slug', current: slug }, market: 'global',
+    ...(featuredImage ? { featuredImage, ogImage: featuredImage } : {}),
+    ...(body.length ? { body } : {}),
+    ...(wp.date_gmt ? { publishedAt: new Date(wp.date_gmt + 'Z').toISOString() } : {}),
+    ...(wp.modified_gmt ? { lastUpdated: new Date(wp.modified_gmt + 'Z').toISOString() } : {}),
+    ...(yoast.title ? { metaTitle: yoast.title } : {}),
+    ...(yoast.description ? { metaDescription: yoast.description } : {}),
+  }
+}
+
 const TYPES = {
   bookmakers: { restBase: 'casinoer', label: '🎰 Casinoer → bookmaker', build: buildBookmaker },
+  spillemaskiner: { restBase: 'unit', label: '🎰 Spillemaskiner → spillemaskine', build: buildSpillemaskine },
   bonuses: { restBase: 'casino-bonusser', label: '🎁 Casino bonusser → bonus', build: buildBonus },
   payment: { restBase: 'betalingsmetoder', label: '💳 Betalingsmetoder → paymentMethod', build: buildPayment },
   software: { restBase: 'spiludviklere', label: '🎮 Spiludviklere → software', build: buildSoftware },
@@ -294,7 +361,7 @@ async function migrateType(key, sanity, eng) {
   console.log(`  Found ${posts.length} records${LIMIT ? ` (limited to ${LIMIT})` : ''}\n`)
   const ctx = cfg.prepare ? await cfg.prepare(posts, { sanity, eng, dryRun }) : {}
   const acfKeysSeen = new Set()
-  let ok = 0, fail = 0, noImg = 0, linked = 0
+  let ok = 0, fail = 0, noImg = 0, linked = 0, demo = 0
   for (const wp of posts) {
     Object.keys(wp.acf || {}).forEach(k => acfKeysSeen.add(k))
     try {
@@ -303,16 +370,18 @@ async function migrateType(key, sanity, eng) {
       ok++
       const hasImg = !!(doc.logo || doc.casinoLogo || doc.featuredImage || doc.ogImage)
       if (!hasImg) noImg++
+      const hasDemo = Array.isArray(doc.body) && doc.body.some(b => b && b._type === 'htmlBlock')
+      if (hasDemo) demo++
       const refs = (doc.paymentMethods?.length || 0) + (doc.software?.length || 0) + (doc.aktuelleBonusser?.length || 0) + (doc.casinos?.length || 0) + (doc.bookmaker ? 1 : 0) + (doc.category ? 1 : 0) + (doc.author ? 1 : 0)
       if (refs) linked++
-      const flags = [hasImg ? 'img' : 'no-img', refs ? `${refs} refs` : ''].filter(Boolean).join(' · ')
+      const flags = [hasImg ? 'img' : 'no-img', hasDemo ? 'demo ✓' : 'no-demo', refs ? `${refs} refs` : ''].filter(Boolean).join(' · ')
       console.log(`  ${dryRun ? '·' : '✅'} ${doc._id}  ${doc.name || doc.title}  [${flags}]`)
     } catch (err) {
       fail++
       console.error(`  ❌ ${wp.slug}: ${err.message}`)
     }
   }
-  console.log(`\n  → ${ok} ${dryRun ? 'mapped' : 'written'}, ${fail} failed, ${noImg} without image, ${linked} with relationships`)
+  console.log(`\n  → ${ok} ${dryRun ? 'mapped' : 'written'}, ${fail} failed, ${noImg} without image, ${demo} with demo widget, ${linked} with relationships`)
   if (acfKeysSeen.size) console.log(`  → ACF keys present on these records:\n     ${[...acfKeysSeen].sort().join(', ')}`)
   return { ok, fail }
 }

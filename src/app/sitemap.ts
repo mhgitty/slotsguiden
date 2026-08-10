@@ -11,7 +11,7 @@ function lastMod(date?: string): { lastModified: Date } | Record<string, never> 
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, pages, bookmakers, paymentMethods, software, casinoGuides] = await Promise.all([
+  const [posts, pages, bookmakers, paymentMethods, software, casinoGuides, spillemaskiner, bonuses] = await Promise.all([
 
     client.fetch<Array<{ slug: { current: string }; publishedAt?: string; lastUpdated?: string }>>(
       `*[_type == "post" && defined(slug.current) && defined(publishedAt)] | order(publishedAt desc) { slug, publishedAt, lastUpdated }`
@@ -42,6 +42,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     client.fetch<Array<{ slug: { current: string }; _updatedAt?: string }>>(
       `*[_type == "casinoGuide" && defined(slug.current)] { slug, _updatedAt }`
+    ).catch(() => []),
+
+    client.fetch<Array<{ slug: { current: string }; _updatedAt?: string }>>(
+      `*[_type == "spillemaskine" && defined(slug.current) && (market == "global" || !defined(market))] { slug, _updatedAt }`
+    ).catch(() => []),
+
+    client.fetch<Array<{ slug: { current: string }; _updatedAt?: string }>>(
+      `*[_type == "bonus" && defined(slug.current) && (market == "global" || !defined(market))] { slug, _updatedAt }`
     ).catch(() => []),
   ])
 
@@ -75,6 +83,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...lastMod(g._updatedAt),
   }))
 
+  // ── Spillemaskine (online slot) URLs ────────────────────────────────────────────
+  const spillemaskineEntries: MetadataRoute.Sitemap = spillemaskiner.map((s) => ({
+    url: `${BASE}/online-spillemaskiner/${s.slug.current}/`,
+    ...lastMod(s._updatedAt),
+  }))
+
+  // ── Casino campaign (bonus) URLs ─────────────────────────────────────────────────
+  const bonusEntries: MetadataRoute.Sitemap = bonuses.map((b) => ({
+    url: `${BASE}/casino-kampagner/${b.slug.current}/`,
+    ...lastMod(b._updatedAt),
+  }))
+
   return [
     // ── Root index pages (no fake lastmod) ──
     { url: `${BASE}/` },
@@ -82,12 +102,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/betalingsmetoder/` },
     { url: `${BASE}/spiludviklere/` },
     { url: `${BASE}/casino-guides/` },
+    { url: `${BASE}/online-spillemaskiner/` },
+    { url: `${BASE}/casino-kampagner/` },
+    { url: `${BASE}/blog/` },
 
     // ── Dynamic content (real lastmod from Sanity _updatedAt) ──
     ...bookmakerEntries,
     ...paymentEntries,
     ...softwareEntries,
     ...guideEntries,
+    ...spillemaskineEntries,
+    ...bonusEntries,
     ...posts.map((p) => ({
       url: `${BASE}/${p.slug.current}/`,
       ...lastMod(p.lastUpdated ?? p.publishedAt),

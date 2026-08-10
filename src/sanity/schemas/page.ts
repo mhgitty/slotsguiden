@@ -140,6 +140,21 @@ export const bodyField = defineField({
     },
     {
       type: 'object',
+      name: 'htmlBlock',
+      title: 'HTML (raw embed)',
+      fields: [
+        { name: 'html', title: 'HTML', type: 'text', rows: 12, description: 'Raw HTML embed rendered as-is — including <script>, <iframe> and inline CSS. Used e.g. for the game demo widget.' },
+      ],
+      preview: {
+        select: { html: 'html' },
+        prepare({ html }: any) {
+          const s = String(html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+          return { title: '⧉ HTML embed', subtitle: s.slice(0, 60) || 'Tom' }
+        },
+      },
+    },
+    {
+      type: 'object',
       name: 'calloutBlock',
       title: 'Info / Tip / Quote box',
       fields: [
