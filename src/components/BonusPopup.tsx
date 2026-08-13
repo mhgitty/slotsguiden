@@ -77,11 +77,11 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
             )}
 
             {/* Name + stats */}
-            <div style={{ minWidth: 0 }}>
+            <div className="bonus-popup-info" style={{ minWidth: 0 }}>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '17px', fontWeight: 700, color: 'var(--text)', margin: '0 0 8px' }}>
                 {name}
               </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
+              <div className="bonus-popup-stats" style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
                 {bonus.minimumIndbetaling != null && <Stat icon="wallet" label="Min. indbetaling" value={`${bonus.minimumIndbetaling} kr.`} />}
                 {bonus.gennemspilskrav && <Stat icon="refresh-circle" label="Omsætningskrav" value={bonus.gennemspilskrav} />}
               </div>

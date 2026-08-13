@@ -102,13 +102,18 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 820px) {
   .bonus-popup-overlay { padding: 0 10px 12px; }
   .bonus-popup { flex-direction: column; border-radius: 14px; }
-  .bonus-popup-badge { padding: 11px 14px; flex-direction: row; justify-content: flex-start; align-items: center; gap: 7px; font-size: 17px; }
-  .bonus-popup-main { flex-direction: column; text-align: center; gap: 14px; padding: 16px; }
-  .bonus-popup-offer { margin-left: 0; width: 100%; padding: 14px; }
-  .bonus-popup-terms { text-align: center; padding: 10px 16px 14px; font-size: 10px; }
-  .bonus-popup-close { top: 8px; right: 10px; color: rgba(255,255,255,0.9); }
-  .bonus-popup-logo { width: 56px; height: 56px; }
-  .bonus-popup-headline { font-size: 18px; margin-bottom: 12px; }
+  .bonus-popup-badge { padding: 9px 14px; flex-direction: row; justify-content: flex-start; align-items: center; gap: 7px; font-size: 15px; }
+  /* Compact: logo + name + stats on one row; offer wraps to a full-width row below */
+  .bonus-popup-main { flex-direction: row; flex-wrap: wrap; align-items: center; text-align: left; gap: 10px 12px; padding: 12px 14px; }
+  .bonus-popup-info { flex: 1; min-width: 0; }
+  .bonus-popup-info h3 { font-size: 14px !important; margin: 0 0 5px !important; }
+  .bonus-popup-stats { flex-direction: row !important; flex-wrap: wrap; gap: 4px 16px !important; }
+  .bonus-popup-stats span { font-size: 12px !important; }
+  .bonus-popup-offer { margin-left: 0; flex-basis: 100%; width: 100%; padding: 12px; }
+  .bonus-popup-terms { text-align: left; padding: 8px 14px 12px; font-size: 8px; line-height: 1.45; }
+  .bonus-popup-close { top: 7px; right: 9px; font-size: 22px; color: rgba(255,255,255,0.9); }
+  .bonus-popup-logo { width: 44px; height: 44px; }
+  .bonus-popup-headline { font-size: 15px; margin-bottom: 9px; }
 }
 
 /* ─── Email flyout (Klaviyo) ─────────────────────────────────────────────── */
