@@ -67,7 +67,7 @@ h1, h2, h3, h4, h5, h6 {
 .bonus-popup {
   pointer-events: auto;
   position: relative;
-  width: 100%; max-width: 1000px;
+  width: 100%; max-width: 700px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 16px; overflow: hidden;
@@ -79,17 +79,17 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
   background: var(--green); color: #fff;
   display: flex; flex-direction: column; justify-content: center;
-  padding: 32px 44px;
-  font-family: var(--font-display); font-size: 27px; line-height: 1.2; font-weight: 500;
+  padding: 20px 26px;
+  font-family: var(--font-display); font-size: 19px; line-height: 1.2; font-weight: 500;
 }
 .bonus-popup-badge strong { font-weight: 800; }
 .bonus-popup-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.bonus-popup-main { display: flex; align-items: center; gap: 24px; padding: 24px 28px; }
-.bonus-popup-logo { width: 72px; height: 72px; border-radius: 12px; overflow: hidden; background: #1a1a2e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.bonus-popup-headline { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--text); text-align: center; margin-bottom: 14px; line-height: 1.2; }
-.bonus-popup-offer { margin-left: auto; flex-shrink: 0; width: 320px; max-width: 100%; }
+.bonus-popup-main { display: flex; align-items: center; gap: 16px; padding: 16px 20px; }
+.bonus-popup-logo { width: 52px; height: 52px; border-radius: 11px; overflow: hidden; background: #1a1a2e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bonus-popup-headline { font-family: var(--font-display); font-size: 17px; font-weight: 800; color: var(--text); text-align: center; margin-bottom: 10px; line-height: 1.2; }
+.bonus-popup-offer { margin-left: auto; flex-shrink: 0; width: 240px; max-width: 100%; }
 .bonus-popup-terms {
-  padding: 12px 28px 16px; font-size: 10.5px; color: var(--text-faint); line-height: 1.5;
+  padding: 8px 20px 12px; font-size: 10px; color: var(--text-faint); line-height: 1.5;
   border-top: 1px solid var(--border-faint);
 }
 .bonus-popup-close {
@@ -114,7 +114,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ─── Email flyout (Klaviyo) ─────────────────────────────────────────────── */
 .email-flyout {
   position: fixed; right: 20px; bottom: 20px; z-index: 90;
-  width: 420px; max-width: calc(100vw - 32px);
+  width: 344px; max-width: calc(100vw - 32px);
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 16px; overflow: hidden;
   box-shadow: 0 12px 40px rgba(0,0,0,0.28);
@@ -122,12 +122,12 @@ h1, h2, h3, h4, h5, h6 {
   animation: sg-popup-in 0.3s ease;
 }
 .email-flyout-img {
-  flex-shrink: 0; width: 130px;
+  flex-shrink: 0; width: 104px;
   background: linear-gradient(160deg, var(--green) 0%, var(--green-dark) 100%);
   background-size: cover; background-position: center; background-repeat: no-repeat;
   display: flex; align-items: center; justify-content: center;
 }
-.email-flyout-body { flex: 1; min-width: 0; padding: 22px 22px 20px; }
+.email-flyout-body { flex: 1; min-width: 0; padding: 18px 18px 16px; }
 .email-flyout-close {
   position: absolute; top: 10px; right: 12px;
   background: transparent; border: none; cursor: pointer;

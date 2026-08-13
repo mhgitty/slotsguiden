@@ -24,9 +24,9 @@ const DELAY_MS = 4000
 function Stat({ icon, label, value }: { icon: string; label: string; value: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-      <Icon name={icon} size={18} color="var(--green)" style={{ flexShrink: 0 }} />
-      <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{label}:</span>
-      <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{value}</span>
+      <Icon name={icon} size={16} color="var(--green)" style={{ flexShrink: 0 }} />
+      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{label}:</span>
+      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text)' }}>{value}</span>
     </div>
   )
 }
@@ -78,7 +78,7 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
 
             {/* Name + stats */}
             <div style={{ minWidth: 0 }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 700, color: 'var(--text)', margin: '0 0 10px' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '17px', fontWeight: 700, color: 'var(--text)', margin: '0 0 8px' }}>
                 {name}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
@@ -93,8 +93,8 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
                 <div className="bonus-popup-headline">{headline}</div>
               )}
               <a href={bonus.offerUrl || '#'} target="_blank" rel="nofollow sponsored noopener noreferrer"
-                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--btn)', color: '#fff', fontWeight: 700, fontSize: '16px', padding: '14px', borderRadius: '9px', textDecoration: 'none' }}>
-                Få bonus nu <Icon name="alt-arrow-right" size={16} color="#fff" />
+                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--btn)', color: '#fff', fontWeight: 700, fontSize: '15px', padding: '12px', borderRadius: '9px', textDecoration: 'none' }}>
+                Få bonus nu <Icon name="alt-arrow-right" size={15} color="#fff" />
               </a>
             </div>
           </div>
