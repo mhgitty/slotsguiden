@@ -354,7 +354,7 @@ export async function getPopupBonus() {
 export async function getBonusBySlug(slug: string) {
   return client.fetch(
     `*[_type == "bonus" && slug.current == $slug && (market == "global" || !defined(market))][0] {
-      _id, title, slug, body, metaTitle, metaDescription,
+      _id, title, slug, body, metaTitle, metaDescription, schemaAudience,
       minimumOdds, minimumIndbetaling, gennemspilskrav,
       maksGevinst, bonuskode, spinVaerdi,
       offerUrl, terms, casinoNavn,

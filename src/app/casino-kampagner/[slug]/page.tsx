@@ -69,6 +69,30 @@ export default async function BonusPage({ params }: Props) {
   const logo = b.casinoLogoSquare?.url ? b.casinoLogoSquare : (b.casinoLogo?.url ? b.casinoLogo : b.bookmaker?.logo)
   const canonical = `${BASE}/casino-kampagner/${slug}/`
 
+  // Auto-generated Offer schema for this bonus (mirrors the WordPress script).
+  const offerDescription = replaceDateVars(b.metaDescription || b.terms || '')
+  const audienceType = b.schemaAudience || 'Existing customers'
+  const offerSchema = {
+    '@type': 'Offer',
+    name: title,
+    url: canonical,
+    ...(offerDescription ? { description: offerDescription } : {}),
+    ...(casinoName ? { seller: { '@type': 'Organization', name: casinoName } } : {}),
+    itemOffered: {
+      '@type': 'Service',
+      name: title,
+      ...(casinoName ? { provider: { '@type': 'Organization', name: casinoName } } : {}),
+      areaServed: 'DK',
+      audience: { '@type': 'PeopleAudience', audienceType },
+    },
+    eligibleCustomerType: 'http://purl.org/goodrelations/v1#Enduser',
+    priceSpecification: { '@type': 'UnitPriceSpecification', price: 0, priceCurrency: 'DKK', valueAddedTaxIncluded: true },
+    additionalProperty: [
+      { '@type': 'PropertyValue', name: 'Wagering', value: b.gennemspilskrav || '0x' },
+      { '@type': 'PropertyValue', name: 'Minimum indbetaling', value: b.minimumIndbetaling != null ? `${b.minimumIndbetaling} kr.` : '0 kr.' },
+    ],
+  }
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -81,6 +105,7 @@ export default async function BonusPage({ params }: Props) {
         ],
       },
       { '@type': 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: title, inLanguage: 'da-DK', publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE } },
+      offerSchema,
     ],
   }
 

@@ -238,6 +238,15 @@ export const bonusType = defineType({
     defineField({ name: 'metaTitle',       title: 'Meta title',       type: 'string',             group: 'seo' }),
     defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3,      group: 'seo' }),
     defineField({
+      name: 'schemaAudience',
+      title: 'Målgruppe (Offer-schema)',
+      type: 'string',
+      group: 'seo',
+      description: 'Bruges i den automatiske Offer-schema. Vælg om tilbuddet er til nye eller eksisterende kunder.',
+      options: { list: [{ title: 'Eksisterende kunder', value: 'Existing customers' }, { title: 'Nye kunder', value: 'New customers' }], layout: 'radio' },
+      initialValue: 'Existing customers',
+    }),
+    defineField({
       name: 'ogImage',
       title: 'OG image',
       type: 'image',
