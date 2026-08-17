@@ -94,7 +94,7 @@ function LogoTile({ item, size = 28 }: { item: LogoRef; size?: number }) {
 }
 
 // ─── Logo stack: overlapping logos + "+N" → tooltip listing all ──────────────────
-export function LogoStack({ label, items, max = 4 }: { label: string; items: LogoRef[]; max?: number }) {
+export function LogoStack({ label, items, max = 4, hrefBase }: { label: string; items: LogoRef[]; max?: number; hrefBase?: string }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -119,17 +119,26 @@ export function LogoStack({ label, items, max = 4 }: { label: string; items: Log
         onMouseLeave={() => setOpen(false)}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {shown.map((it, i) => (
-            <div key={it._id} style={{
-              marginLeft: i === 0 ? 0 : '-9px',
-              borderRadius: '10px',
-              boxShadow: '0 0 0 2px var(--bg-card)',
-              position: 'relative',
-              zIndex: shown.length - i,
-            }}>
-              <LogoTile item={it} size={28} />
-            </div>
-          ))}
+          {shown.map((it, i) => {
+            const href = hrefBase && it.slug ? `${hrefBase}/${it.slug}/` : null
+            return (
+              <div key={it._id} style={{
+                marginLeft: i === 0 ? 0 : '-9px',
+                borderRadius: '10px',
+                boxShadow: '0 0 0 2px var(--bg-card)',
+                position: 'relative',
+                zIndex: shown.length - i,
+              }}>
+                {href ? (
+                  <Link href={href} title={it.name} style={{ display: 'block' }}>
+                    <LogoTile item={it} size={28} />
+                  </Link>
+                ) : (
+                  <LogoTile item={it} size={28} />
+                )}
+              </div>
+            )
+          })}
           {extra > 0 && (
             <button
               type="button"
@@ -158,16 +167,26 @@ export function LogoStack({ label, items, max = 4 }: { label: string; items: Log
               {label} · {items.length}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-              {items.map((it) => (
-                <div key={it._id} style={{
+              {items.map((it) => {
+                const href = hrefBase && it.slug ? `${hrefBase}/${it.slug}/` : null
+                const rowStyle: React.CSSProperties = {
                   display: 'flex', alignItems: 'center', gap: '5px',
                   background: 'var(--bg-raised)', border: '1px solid var(--border-faint)',
                   borderRadius: '7px', padding: '3px 8px 3px 4px',
-                }}>
-                  <LogoTile item={it} size={18} />
-                  <span style={{ fontSize: '11.5px', color: 'var(--text)', whiteSpace: 'nowrap' }}>{it.name}</span>
-                </div>
-              ))}
+                  textDecoration: 'none', color: 'var(--text)',
+                }
+                const content = (
+                  <>
+                    <LogoTile item={it} size={18} />
+                    <span style={{ fontSize: '11.5px', color: 'var(--text)', whiteSpace: 'nowrap' }}>{it.name}</span>
+                  </>
+                )
+                return href ? (
+                  <Link key={it._id} href={href} style={rowStyle}>{content}</Link>
+                ) : (
+                  <div key={it._id} style={rowStyle}>{content}</div>
+                )
+              })}
             </div>
             <div style={{
               position: 'absolute', top: '100%', right: '14px', width: 0, height: 0,
@@ -329,10 +348,10 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
           {terms}
         </div>
         <div style={{ gridArea: 'payments', minWidth: 0 }}>
-          <LogoStack label="Betalingsmetoder" items={casino.paymentMethods || []} />
+          <LogoStack label="Betalingsmetoder" items={casino.paymentMethods || []} hrefBase="/betalingsmetoder" />
         </div>
         <div style={{ gridArea: 'software', minWidth: 0 }}>
-          <LogoStack label="Spiludviklere" items={casino.software || []} />
+          <LogoStack label="Spiludviklere" items={casino.software || []} hrefBase="/spiludviklere" />
         </div>
       </div>
     </div>

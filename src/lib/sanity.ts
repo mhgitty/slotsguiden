@@ -266,8 +266,12 @@ export async function getCategories() {
 // ─── Bookmakers ───────────────────────────────────────────────────────────────
 
 export async function getBookmakers() {
+  // Only real, reviewed casinos: those with an actual score. This excludes the
+  // legacy "/go/" affiliate-redirect stubs that carry a name + URL but no
+  // score, logo or bonus data (which otherwise sorted to the top and rendered
+  // as empty cards on the homepage listings).
   return clientNoCdn.fetch(
-    `*[_type == "bookmaker" && (market == "global" || !defined(market))] | order(score desc, name asc) {
+    `*[_type == "bookmaker" && (market == "global" || !defined(market)) && defined(score)] | order(score desc, name asc) {
       _id, name, slug, usp, score,
       indbetalingsbonus, minIndbetaling,
       gennemspilskrav, url, terms,
@@ -495,6 +499,7 @@ export async function getPaymentMethods() {
     `*[_type == "paymentMethod" && (market == "global" || !defined(market))] | order(name asc) {
       _id, name, slug, paymentCategory,
       transactionFees, withdrawalTime, eligibleForBonuses,
+      "casinoCount": count(*[_type == "bookmaker" && references(^._id) && defined(score)]),
       "logo": logo { "url": asset->url, alt }
     }`
   )
@@ -557,6 +562,7 @@ export async function getSoftwareProviders() {
   return client.fetch(
     `*[_type == "software" && (market == "global" || !defined(market))] | order(name asc) {
       _id, name, slug, rtp, amountOfSlots, gameCategories,
+      "casinoCount": count(*[_type == "bookmaker" && references(^._id) && defined(score)]),
       "logo": logo { "url": asset->url, alt }
     }`
   )

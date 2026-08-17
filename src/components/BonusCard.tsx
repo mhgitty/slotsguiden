@@ -185,10 +185,10 @@ export function BonusCard({
           {shownTerms}
         </div>
         <div style={{ gridArea: 'payments', minWidth: 0 }}>
-          <LogoStack label="Betalingsmetoder" items={paymentMethods} />
+          <LogoStack label="Betalingsmetoder" items={paymentMethods} hrefBase="/betalingsmetoder" />
         </div>
         <div style={{ gridArea: 'software', minWidth: 0 }}>
-          <LogoStack label="Spiludviklere" items={software} />
+          <LogoStack label="Spiludviklere" items={software} hrefBase="/spiludviklere" />
         </div>
       </div>
     </div>

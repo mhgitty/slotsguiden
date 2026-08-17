@@ -310,9 +310,6 @@ function ProviderCardsSection({
             {section.title}
           </h2>
         )}
-        <Link href={seeAllHref} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--green)', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          {seeAllLabel} →
-        </Link>
       </div>
 
       {/* Optional rich intro */}
@@ -379,7 +376,7 @@ function ProviderCardsSection({
               </div>
 
               {/* Casino count */}
-              {item.casinoCount != null && (
+              {item.casinoCount > 0 && (
                 <div style={{ fontSize: '14px', color: 'var(--text-muted)', width: '100%' }}>
                   <strong style={{ color: 'var(--text)', fontWeight: 700 }}>{item.casinoCount}</strong>
                   {' '}{casinoLabel}

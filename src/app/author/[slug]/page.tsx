@@ -4,7 +4,11 @@ import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
 import { Icon } from '@/components/Icon'
+import { blocksToPlainText } from '@/lib/dateVars'
 import { getAuthorBySlug, getPostsByAuthor, getAuthorPaths } from '@/lib/sanity'
+
+// author.intro is Portable Text; author.bio is a plain string.
+const introText = (a: any): string => (Array.isArray(a?.intro) ? blocksToPlainText(a.intro) : (a?.intro || a?.bio || ''))
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -25,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const author = await getAuthorBySlug(slug).catch(() => null)
   if (!author) return {}
   const title = author.metaTitle || `${author.name} — ${author.role || 'Forfatter'} på Slotsguiden`
-  const description = author.metaDescription || author.intro || author.bio || `Artikler og anmeldelser af ${author.name}.`
+  const description = author.metaDescription || introText(author) || `Artikler og anmeldelser af ${author.name}.`
   return {
     title,
     description,
@@ -62,7 +66,7 @@ export default async function AuthorPage({ params }: Props) {
         name: author.name,
         url: `${BASE}/author/${slug}/`,
         jobTitle: author.role,
-        description: author.intro || author.bio,
+        description: introText(author),
         ...(author.imageUrl ? { image: author.imageUrl } : {}),
         ...(author.linkedin ? { sameAs: [author.linkedin] } : {}),
       },
@@ -177,11 +181,11 @@ export default async function AuthorPage({ params }: Props) {
                 </div>
               )}
 
-              {(author.intro || author.bio) && (
+              {introText(author) && (
                 <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '16px 20px' }}>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>Sammenfatning</div>
                   <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, margin: 0, whiteSpace: 'pre-line' }}>
-                    {author.intro || author.bio}
+                    {introText(author)}
                   </p>
                 </div>
               )}
