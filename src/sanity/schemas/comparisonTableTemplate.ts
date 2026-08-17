@@ -86,6 +86,21 @@ export const comparisonTableTemplateType = defineType({
       ],
       hidden: ({ document }: any) => document?.tableType !== 'bookmaker',
     }),
+    defineField({
+      name: 'showMoreButton',
+      title: 'Vis "Se flere casinoer"-knap',
+      type: 'boolean',
+      description: 'Vis kun et bestemt antal i listen, og skjul resten bag en "Se flere casinoer"-knap.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'visibleCount',
+      title: 'Antal vist før knappen',
+      type: 'number',
+      description: 'Hvor mange rækker der vises som standard, før "Se flere casinoer"-knappen. Kun aktiv når knappen er slået til.',
+      validation: (r) => r.min(1).integer(),
+      hidden: ({ document }: any) => !document?.showMoreButton,
+    }),
   ],
   preview: {
     select: {

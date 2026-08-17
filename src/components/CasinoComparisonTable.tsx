@@ -35,8 +35,10 @@ interface CasinoComparisonTableProps {
   currency?: string
   /** Advertiser disclosure shown above the table. Pass null to hide. */
   disclosure?: string | null
-  /** Show only this many casinos; hide the rest behind a "Vis flere" button. */
+  /** Show only this many casinos; hide the rest behind a "show more" button. */
   maxVisible?: number
+  /** Label for the show-more button. */
+  moreLabel?: string
 }
 
 const DEFAULT_DISCLOSURE = 'Vi kan modtage provision fra disse casinoer · 18+ · Spil ansvarligt'
@@ -338,7 +340,7 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
 }
 
 // ─── Table ──────────────────────────────────────────────────────────────────────
-export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = DEFAULT_DISCLOSURE, maxVisible }: CasinoComparisonTableProps) {
+export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = DEFAULT_DISCLOSURE, maxVisible, moreLabel = 'Se flere casinoer' }: CasinoComparisonTableProps) {
   const [expanded, setExpanded] = useState(false)
   if (!casinos?.length) return null
 
@@ -379,7 +381,7 @@ export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = 
               padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
             }}
           >
-            Vis flere ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
+            {moreLabel} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
           </button>
         </div>
       )}

@@ -133,7 +133,7 @@ export async function getPostBySlug(slug: string) {
 const COMPARISON_TABLE_FRAGMENT = `
   showComparisonTable, comparisonTableTitle,
   "comparisonTable": comparisonTemplate-> {
-    tableType,
+    tableType, showMoreButton, visibleCount,
     bonuses[]-> {
       _id, title, slug, active,
       oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,

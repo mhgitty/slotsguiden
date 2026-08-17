@@ -65,16 +65,7 @@ export function PaymentMethodHero({
       <div style={{ maxWidth: '1250px', margin: '0 auto' }}>
 
         {/* Card */}
-        <div className="dochero-card" style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          borderRadius: '16px',
-          padding: '32px',
-          display: 'flex',
-          gap: '32px',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-        }}>
+        <div className="dochero-card">
 
           {/* Logo */}
           {logo?.url && (
@@ -88,7 +79,6 @@ export function PaymentMethodHero({
               alignItems: 'center',
               justifyContent: 'center',
               padding: '12px',
-              flexShrink: 0,
               boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
             }}>
               <Image
@@ -101,9 +91,8 @@ export function PaymentMethodHero({
             </div>
           )}
 
-          {/* Info */}
-          <div className="dochero-info" style={{ flex: 1, minWidth: '240px' }}>
-            {/* Eyebrow */}
+          {/* Title: eyebrow + H1 */}
+          <div className="dochero-titles">
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
               background: 'rgba(10,95,62,0.1)', color: 'var(--green)',
@@ -114,8 +103,6 @@ export function PaymentMethodHero({
             }}>
               Betalingsmetode
             </div>
-
-            {/* Name */}
             <h1 style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(22px, 3vw, 36px)',
@@ -123,27 +110,29 @@ export function PaymentMethodHero({
               color: 'var(--text)',
               letterSpacing: '-0.03em',
               lineHeight: 1.1,
-              marginBottom: intro?.length ? '16px' : activeStats.length > 0 ? '24px' : '0',
+              margin: 0,
             }}>
               {title}
             </h1>
-
-            {/* Intro text */}
-            {intro && intro.length > 0 && (
-              <div style={{ marginBottom: activeStats.length > 0 ? '24px' : '0', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.7 }}>
-                <PortableTextRenderer value={intro} />
-              </div>
-            )}
-
-            {/* Stats row */}
-            {activeStats.length > 0 && (
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                {activeStats.map((stat) => (
-                  <StatBox key={stat.label} label={stat.label} value={stat.value!} />
-                ))}
-              </div>
-            )}
           </div>
+
+          {/* Body: intro + stats (full width) */}
+          {(intro?.length || activeStats.length > 0) && (
+            <div className="dochero-body">
+              {intro && intro.length > 0 && (
+                <div style={{ marginBottom: activeStats.length > 0 ? '20px' : '0', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.7 }}>
+                  <PortableTextRenderer value={intro} />
+                </div>
+              )}
+              {activeStats.length > 0 && (
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  {activeStats.map((stat) => (
+                    <StatBox key={stat.label} label={stat.label} value={stat.value!} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </div>

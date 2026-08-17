@@ -145,12 +145,33 @@ h1, h2, h3, h4, h5, h6 {
   .email-flyout-body { padding: 18px 16px 16px; }
 }
 
-/* ─── Payment/Software hero card — logo inline with title on mobile ───────── */
+/* ─── Payment/Software hero card ─────────────────────────────────────────── */
+/* Desktop: logo spans both rows (beside the title + body).
+   Mobile: logo sits next to the title only, body spans full width below. */
+.dochero-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "logo titles" "logo body";
+  column-gap: 32px;
+  row-gap: 18px;
+  align-items: start;
+}
+.dochero-logo   { grid-area: logo; }
+.dochero-titles { grid-area: titles; min-width: 0; }
+.dochero-body   { grid-area: body; min-width: 0; }
 @media (max-width: 640px) {
-  .dochero-card { padding: 18px !important; gap: 14px !important; flex-wrap: nowrap !important; }
+  .dochero-card {
+    padding: 18px;
+    grid-template-areas: "logo titles" "body body";
+    column-gap: 14px;
+    row-gap: 14px;
+  }
   .dochero-logo { width: 60px !important; height: 60px !important; padding: 8px !important; border-radius: 12px !important; }
   .dochero-logo img { max-width: 100% !important; max-height: 100% !important; }
-  .dochero-info { min-width: 0 !important; }
 }
 
 /* ─── Sticky CTA bar (review pages) ──────────────────────────────────────── */
