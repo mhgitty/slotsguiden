@@ -23,7 +23,7 @@ interface Props {
   seeAllLabel?: string
 }
 
-export function GuidesArchive({ guides, hrefPrefix = '/casino-guides', title = 'Alle casinoguider', intro, seeAllHref, seeAllLabel = 'Se alle casinoguider' }: Props) {
+export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle casinoguider', intro, seeAllHref, seeAllLabel = 'Se alle casinoguider' }: Props) {
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {

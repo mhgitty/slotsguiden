@@ -133,7 +133,7 @@ export async function getPostBySlug(slug: string) {
 const COMPARISON_TABLE_FRAGMENT = `
   showComparisonTable, comparisonTableTitle,
   "comparisonTable": comparisonTemplate-> {
-    tableType, showMoreButton, visibleCount,
+    tableType, showMoreButton, visibleCount, moreButtonLabel,
     bonuses[]-> {
       _id, title, slug, active,
       oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
@@ -515,7 +515,7 @@ export async function getPaymentMethodBySlug(slug: string) {
       _id, name, titel, slug, withdrawalTime,
       paymentCategory, transactionFees, eligibleForBonuses,
       metaTitle, metaDescription,
-      showCasinoComparison, comparisonTitle, comparisonLimit,
+      showCasinoComparison, comparisonTitle, comparisonLimit, comparisonMoreLabel,
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
@@ -567,7 +567,7 @@ export async function getSoftwareBySlug(slug: string) {
     `*[_type == "software" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, name, titel, slug, metaTitle, metaDescription,
       rtp, amountOfSlots, licenses, gameCategories, highestRtpSlot, bonusBuys,
-      showCasinoComparison, comparisonTitle, comparisonLimit,
+      showCasinoComparison, comparisonTitle, comparisonLimit, comparisonMoreLabel,
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
@@ -719,7 +719,7 @@ export function relatedItemHref(item: RelatedItem): string {
       return `/${segments.join('/')}/`
     }
     case 'casinoGuide':
-      return `/casino-guides/${slug}/`
+      return `/guides/${slug}/`
     case 'paymentMethod':
       return `/betalingsmetoder/${slug}/`
     case 'software':

@@ -12,25 +12,25 @@ interface ComparisonTableData {
   bookmakers?: any[]
   showMoreButton?: boolean
   visibleCount?: number
+  moreButtonLabel?: string
 }
 
 interface ComparisonTableProps {
   data?: ComparisonTableData | null
 }
 
-const MORE_LABEL = 'Se flere casinoer'
-
 export function ComparisonTable({ data }: ComparisonTableProps) {
   const [expanded, setExpanded] = useState(false)
   if (!data) return null
 
   const limit = data.showMoreButton && data.visibleCount && data.visibleCount > 0 ? data.visibleCount : undefined
+  const moreLabel = data.moreButtonLabel?.trim() || 'Se flere casinoer'
 
   // ── Bookmaker list ──────────────────────────────────────────────────────────
   if (data.tableType === 'bookmaker') {
     const items = data.bookmakers || []
     if (!items.length) return null
-    return <CasinoComparisonTable casinos={items} maxVisible={limit} moreLabel={MORE_LABEL} />
+    return <CasinoComparisonTable casinos={items} maxVisible={limit} moreLabel={moreLabel} />
   }
 
   // ── Bonus list ──────────────────────────────────────────────────────────────
@@ -55,7 +55,7 @@ export function ComparisonTable({ data }: ComparisonTableProps) {
               padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
             }}
           >
-            {MORE_LABEL} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
+            {moreLabel} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
           </button>
         </div>
       )}

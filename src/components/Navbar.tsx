@@ -23,7 +23,7 @@ function resolveUrl(item: {
   if (item.softwareSlug) return `/spiludviklere/${item.softwareSlug}/`
   if (item.paymentMethodSlug) return `/betalingsmetoder/${item.paymentMethodSlug}/`
   if (item.postSlug) return `/${item.postSlug}/`
-  if (item.casinoGuideSlug) return `/casino-guides/${item.casinoGuideSlug}/`
+  if (item.casinoGuideSlug) return `/guides/${item.casinoGuideSlug}/`
   return item.url || '/'
 }
 

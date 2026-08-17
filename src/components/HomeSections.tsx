@@ -443,7 +443,7 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
   const listBase   = '/online-casino/'
   const payBase    = '/betalingsmetoder'
   const softBase   = '/spiludviklere'
-  const guideBase  = '/casino-guides'
+  const guideBase  = '/guides'
 
   return (
     <>

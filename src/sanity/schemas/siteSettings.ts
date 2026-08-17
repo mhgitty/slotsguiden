@@ -73,7 +73,7 @@ const navPreview = {
       : softwareRef ? `/spiludviklere/${softwareRef}/`
       : paymentMethodRef ? `/betalingsmetoder/${paymentMethodRef}/`
       : postRef ? `/${postRef}/`
-      : casinoGuideRef ? `/casino-guides/${casinoGuideRef}/`
+      : casinoGuideRef ? `/guides/${casinoGuideRef}/`
       : url
     const hasChildren = children?.length > 0
     return { title: `${hasChildren ? '▾ ' : ''}${title || 'Uden titel'}`, subtitle: resolved }

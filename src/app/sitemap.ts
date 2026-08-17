@@ -79,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ── Casino guide URLs ──────────────────────────────────────────────────────────
   const guideEntries: MetadataRoute.Sitemap = casinoGuides.map((g) => ({
-    url: `${BASE}/casino-guides/${g.slug.current}/`,
+    url: `${BASE}/guides/${g.slug.current}/`,
     ...lastMod(g._updatedAt),
   }))
 
@@ -101,7 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/online-casino/` },
     { url: `${BASE}/betalingsmetoder/` },
     { url: `${BASE}/spiludviklere/` },
-    { url: `${BASE}/casino-guides/` },
+    { url: `${BASE}/guides/` },
     { url: `${BASE}/online-spillemaskiner/` },
     { url: `${BASE}/casino-kampagner/` },
     { url: `${BASE}/blog/` },

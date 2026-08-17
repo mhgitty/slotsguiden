@@ -79,11 +79,18 @@ export const softwareType = defineType({
     }),
     defineField({
       name: 'comparisonLimit',
-      title: 'Antal casinoer før "Vis flere"',
+      title: 'Antal casinoer før knappen',
       type: 'number',
       group: 'general',
-      description: 'Vis kun dette antal casinoer i sammenligningslisten. Resten skjules bag en "Vis flere"-knap. Efterlad tom for at vise alle.',
+      description: 'Vis kun dette antal casinoer i sammenligningslisten. Resten skjules bag en knap. Efterlad tom for at vise alle.',
       validation: (r) => r.min(1).integer(),
+    }),
+    defineField({
+      name: 'comparisonMoreLabel',
+      title: 'Knaptekst (Se flere)',
+      type: 'string',
+      group: 'general',
+      description: 'Teksten på knappen. Efterlad tom for at bruge "Se flere casinoer". Antallet tilføjes automatisk.',
     }),
     defineField({
       name: 'casinos',
