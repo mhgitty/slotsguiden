@@ -89,7 +89,7 @@ export async function Navbar({ navItems, logoHref = '/' }: { navItems?: Resolved
           {nav.map((item) => {
             const inner = (
               <>
-                {item.icon && <Icon name={item.icon} size={16} style={{ flexShrink: 0, opacity: 0.8 }} />}
+                {item.icon && <Icon name={item.icon} size={16} color="#ffffff" style={{ flexShrink: 0 }} />}
                 {item.label}
               </>
             )
@@ -108,7 +108,7 @@ export async function Navbar({ navItems, logoHref = '/' }: { navItems?: Resolved
               <div key={item.href + item.label} className="nav-item-dropdown">
                 <Link href={item.href} className={`nav-link nav-link-has-children${item.isHighlighted ? ' nav-link-cta' : ''}`}>
                   {inner}
-                  <Icon name="alt-arrow-down" size={14} style={{ marginLeft: '2px', flexShrink: 0, opacity: 0.5 }} />
+                  <Icon name="alt-arrow-down" size={14} color="#ffffff" style={{ marginLeft: '2px', flexShrink: 0, opacity: 0.7 }} />
                 </Link>
                 <div className="nav-dropdown">
                   <NavDropdownTree items={item.children} />

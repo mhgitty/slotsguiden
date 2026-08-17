@@ -56,6 +56,32 @@ h1, h2, h3, h4, h5, h6 {
 .section         { max-width: 1250px; margin: 0 auto; padding: 48px 15px; }
 .section-narrow  { max-width: 760px;  margin: 0 auto; padding: 48px 15px; }
 
+/* ─── CTA button hover effect ────────────────────────────────────────────── */
+/* Applies to affiliate CTAs (rel="…sponsored"), the nav CTA and form submits. */
+a[rel~="sponsored"],
+.nav-link-cta,
+button[type="submit"] {
+  transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.18s ease !important;
+  will-change: transform;
+}
+a[rel~="sponsored"]:hover,
+.nav-link-cta:hover,
+button[type="submit"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 24px rgba(10,95,62,0.30) !important;
+  filter: brightness(1.07) saturate(1.05) !important;
+}
+a[rel~="sponsored"]:active,
+.nav-link-cta:active,
+button[type="submit"]:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 4px 12px rgba(10,95,62,0.22) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  a[rel~="sponsored"], .nav-link-cta, button[type="submit"] { transition: none !important; }
+  a[rel~="sponsored"]:hover, .nav-link-cta:hover, button[type="submit"]:hover { transform: none !important; }
+}
+
 /* ─── Bonus pop-up ───────────────────────────────────────────────────────── */
 @keyframes sg-popup-in { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
 .bonus-popup-overlay {
