@@ -1,59 +1,117 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { HeroSection } from '@/components/HeroSection'
+import { ComparisonTable } from '@/components/ComparisonTable'
+import { AuthorBio } from '@/components/AuthorBio'
+import { PortableTextRenderer } from '@/components/PortableTextRenderer'
+import { TableOfContents } from '@/components/TableOfContents'
+import { MobileToc } from '@/components/MobileToc'
 import { JsonLd } from '@/components/JsonLd'
-import { client } from '@/lib/sanity'
-import Link from 'next/link'
-import Image from 'next/image'
+import { HreflangLinks } from '@/components/HreflangLinks'
+import { RelatedPages } from '@/components/RelatedPages'
+import { BonusGrid } from '@/components/BonusGrid'
+import { getPageBySlug, getSiteSettings } from '@/lib/sanity'
+import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
+import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export const revalidate = 3600
+
 const BASE = 'https://slotsguiden.dk'
 const CANONICAL = `${BASE}/casino-kampagner/`
+const SLUG = 'casino-kampagner'
 
-export const metadata: Metadata = {
-  title: 'Casino kampagner & bonusser',
-  description: 'Se de nyeste casino kampagner, free spins og bonusser fra danske onlinecasinoer.',
-  alternates: { canonical: CANONICAL },
-  openGraph: { title: 'Casino kampagner & bonusser', description: 'Se de nyeste casino kampagner, free spins og bonusser.', url: CANONICAL, type: 'website' },
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug(SLUG).catch(() => null)
+  const title = replaceDateVars(page?.metaTitle || page?.title || 'Casino kampagner')
+  const description = replaceDateVars(page?.metaDescription || blocksToPlainText(page?.intro))
+  const ogImg = (page as any)?.ogImage
+  return {
+    title, description,
+    alternates: { canonical: CANONICAL },
+    openGraph: { title, description, url: CANONICAL, type: 'article', images: ogImg?.url ? [{ url: ogImg.url }] : [{ url: `${BASE}/og.png` }] },
+  }
 }
 
 export default async function CasinoKampagnerPage() {
-  const bonuses = await client.fetch<any[]>(
-    `*[_type == "bonus" && defined(slug.current) && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) {
-      _id, title, "slug": slug.current, casinoNavn,
-      "logo": coalesce(casinoLogoSquare, casinoLogo) { "url": asset->url, alt },
-      "date": coalesce(publishedAt, _createdAt)
-    }`
-  ).catch(() => [])
+  const [page, settings] = await Promise.all([
+    getPageBySlug(SLUG).catch(() => null),
+    getSiteSettings().catch(() => null),
+  ])
+  if (!page) notFound()
+  const author = (page as any).author ?? settings?.defaultAuthor ?? null
+
+  const crumbLabel = ((page.slug as any)?.current || SLUG).replace(/-/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())
 
   const jsonLd = {
-    '@context': 'https://schema.org', '@type': 'WebPage', '@id': `${CANONICAL}#webpage`,
-    url: CANONICAL, name: 'Casino kampagner & bonusser', inLanguage: 'da-DK',
-    publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Hjem', item: BASE },
+          { '@type': 'ListItem', position: 2, name: crumbLabel, item: CANONICAL },
+        ],
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${CANONICAL}#webpage`,
+        url: CANONICAL,
+        name: page.title,
+        description: blocksToPlainText(page.intro),
+        inLanguage: 'da-DK',
+        publisher: { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
+      },
+    ],
   }
 
   return (
     <>
       <JsonLd data={jsonLd} />
+      <HreflangLinks docId={(page as any)?._id} />
       <Navbar />
-      <div className="section">
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3.4vw, 36px)', fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, marginBottom: '24px' }}>
-          Casino kampagner & bonusser
-        </h1>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '14px' }}>
-          {bonuses.map((b) => (
-            <Link key={b._id} href={`/casino-kampagner/${b.slug}/`} style={{ display: 'flex', alignItems: 'center', gap: '14px', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', background: 'var(--bg-card)', textDecoration: 'none' }}>
-              {b.logo?.url && (
-                <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0, borderRadius: '9px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                  <Image src={b.logo.url} alt={b.logo.alt ?? b.casinoNavn ?? ''} fill style={{ objectFit: 'cover' }} sizes="44px" />
-                </div>
-              )}
-              <span style={{ fontSize: '14.5px', fontWeight: 600, color: 'var(--text)', lineHeight: 1.35 }}>{b.title}</span>
-            </Link>
-          ))}
+      <HeroSection
+        title={page.title}
+        intro={page.intro}
+        author={author}
+        factChecker={page.factChecker}
+        updatedAt={page.lastUpdated}
+        breadcrumbs={[{ label: 'Hjem', href: '/' }, { label: crumbLabel }]}
+      />
+
+      {page.showBonusGrid && <BonusGrid title={page.bonusGridTitle} />}
+
+      {page.showComparisonTable && page.comparisonTable && (
+        <div className="section" style={{ paddingBottom: page.body ? '0' : undefined }}>
+          {page.comparisonTableTitle && (
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px' }}>
+              {replaceDateVars(page.comparisonTableTitle)}
+            </h2>
+          )}
+          <ComparisonTable data={page.comparisonTable} />
         </div>
-      </div>
+      )}
+
+      {page.body && (
+        <div className="article-layout">
+          <article className="article-content">
+            <MobileToc body={page.body} />
+            <PortableTextRenderer value={page.body} />
+          </article>
+          <aside className="toc-sidebar">
+            <TableOfContents body={page.body} />
+          </aside>
+        </div>
+      )}
+
+      {author && (
+        <div className="section" style={{ paddingTop: '0' }}>
+          <AuthorBio author={author} compact />
+        </div>
+      )}
+
       <Footer />
+      <RelatedPages docId={page?._id} />
     </>
   )
 }
