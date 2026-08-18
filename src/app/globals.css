@@ -776,6 +776,29 @@ body.menu-open .navbar { position: fixed; top: 0; left: 0; right: 0; }
   box-shadow: 0 0 0 3px rgba(10,95,62,0.08);
 }
 
+/* ── Slot / spillemaskine cards ─────────────────────────────────────────────── */
+.slot-card {
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+.slot-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--green);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+.slot-card__media { overflow: hidden; }
+.slot-card__media img { transition: transform 0.35s ease; }
+.slot-card:hover .slot-card__media img { transform: scale(1.06); }
+.slot-card__play {
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+.slot-card:hover .slot-card__play { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .slot-card, .slot-card__media img { transition: none; }
+  .slot-card:hover { transform: none; }
+  .slot-card:hover .slot-card__media img { transform: none; }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    MOBILE — ≤ 768px
    ═══════════════════════════════════════════════════════════════════════════ */
