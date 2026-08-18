@@ -12,6 +12,7 @@ interface Casino {
   indbetalingsbonus?: string
   url?: string
   logo?: { url?: string; alt?: string }
+  logoSquare?: { url?: string; alt?: string }
 }
 
 interface Props {
@@ -104,6 +105,9 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '18px' }}>
           {filtered.map((c) => {
             const href = `${hrefPrefix}/${c.slug.current}/`
+            const square = c.logoSquare?.url ? c.logoSquare : null
+            const logo = square || (c.logo?.url ? c.logo : null)
+            const isSquare = !!square
             return (
               <div key={c._id} style={{
                 background: 'var(--bg-card)', border: '1px solid var(--border)',
@@ -114,10 +118,12 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
                   padding: '22px', minHeight: '104px', borderBottom: '1px solid var(--border)',
                   textDecoration: 'none',
                 }}>
-                  {c.logo?.url ? (
+                  {logo?.url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={c.logo.url} alt={c.logo.alt || c.name}
-                      style={{ maxWidth: '150px', maxHeight: '60px', objectFit: 'contain', borderRadius: '8px', display: 'block' }} />
+                    <img src={logo.url} alt={logo.alt || c.name}
+                      style={isSquare
+                        ? { width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px', display: 'block' }
+                        : { maxWidth: '150px', maxHeight: '60px', objectFit: 'contain', borderRadius: '8px', display: 'block' }} />
                   ) : (
                     <span style={{ fontSize: '15px', fontWeight: 700, color: '#1f2937' }}>{c.name}</span>
                   )}

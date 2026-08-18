@@ -275,7 +275,8 @@ export async function getBookmakers() {
       _id, name, slug, usp, score,
       indbetalingsbonus, minIndbetaling,
       gennemspilskrav, url, terms,
-      "logo": logo { "url": asset->url, alt }
+      "logo": logo { "url": asset->url, alt },
+      "logoSquare": logoSquare { "url": asset->url, alt }
     }`
   )
 }
