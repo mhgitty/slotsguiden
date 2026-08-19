@@ -191,7 +191,7 @@ const PAGE_FIELDS = `
       "imageUrl": image.asset->url,
       "bonus": bonus-> {
         "name": coalesce(bookmaker->name, casinoNavn, title),
-        "bonusText": coalesce(velkomstbonusTitel, oddsBonusTitel, indbetalingsbonusTitel, title),
+        "bonusText": coalesce(oddsBonusTitel, title),
         "logoUrl": coalesce(casinoLogo.asset->url, bookmaker->logo.asset->url),
         "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
         "score": bookmaker->score,
@@ -348,7 +348,7 @@ export async function getPopupBonus() {
     `*[_type == "bonus" && showInPopup == true && (market == "global" || !defined(market)) && (!defined(kampagneSlut) || kampagneSlut >= now())] | order(coalesce(publishedAt, _createdAt) desc)[0] {
       _id,
       "name": coalesce(casinoNavn, bookmaker->name),
-      "headline": coalesce(velkomstbonusTitel, indbetalingsbonusTitel, casinoBonusTitel, oddsBonusTitel, title),
+      "headline": coalesce(oddsBonusTitel, title),
       minimumIndbetaling, gennemspilskrav, offerUrl, terms,
       "slug": slug.current,
       "logo": coalesce(casinoLogoSquare, casinoLogo) { "url": asset->url, alt }
