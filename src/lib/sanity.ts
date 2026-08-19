@@ -132,6 +132,7 @@ export async function getPostBySlug(slug: string) {
 // We expand the reference inline so the frontend gets the same data shape.
 const COMPARISON_TABLE_FRAGMENT = `
   showComparisonTable, comparisonTableTitle,
+  showComparisonHeroButton, comparisonHeroButtonText,
   "comparisonTable": comparisonTemplate-> {
     tableType, showMoreButton, visibleCount, moreButtonLabel,
     bonuses[]-> {
@@ -316,6 +317,30 @@ export async function getBonuses(limit = 50) {
   )
 }
 
+/** All bonuses that have a detail page — used for the author page listing.
+ *  Not limited to active, since it's an authorship archive, not a live offer list. */
+export async function getBonusesForListing(limit = 300) {
+  return client.fetch(
+    `*[_type == "bonus" && (market == "global" || !defined(market)) && defined(slug.current)] | order(coalesce(publishedAt, _createdAt) desc) [0...$limit] {
+      _id,
+      "title": coalesce(oddsBonusTitel, title),
+      "slug": slug.current,
+      "casinoName": coalesce(casinoNavn, bookmaker->name),
+      "score": bookmaker->score,
+      "logo": coalesce(casinoLogoSquare, casinoLogo, bookmaker->logoSquare, bookmaker->logo) { "url": asset->url, alt }
+    }`,
+    { limit }
+  )
+}
+
+/** The primary author = the one with the most posts. Used as a fallback for
+ *  "main author" gating when Site Settings → Default author isn't set yet. */
+export async function getPrimaryAuthorId(): Promise<string | null> {
+  return client.fetch(
+    `*[_type == "author"]{ _id, "n": count(*[_type == "post" && references(^._id)]) } | order(n desc, _createdAt asc)[0]._id`
+  )
+}
+
 // Keep old name as alias for any existing usage
 export async function getFreeSpinsGridBonuses() {
   return client.fetch(
@@ -394,7 +419,7 @@ export const getSiteSettings = cache(async () => {
       "logoUrl": logo.asset->url,
       "logoWhiteUrl": logoWhite.asset->url,
       "defaultAuthor": defaultAuthor-> {
-        name, slug, bio, linkedin, x, facebook,
+        _id, name, slug, bio, linkedin, x, facebook,
         "imageUrl": image.asset->url
       },
       ${headerNavProjection()},

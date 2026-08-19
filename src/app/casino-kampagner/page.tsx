@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { HeroSection } from '@/components/HeroSection'
+import { buildHeroQuickLinks } from '@/lib/heroQuickLinks'
 import { ComparisonTable } from '@/components/ComparisonTable'
 import { AuthorBio } from '@/components/AuthorBio'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
@@ -72,6 +73,7 @@ export default async function CasinoKampagnerPage() {
       <Navbar />
       <HeroSection
         title={page.title}
+        quickLinks={buildHeroQuickLinks(page)}
         intro={page.intro}
         author={author}
         factChecker={page.factChecker}

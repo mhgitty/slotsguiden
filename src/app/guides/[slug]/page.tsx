@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { HeroSection } from '@/components/HeroSection'
+import { buildHeroQuickLinks } from '@/lib/heroQuickLinks'
 import { AuthorBio } from '@/components/AuthorBio'
 import { ComparisonTable } from '@/components/ComparisonTable'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
@@ -82,6 +83,7 @@ export default async function CasinoGuidePage({ params }: Props) {
       <Navbar />
       <HeroSection
         title={guide.title}
+        quickLinks={buildHeroQuickLinks(guide)}
         intro={(guide as any).intro ?? undefined}
         author={author}
         factChecker={factChecker}

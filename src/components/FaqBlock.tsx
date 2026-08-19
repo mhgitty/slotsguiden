@@ -21,7 +21,7 @@ export function FaqBlock({ value }: FaqBlockProps) {
   } : null
 
   return (
-    <div style={{ margin: '32px 0' }}>
+    <div id="faq" className="scroll-anchor" style={{ margin: '32px 0' }}>
       {faqSchema && (
         <script
           type="application/ld+json"

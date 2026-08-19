@@ -776,6 +776,18 @@ body.menu-open .navbar { position: fixed; top: 0; left: 0; right: 0; }
   box-shadow: 0 0 0 3px rgba(10,95,62,0.08);
 }
 
+/* ── Hero quick links + smooth in-page scrolling ────────────────────────────── */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+.hero-quick-link { transition: filter 0.15s ease, background-color 0.15s ease, color 0.15s ease, transform 0.15s ease; }
+.hero-quick-link:hover { transform: translateY(-1px); filter: brightness(1.05); }
+/* outline variant fills green on hover */
+.hero-quick-link[data-variant="outline"]:hover { background: var(--green); color: #fff; }
+/* offset in-page scroll targets so the sticky navbar doesn't cover them */
+.scroll-anchor { scroll-margin-top: 90px; }
+
 /* ── Slot / spillemaskine cards ─────────────────────────────────────────────── */
 .slot-card {
   transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;

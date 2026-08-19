@@ -5,7 +5,7 @@ interface ProsConsBlockProps { value: { title?: string; pros?: string[]; cons?: 
 export function ProsConsBlock({ value }: ProsConsBlockProps) {
   const { title, pros = [], cons = [] } = value
   return (
-    <div style={{ margin: '24px 0' }}>
+    <div id="pros-cons" className="scroll-anchor" style={{ margin: '24px 0' }}>
       {title && <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 700, color: 'var(--text)', marginBottom: '16px' }}>{title}</h3>}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
         <div style={{ background: 'rgba(10,95,62,0.08)', border: '1px solid rgba(10,95,62,0.2)', borderRadius: '8px', padding: '16px 20px' }}>

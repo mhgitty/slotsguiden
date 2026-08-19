@@ -2,6 +2,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { HeroSection } from '@/components/HeroSection'
+import { buildHeroQuickLinks } from '@/lib/heroQuickLinks'
 import { AuthorBar } from '@/components/AuthorBar'
 import { AuthorBio } from '@/components/AuthorBio'
 import { ComparisonTable } from '@/components/ComparisonTable'
@@ -218,6 +219,7 @@ export default async function SlugPage({ params }: Props) {
       <Navbar />
       <HeroSection
         title={page.title}
+        quickLinks={buildHeroQuickLinks(page)}
         intro={page.intro}
         author={author}
         factChecker={page.factChecker}

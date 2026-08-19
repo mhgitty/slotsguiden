@@ -30,7 +30,11 @@ export function ComparisonTable({ data }: ComparisonTableProps) {
   if (data.tableType === 'bookmaker') {
     const items = data.bookmakers || []
     if (!items.length) return null
-    return <CasinoComparisonTable casinos={items} maxVisible={limit} moreLabel={moreLabel} />
+    return (
+      <div id="sammenligning" className="scroll-anchor">
+        <CasinoComparisonTable casinos={items} maxVisible={limit} moreLabel={moreLabel} />
+      </div>
+    )
   }
 
   // ── Bonus list ──────────────────────────────────────────────────────────────
@@ -40,7 +44,7 @@ export function ComparisonTable({ data }: ComparisonTableProps) {
   const hidden = items.length - visible.length
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div id="sammenligning" className="scroll-anchor" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {visible.map((bonus: any, i: number) => (
         <BonusCard key={bonus._id} {...bonus} rank={i + 1} />
       ))}
