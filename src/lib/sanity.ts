@@ -284,7 +284,7 @@ export async function getBookmakers() {
 export async function getBookmakerBySlug(slug: string) {
   return clientNoCdn.fetch(
     `*[_type == "bookmaker" && slug.current == $slug && (market == "global" || !defined(market))][0] {
-      _id, titel, name, slug, usp, score, trustpilot, freeSpinsBonus,
+      _id, _createdAt, _updatedAt, titel, name, slug, usp, score, trustpilot, freeSpinsBonus,
       indbetalingsbonus, minIndbetaling, gennemspilskrav,
       url, terms, lanceringsdato, license, body,
       "logo": logo { "url": asset->url, alt },

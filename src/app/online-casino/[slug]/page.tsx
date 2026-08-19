@@ -133,9 +133,33 @@ export default async function ReviewPage({ params }: Props) {
       },
       {
         '@type': 'Review',
-        itemReviewed: { '@type': 'Organization', name: bm.name, url: bm.url },
-        reviewRating: bm.score != null ? { '@type': 'Rating', ratingValue: bm.score, bestRating: 10 } : undefined,
-        author: { '@type': 'Organization', name: 'Slotsguiden' },
+        name: `${bm.name} anmeldelse`,
+        itemReviewed: {
+          '@type': 'Organization',
+          name: bm.name,
+          url: bm.url,
+          ...(bm.ogImage?.url || bm.logoSquare?.url || bm.logo?.url
+            ? { image: bm.ogImage?.url || bm.logoSquare?.url || bm.logo?.url }
+            : {}),
+        },
+        reviewRating: bm.score != null
+          ? { '@type': 'Rating', ratingValue: bm.score, bestRating: 10, worstRating: 1 }
+          : undefined,
+        author: author?.name
+          ? {
+              '@type': 'Person',
+              name: author.name,
+              ...(author.slug?.current ? { url: `${BASE}/author/${author.slug.current}/` } : {}),
+            }
+          : { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Slotsguiden',
+          url: BASE,
+          logo: { '@type': 'ImageObject', url: `${BASE}/logo.webp` },
+        },
+        ...(bm._createdAt ? { datePublished: (bm._createdAt as string).slice(0, 10) } : {}),
+        ...(bm._updatedAt ? { dateModified: (bm._updatedAt as string).slice(0, 10) } : {}),
         url: canonical,
       },
     ],
