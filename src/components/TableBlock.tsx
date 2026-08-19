@@ -24,7 +24,7 @@ export function TableBlock({ value }: { value: TableBlockValue }) {
                   <th key={i} style={{
                     background: 'var(--bg-navbar)', borderBottom: '2px solid var(--border)',
                     padding: '10px 16px', textAlign: 'left',
-                    fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)',
+                    fontFamily: 'var(--font-display)', fontWeight: 600, color: '#fff',
                     whiteSpace: 'nowrap', fontSize: '13.5px',
                   }}>
                     {h}
