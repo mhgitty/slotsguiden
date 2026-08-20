@@ -167,6 +167,7 @@ export const bonusType = defineType({
       type: 'text',
       rows: 3,
       group: 'details',
+      description: 'HTML is allowed (e.g. <a href="…">links</a> to the operator T&C).',
     }),
     defineField({
       name: 'bonuskode',

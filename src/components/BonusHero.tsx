@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Icon } from '@/components/Icon'
+import { Terms } from './Terms'
 import { Breadcrumbs } from './Breadcrumbs'
 
 interface BonusHeroProps {
@@ -168,7 +169,7 @@ export function BonusHero({
             </a>
             {terms && (
               <p style={{ fontSize: '10px', color: 'var(--text-faint)', margin: '10px 0 0', lineHeight: 1.5 }}>
-                {terms}
+                <Terms html={terms} />
               </p>
             )}
           </div>

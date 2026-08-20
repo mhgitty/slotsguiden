@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { Icon } from '@/components/Icon'
+import { Terms } from '@/components/Terms'
 import { replaceDateVars } from '@/lib/dateVars'
 
 export interface PopupBonus {
@@ -101,7 +102,7 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
 
           {/* Terms */}
           {bonus.terms && (
-            <div className="bonus-popup-terms">{bonus.terms}</div>
+            <div className="bonus-popup-terms"><Terms html={bonus.terms} /></div>
           )}
         </div>
       </div>

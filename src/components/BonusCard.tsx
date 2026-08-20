@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Icon } from './Icon'
 import { LogoStack, ScoreBadge, LABEL, type LogoRef } from './CasinoComparisonTable'
+import { Terms } from './Terms'
 
 interface BonusCardProps {
   _id: string
@@ -182,7 +183,7 @@ export function BonusCard({
         marginTop: '12px', paddingTop: '11px', borderTop: '1px solid var(--border-faint)',
       }}>
         <div className="casino-cmp-terms" style={{ gridArea: 'terms', minWidth: 0, fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.45 }}>
-          {shownTerms}
+          <Terms html={shownTerms} />
         </div>
         <div style={{ gridArea: 'payments', minWidth: 0 }}>
           <LogoStack label="Betalingsmetoder" items={paymentMethods} hrefBase="/betalingsmetoder" />

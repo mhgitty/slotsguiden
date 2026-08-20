@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { Terms } from './Terms'
 
 interface BookmakerCardProps {
   _id: string
@@ -156,7 +157,7 @@ export function BookmakerCard({
           borderTop: '1px solid var(--border-faint)',
           fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.5,
         }}>
-          {terms}
+          <Terms html={terms} />
         </div>
       )}
     </div>

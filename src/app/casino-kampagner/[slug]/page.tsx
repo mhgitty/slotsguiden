@@ -5,8 +5,10 @@ import { MobileToc } from '@/components/MobileToc'
 import { TableOfContents } from '@/components/TableOfContents'
 import { JsonLd } from '@/components/JsonLd'
 import { Icon } from '@/components/Icon'
+import { Terms } from '@/components/Terms'
 import { getBonusBySlug, client } from '@/lib/sanity'
 import { replaceDateVars } from '@/lib/dateVars'
+import { stripHtml } from '@/lib/sanitizeHtml'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -38,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const b: any = await getBonusBySlug(slug).catch(() => null)
   if (!b) return {}
   const title = replaceDateVars(b.metaTitle || b.title)
-  const description = replaceDateVars(b.metaDescription || b.terms || '')
+  const description = replaceDateVars(b.metaDescription || stripHtml(b.terms) || '')
   const canonical = `${BASE}/casino-kampagner/${slug}/`
   const img = b.ogImage?.url || b.kampagneBillede?.url
   return {
@@ -70,7 +72,7 @@ export default async function BonusPage({ params }: Props) {
   const canonical = `${BASE}/casino-kampagner/${slug}/`
 
   // Auto-generated Offer schema for this bonus (mirrors the WordPress script).
-  const offerDescription = replaceDateVars(b.metaDescription || b.terms || '')
+  const offerDescription = replaceDateVars(b.metaDescription || stripHtml(b.terms) || '')
   const audienceType = b.schemaAudience || 'Existing customers'
   const offerSchema = {
     '@type': 'Offer',
@@ -161,7 +163,7 @@ export default async function BonusPage({ params }: Props) {
 
           {/* Terms */}
           {b.terms && (
-            <p style={{ fontSize: '11.5px', color: 'var(--text-faint)', lineHeight: 1.6, marginTop: '18px', paddingTop: '16px', borderTop: '1px solid var(--border-faint)' }}>{b.terms}</p>
+            <p style={{ fontSize: '11.5px', color: 'var(--text-faint)', lineHeight: 1.6, marginTop: '18px', paddingTop: '16px', borderTop: '1px solid var(--border-faint)' }}><Terms html={b.terms} /></p>
           )}
         </div>
       </div>

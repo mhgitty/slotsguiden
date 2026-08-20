@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Icon } from '@/components/Icon'
 import { RichIntro } from '@/components/RichIntro'
+import { Terms } from '@/components/Terms'
 import { CasinoReviewsArchive } from '@/components/CasinoReviewsArchive'
 import { GuidesArchive } from '@/components/GuidesArchive'
 import {
@@ -99,7 +100,7 @@ function CasinoListSection({ bookmakers, section, reviewBase, listBase }: {
                   <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--green)' }}>{bm.indbetalingsbonus}</div>
                 )}
                 {bm.terms && (
-                  <div style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '4px', lineHeight: 1.4 }}>{bm.terms}</div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '4px', lineHeight: 1.4 }}><Terms html={bm.terms} /></div>
                 )}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 0 }}>

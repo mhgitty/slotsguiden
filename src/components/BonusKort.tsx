@@ -1,4 +1,5 @@
 import { PortableText } from '@portabletext/react'
+import { Terms } from './Terms'
 
 const bodyComponents = {
   block: { normal: ({ children }: any) => <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 8px', lineHeight: 1.65 }}>{children}</p> },
@@ -82,7 +83,7 @@ export function BonusKort({ value }: { value: BonusKortData }) {
 
         {/* Terms */}
         {bonus.terms && (
-          <p style={{ fontSize: '10px', color: 'var(--text-faint)', margin: 0, lineHeight: 1.5 }}>{bonus.terms}</p>
+          <p style={{ fontSize: '10px', color: 'var(--text-faint)', margin: 0, lineHeight: 1.5 }}><Terms html={bonus.terms} /></p>
         )}
 
       </div>

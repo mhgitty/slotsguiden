@@ -776,6 +776,14 @@ body.menu-open .navbar { position: fixed; top: 0; left: 0; right: 0; }
   box-shadow: 0 0 0 3px rgba(10,95,62,0.08);
 }
 
+/* ── Terms & conditions inline HTML (links to operator T&C) ──────────────────── */
+.terms-html a {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.terms-html a:hover { filter: brightness(1.15); }
+
 /* ── Hero quick links + smooth in-page scrolling ────────────────────────────── */
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {

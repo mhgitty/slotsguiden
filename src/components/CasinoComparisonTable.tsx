@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Icon } from './Icon'
+import { Terms } from './Terms'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 export interface LogoRef {
@@ -345,7 +346,7 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
         marginTop: '12px', paddingTop: '11px', borderTop: '1px solid var(--border-faint)',
       }}>
         <div className="casino-cmp-terms" style={{ gridArea: 'terms', minWidth: 0, fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.45 }}>
-          {terms}
+          <Terms html={terms} />
         </div>
         <div style={{ gridArea: 'payments', minWidth: 0 }}>
           <LogoStack label="Betalingsmetoder" items={casino.paymentMethods || []} hrefBase="/betalingsmetoder" />

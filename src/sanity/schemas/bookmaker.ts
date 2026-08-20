@@ -154,9 +154,9 @@ export const bookmakerType = defineType({
       name: 'terms',
       title: 'Terms',
       type: 'text',
-      rows: 2,
+      rows: 3,
       group: 'info',
-      description: 'Short terms text — shown below bonus details',
+      description: 'Short terms text — shown below bonus details. HTML is allowed (e.g. <a href="…">links</a> to the operator T&C).',
     }),
 
     // ── Page content ──────────────────────────────────────────────────────────

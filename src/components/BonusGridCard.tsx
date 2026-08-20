@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Icon } from '@/components/Icon'
+import { Terms } from '@/components/Terms'
 
 export interface GridBonus {
   _id: string
@@ -112,7 +113,7 @@ export function BonusGridCard({ bonus, label = 'Free spins til eksisterende kund
 
         {/* Terms — always visible */}
         {bonus.terms && (
-          <p style={{ fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.55, marginTop: '14px' }}>{bonus.terms}</p>
+          <p style={{ fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.55, marginTop: '14px' }}><Terms html={bonus.terms} /></p>
         )}
       </div>
     </div>

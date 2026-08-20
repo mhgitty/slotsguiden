@@ -13,6 +13,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Icon } from '@/components/Icon'
+import { Terms } from '@/components/Terms'
 import { AuthorBio } from '@/components/AuthorBio'
 import { RelatedPages } from '@/components/RelatedPages'
 import type { Metadata } from 'next'
@@ -236,7 +237,7 @@ export default async function ReviewPage({ params }: Props) {
 
                 {/* Terms */}
                 {bm.terms && (
-                  <p style={{ fontSize: '10.5px', color: 'var(--text-faint)', margin: '14px 0 0', lineHeight: 1.5 }}>{bm.terms}</p>
+                  <p style={{ fontSize: '10.5px', color: 'var(--text-faint)', margin: '14px 0 0', lineHeight: 1.5 }}><Terms html={bm.terms} /></p>
                 )}
               </div>
 

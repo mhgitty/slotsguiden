@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { Terms } from './Terms'
 
 interface StickyCtaBarProps {
   url: string
@@ -85,7 +86,7 @@ export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms }: Stic
 
           {/* Terms */}
           <div className="sticky-cta-terms">
-            {terms || '18+ | Kun nye spillere | Vilkår gælder'}
+            {terms ? <Terms html={terms} /> : '18+ | Kun nye spillere | Vilkår gælder'}
           </div>
 
           {/* CTA button */}
