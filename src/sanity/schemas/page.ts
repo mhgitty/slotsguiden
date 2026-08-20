@@ -20,6 +20,7 @@ import { TableBlockInput } from '../components/TableBlockInput'
 import { FaqBlockInput } from '../components/FaqBlockInput'
 import { ProsConsBlockInput } from '../components/ProsConsBlockInput'
 import { comparisonTableFields } from './comparisonTable'
+import { customQuickLinksField } from './quickLinks'
 
 // Minimal rich-text field for intro/lead text — supports inline formatting + links only
 export const introField = defineField({
@@ -727,6 +728,7 @@ export const pageType = defineType({
     }),
     { ...introField, title: 'Intro', group: 'content' } as any,
     ...comparisonTableFields.map(f => ({ ...f, group: 'content' })) as any,
+    { ...customQuickLinksField, group: 'content' } as any,
     { ...bodyField, group: 'content' } as any,
     ...relatedPagesFields.map((f) => ({ ...f, group: 'content' })),
     defineField({

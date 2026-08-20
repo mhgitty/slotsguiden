@@ -174,6 +174,7 @@ const COMPARISON_TABLE_FRAGMENT = `
 const PAGE_FIELDS = `
   _id, title, slug, intro, metaTitle, metaDescription,
   showBonusGrid, bonusGridTitle,
+  customQuickLinks[]{ label, targetHeading },
   "body": body[] {
     ...,
     _type == "casinoKortBlock" => {

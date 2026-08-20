@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity'
 import { introField, bodyField, relatedPagesFields } from './page'
 import { comparisonTableFields } from './comparisonTable'
+import { customQuickLinksField } from './quickLinks'
 
 /**
  * Casino Guide — a page-like editorial document that lives under
@@ -35,6 +36,7 @@ export const casinoGuideType = defineType({
     }),
     { ...introField, title: 'Intro', group: 'content' } as any,
     ...comparisonTableFields.map((f) => ({ ...f, group: 'content' })) as any,
+    { ...customQuickLinksField, group: 'content' } as any,
     { ...bodyField, group: 'content' } as any,
     ...relatedPagesFields.map((f) => ({ ...f, group: 'content' })),
     defineField({ name: 'author', title: 'Author', type: 'reference', to: [{ type: 'author' }], group: 'content', description: 'Shown in hero and as author card at the bottom' }),

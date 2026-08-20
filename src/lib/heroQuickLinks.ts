@@ -7,7 +7,9 @@
  *   #pros-cons     — a Pros & Cons block (ProsConsBlock root)
  *   #how-to        — a How-to block (HowToBlock root)
  *   #faq           — an FAQ block (FaqBlock root)
+ *   #<headingId>   — a custom quick link targeting an H2 in the body
  */
+import { headingId } from '@/lib/headingId'
 
 export interface QuickLink {
   label: string
@@ -50,6 +52,16 @@ export function buildHeroQuickLinks(page: any): QuickLink[] {
   }
   if (bodyHasBlock(body, 'faqBlock')) {
     links.push({ label: 'FAQ', href: '#faq', variant: 'outline' })
+  }
+
+  // 3) Editor-defined custom buttons that jump to a chosen H2 in the body.
+  if (Array.isArray(page.customQuickLinks)) {
+    for (const cl of page.customQuickLinks) {
+      const label = (cl?.label || '').trim()
+      const heading = (cl?.targetHeading || '').trim()
+      if (!label || !heading) continue
+      links.push({ label, href: `#${headingId(heading)}`, variant: 'outline' })
+    }
   }
 
   return links
