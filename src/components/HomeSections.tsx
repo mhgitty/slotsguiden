@@ -471,6 +471,7 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
                 title={sec.title || 'Casinoanmeldelser'}
                 intro={sec.intro ? <RichIntro value={sec.intro} /> : undefined}
                 seeAllHref={all.length > max ? listBase : undefined}
+                showCount={false}
               />
             )
           }
@@ -488,6 +489,7 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
                 title={sec.title || 'Casinoguider'}
                 intro={sec.intro ? <RichIntro value={sec.intro} /> : undefined}
                 seeAllHref={all.length > gmax ? `${guideBase}/` : undefined}
+                showCount={false}
               />
             )
           }

@@ -21,9 +21,11 @@ interface Props {
   /** Optional "see all" link shown under the list. */
   seeAllHref?: string
   seeAllLabel?: string
+  /** Show the "(N)" result count next to the title. */
+  showCount?: boolean
 }
 
-export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle casinoguider', intro, seeAllHref, seeAllLabel = 'Se alle casinoguider' }: Props) {
+export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle casinoguider', intro, seeAllHref, seeAllLabel = 'Se alle casinoguider', showCount = true }: Props) {
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {
@@ -41,7 +43,7 @@ export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle ca
     <div className="section">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginBottom: '18px' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
-          {title} <span style={{ color: 'var(--text-faint)', fontWeight: 500 }}>({filtered.length})</span>
+          {title}{showCount && <span style={{ color: 'var(--text-faint)', fontWeight: 500 }}> ({filtered.length})</span>}
         </h2>
 
         <div style={{ position: 'relative', flex: '1 1 240px', maxWidth: '340px' }}>
