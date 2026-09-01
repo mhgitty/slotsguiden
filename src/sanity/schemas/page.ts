@@ -764,9 +764,11 @@ export const pageType = defineType({
     }),
     defineField({
       name: 'bonusGridTitle',
-      title: 'Bonus grid heading (optional)',
+      title: 'Free-spins grid — overskrift (H2)',
       type: 'string',
       group: 'content',
+      description: 'Overskriften (H2) der vises over free-spins-listen. Vises kun når "Show free-spins bonus grid" er slået til.',
+      hidden: ({ document }: any) => !document?.showBonusGrid,
     }),
     defineField({
       name: 'hideAuthor',

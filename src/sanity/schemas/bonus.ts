@@ -62,6 +62,14 @@ export const bonusType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'freeSpinsGridOrder',
+      title: 'Free-spins grid — rækkefølge',
+      type: 'number',
+      group: 'info',
+      description: 'Bestemmer rækkefølgen i free-spins-listen (lavest først, fx 1, 2, 3…). Tomme vises til sidst, sorteret efter udløbsdato.',
+      hidden: ({ document }: any) => !document?.showInFreeSpinsGrid,
+    }),
+    defineField({
       name: 'showInPopup',
       title: 'Show in pop-up',
       type: 'boolean',

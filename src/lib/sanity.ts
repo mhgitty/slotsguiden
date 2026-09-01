@@ -345,8 +345,8 @@ export async function getPrimaryAuthorId(): Promise<string | null> {
 // Keep old name as alias for any existing usage
 export async function getFreeSpinsGridBonuses() {
   return client.fetch(
-    `*[_type == "bonus" && showInFreeSpinsGrid == true && (!defined(kampagneSlut) || kampagneSlut >= now())] | order(kampagneSlut asc) {
-      _id, offerUrl,
+    `*[_type == "bonus" && showInFreeSpinsGrid == true && (!defined(kampagneSlut) || kampagneSlut >= now())] | order(coalesce(freeSpinsGridOrder, 9999) asc, kampagneSlut asc) {
+      _id, offerUrl, freeSpinsGridOrder,
       "title": freeSpinsEksisterendeTitel,
       "description": freeSpinsEksisterendeBeskrivelse,
       kampagneSlut,
