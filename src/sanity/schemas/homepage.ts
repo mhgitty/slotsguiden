@@ -26,8 +26,15 @@ const sectionReviewsArchive = {
     sectionIntroField,
     defineField({
       name: 'count', title: 'Max casinos to show', type: 'number', initialValue: 4,
-      description: 'A "See all reviews" link is shown when there are more than this',
+      description: 'Fallback when no casinos are hand-picked below: shows the top-rated N. A "See all reviews" link appears when there are more.',
       validation: (r: any) => r.min(1).max(50),
+    }),
+    defineField({
+      name: 'casinos',
+      title: 'Vælg casinoer (valgfri)',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
+      description: 'Vælg og træk i rækkefølge for at bestemme præcis hvilke casinoer der vises (og i hvilken rækkefølge). Lad stå tom for at vise de højest ratede automatisk. Søgefeltet søger altid i alle casinoer.',
     }),
   ],
   preview: {

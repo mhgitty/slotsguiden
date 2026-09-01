@@ -511,6 +511,7 @@ export async function getHomepage() {
         _type, _key,
         title, count, body, icon, buttonLabel, buttonUrl, style,
         intro,
+        "casinoRefs": casinos[]._ref,
         "items": items[] { _key, title, description, icon, href, "bullets": bullets[] }
       },
       metaTitle, metaDescription,

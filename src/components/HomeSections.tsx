@@ -17,7 +17,7 @@ import {
 interface SectionBase { _type: string; _key: string }
 
 interface SectionCasinoList     extends SectionBase { _type: 'sectionCasinoList';     title?: string; count?: number }
-interface SectionReviewsArchive extends SectionBase { _type: 'sectionReviewsArchive'; title?: string; intro?: any[]; count?: number }
+interface SectionReviewsArchive extends SectionBase { _type: 'sectionReviewsArchive'; title?: string; intro?: any[]; count?: number; casinoRefs?: string[] }
 interface SectionGuidesArchive  extends SectionBase { _type: 'sectionGuidesArchive';  title?: string; intro?: any[]; count?: number }
 interface SectionPaymentMethods extends SectionBase { _type: 'sectionPaymentMethods'; title?: string; intro?: any[] }
 interface SectionSoftware       extends SectionBase { _type: 'sectionSoftware';       title?: string; intro?: any[] }
@@ -462,15 +462,28 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
             const sec = section as SectionReviewsArchive
             const all = reviewCasinos as any[]
             if (all.length === 0) return null
-            const max = sec.count ?? 4
+
+            // Curated picks (ordered) drive what's shown by default. Any casino
+            // not picked is still appended so the search box can find it.
+            const refs = sec.casinoRefs ?? []
+            let ordered = all
+            let initialCount = sec.count ?? 4
+            if (refs.length) {
+              const byId = new Map(all.map((c) => [c._id, c]))
+              const picked = refs.map((id) => byId.get(id)).filter(Boolean) as any[]
+              const pickedIds = new Set(picked.map((c) => c._id))
+              ordered = [...picked, ...all.filter((c) => !pickedIds.has(c._id))]
+              initialCount = picked.length || initialCount
+            }
             return (
               <CasinoReviewsArchive
                 key={section._key}
-                casinos={all.slice(0, max)}
+                casinos={ordered}
+                initialCount={initialCount}
                 hrefPrefix={reviewBase}
                 title={sec.title || 'Casinoanmeldelser'}
                 intro={sec.intro ? <RichIntro value={sec.intro} /> : undefined}
-                seeAllHref={all.length > max ? listBase : undefined}
+                seeAllHref={all.length > initialCount ? listBase : undefined}
                 showCount={false}
               />
             )

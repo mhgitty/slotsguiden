@@ -27,6 +27,9 @@ interface Props {
   seeAllLabel?: string
   /** Show the "(N)" result count next to the title. */
   showCount?: boolean
+  /** How many casinos to show by default (before searching). Searching still
+   *  matches across the full `casinos` list. Omit to show all. */
+  initialCount?: number
 }
 
 function ScoreBadge({ score }: { score: number }) {
@@ -42,17 +45,18 @@ function ScoreBadge({ score }: { score: number }) {
   )
 }
 
-export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', title = 'Alle casinoanmeldelser', intro, seeAllHref, seeAllLabel = 'Se alle anmeldelser', showCount = true }: Props) {
+export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', title = 'Alle casinoanmeldelser', intro, seeAllHref, seeAllLabel = 'Se alle anmeldelser', showCount = true, initialCount }: Props) {
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {
     const list = casinos ?? []
     const q = query.trim().toLowerCase()
-    if (!q) return list
+    // No query: show the curated/limited default set. Searching matches the FULL list.
+    if (!q) return typeof initialCount === 'number' ? list.slice(0, initialCount) : list
     return list.filter((c) =>
       c.name.toLowerCase().includes(q) || (c.usp ?? '').toLowerCase().includes(q)
     )
-  }, [casinos, query])
+  }, [casinos, query, initialCount])
 
   if (!casinos?.length) return null
 
