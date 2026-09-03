@@ -39,32 +39,38 @@ export const comparisonTableTemplateType = defineType({
         list: [
           { title: '🎁 Bonusser', value: 'bonus' },
           { title: '🏆 Bookmakers', value: 'bookmaker' },
+          { title: '🎡 Free spins til eksisterende kunder', value: 'freeSpinsEksisterende' },
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
       initialValue: 'bonus',
       validation: (r) => r.required(),
+      description: '"Free spins til eksisterende kunder" bruger samme kort-design som free-spins-listen (kampagnebillede, spinværdi, udløbsdato osv.).',
     }),
     defineField({
       name: 'bonuses',
       title: 'Bonusser',
       type: 'array',
-      description: 'Træk for at ændre rækkefølge. Kun aktive bonusser kan tilføjes.',
+      description: 'Træk for at ændre rækkefølge.',
       of: [
         {
           type: 'reference',
           to: [{ type: 'bonus' }],
           options: {
             disableNew: true,
+            // "Free spins til eksisterende kunder" bonuses aren't necessarily
+            // marked active, so for that type we only filter by market.
             filter: ({ document }: any) => ({
-              filter: 'active == true && market == $market',
+              filter: document?.tableType === 'freeSpinsEksisterende'
+                ? 'market == $market'
+                : 'active == true && market == $market',
               params: { market: document?.market || 'global' },
             }),
           },
         },
       ],
-      hidden: ({ document }: any) => document?.tableType !== 'bonus',
+      hidden: ({ document }: any) => document?.tableType !== 'bonus' && document?.tableType !== 'freeSpinsEksisterende',
     }),
     defineField({
       name: 'bookmakers',
@@ -117,10 +123,11 @@ export const comparisonTableTemplateType = defineType({
       bookmakers: 'bookmakers',
     },
     prepare({ title, tableType, bonuses, bookmakers }: any) {
-      const count = tableType === 'bonus'
-        ? (bonuses || []).length
-        : (bookmakers || []).length
-      const label = tableType === 'bonus' ? 'bonusser' : 'bookmakers'
+      const isBookmaker = tableType === 'bookmaker'
+      const count = isBookmaker ? (bookmakers || []).length : (bonuses || []).length
+      const label = tableType === 'freeSpinsEksisterende'
+        ? 'free spins (eksisterende)'
+        : isBookmaker ? 'bookmakers' : 'bonusser'
       return { title, subtitle: `${count} ${label}` }
     },
   },

@@ -2,17 +2,36 @@
 
 import { useState } from 'react'
 import { BonusCard } from './BonusCard'
+import { BonusGridCard, type GridBonus } from './BonusGridCard'
 import { CasinoComparisonTable } from './CasinoComparisonTable'
 import { Icon } from './Icon'
 
 // Data comes from the comparisonTableTemplate document (expanded by the query)
 interface ComparisonTableData {
-  tableType?: 'bonus' | 'bookmaker'
+  tableType?: 'bonus' | 'bookmaker' | 'freeSpinsEksisterende'
   bonuses?: any[]
   bookmakers?: any[]
   showMoreButton?: boolean
   visibleCount?: number
   moreButtonLabel?: string
+}
+
+/** Map a projected bonus into the free-spins grid card shape. */
+function toGridBonus(b: any): GridBonus {
+  return {
+    _id: b._id,
+    title: b.gridTitle || b.oddsBonusTitel || b.title,
+    description: b.gridDescription,
+    offerUrl: b.offerUrl,
+    kampagneSlut: b.kampagneSlut,
+    campaignImage: b.campaignImage,
+    logoSquare: b.casinoLogoSquare,
+    minimumIndbetaling: b.minimumIndbetaling,
+    spinVaerdi: b.spinVaerdi,
+    gennemspilskrav: b.gennemspilskrav,
+    maksGevinst: b.maksGevinst,
+    terms: b.terms,
+  }
 }
 
 interface ComparisonTableProps {
@@ -33,6 +52,39 @@ export function ComparisonTable({ data }: ComparisonTableProps) {
     return (
       <div id="sammenligning" className="scroll-anchor">
         <CasinoComparisonTable casinos={items} maxVisible={limit} moreLabel={moreLabel} />
+      </div>
+    )
+  }
+
+  // ── Free spins til eksisterende kunder (grid card design) ────────────────────
+  if (data.tableType === 'freeSpinsEksisterende') {
+    const all = (data.bonuses || []).map(toGridBonus)
+    if (!all.length) return null
+    const visible = expanded || !limit ? all : all.slice(0, limit)
+    const hidden = all.length - visible.length
+    const moreFsLabel = data.moreButtonLabel?.trim() || 'Se flere free spins'
+    return (
+      <div id="sammenligning" className="scroll-anchor">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
+          {visible.map((b) => (
+            <BonusGridCard key={b._id} bonus={b} />
+          ))}
+        </div>
+        {hidden > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <button
+              onClick={() => setExpanded(true)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'var(--bg-card)', border: '1px solid var(--btn)',
+                color: 'var(--green-dark)', fontWeight: 700, fontSize: '15px',
+                padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
+              }}
+            >
+              {moreFsLabel} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
+            </button>
+          </div>
+        )}
       </div>
     )
   }

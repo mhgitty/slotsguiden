@@ -142,6 +142,11 @@ const COMPARISON_TABLE_FRAGMENT = `
       "casinoLogo":       casinoLogo       { "url": asset->url, alt },
       "casinoLogoSquare": casinoLogoSquare { "url": asset->url, alt },
       "kampagneBillede":  kampagneBillede  { "url": asset->url, alt },
+      // Extra fields for the "free spins til eksisterende kunder" card design:
+      "gridTitle": freeSpinsEksisterendeTitel,
+      "gridDescription": freeSpinsEksisterendeBeskrivelse,
+      kampagneSlut, spinVaerdi, maksGevinst,
+      "campaignImage": kampagneBillede { "url": asset->url, alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
       "bookmaker": bookmaker-> {
         name, slug, score,
         "logoSquare": logoSquare { "url": asset->url, alt },
