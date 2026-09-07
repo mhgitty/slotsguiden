@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Icon } from './Icon'
+import { replaceDateVars } from '@/lib/dateVars'
 
 interface Guide {
   _id: string
@@ -43,7 +44,7 @@ export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle ca
     <div className="section">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginBottom: '18px' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
-          {title}{showCount && <span style={{ color: 'var(--text-faint)', fontWeight: 500 }}> ({filtered.length})</span>}
+          {replaceDateVars(title)}{showCount && <span style={{ color: 'var(--text-faint)', fontWeight: 500 }}> ({filtered.length})</span>}
         </h2>
 
         <div style={{ position: 'relative', flex: '1 1 240px', maxWidth: '340px' }}>

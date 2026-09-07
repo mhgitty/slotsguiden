@@ -2,6 +2,10 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Icon } from './Icon'
+import { Terms } from './Terms'
+import { replaceDateVars } from '@/lib/dateVars'
+
+const DEFAULT_TERMS = '18+ | Spil ansvarligt | Vilkår gælder'
 
 interface Casino {
   _id: string
@@ -11,6 +15,7 @@ interface Casino {
   score?: number
   indbetalingsbonus?: string
   url?: string
+  terms?: string
   logo?: { url?: string; alt?: string }
   logoSquare?: { url?: string; alt?: string }
 }
@@ -64,7 +69,7 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
     <div className="section">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginBottom: '18px' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
-          {title}{showCount && <span style={{ color: 'var(--text-faint)', fontWeight: 500 }}> ({filtered.length})</span>}
+          {replaceDateVars(title)}{showCount && <span style={{ color: 'var(--text-faint)', fontWeight: 500 }}> ({filtered.length})</span>}
         </h2>
 
         {/* Search */}
@@ -174,6 +179,11 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
                     }}>
                       Læs anmeldelse
                     </Link>
+                  </div>
+
+                  {/* Terms — required for compliance */}
+                  <div style={{ fontSize: '10px', color: 'var(--text-faint)', lineHeight: 1.4, marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-faint)' }}>
+                    <Terms html={c.terms || DEFAULT_TERMS} />
                   </div>
                 </div>
               </div>
