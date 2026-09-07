@@ -181,9 +181,12 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
                     </Link>
                   </div>
 
-                  {/* Terms — required for compliance */}
-                  <div style={{ fontSize: '10px', color: 'var(--text-faint)', lineHeight: 1.4, marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-faint)' }}>
-                    <Terms html={c.terms || DEFAULT_TERMS} />
+                  {/* Terms — required for compliance. Fixed height + scroll so
+                      cards stay aligned regardless of terms length. */}
+                  <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-faint)' }}>
+                    <div style={{ fontSize: '10px', color: 'var(--text-faint)', lineHeight: 1.4, maxHeight: '58px', overflowY: 'auto', paddingRight: '6px' }}>
+                      <Terms html={c.terms || DEFAULT_TERMS} />
+                    </div>
                   </div>
                 </div>
               </div>
