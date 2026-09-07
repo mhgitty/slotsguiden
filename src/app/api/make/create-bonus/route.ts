@@ -24,6 +24,20 @@ function slugify(s: string): string {
     .slice(0, 90)
 }
 
+// Sanity document _id may only contain [a-zA-Z0-9._-] — no æ/ø/å or other
+// non-ASCII. Transliterate Danish letters and strip the rest so the id is
+// always valid, independent of the URL slug (which may keep æøå).
+function asciiId(s: string): string {
+  return (s || '')
+    .toLowerCase()
+    .replace(/æ/g, 'ae').replace(/ø/g, 'oe').replace(/å/g, 'aa')
+    .normalize('NFKD') // decompose remaining accents (é -> e + mark)
+    .replace(/[^a-z0-9]+/g, '-') // any non-ASCII / punctuation (incl. marks) -> dash
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 64)
+}
+
 const clean = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
 
 export async function POST(req: NextRequest) {
@@ -92,7 +106,7 @@ export async function POST(req: NextRequest) {
 
   // Draft so it lands in Studio for review (like the old WordPress "draft").
   const doc: Record<string, unknown> = {
-    _id: `drafts.autobonus-${slug || 'bonus'}-${Date.now().toString(36)}`,
+    _id: `drafts.autobonus-${asciiId(slug) || 'bonus'}-${Date.now().toString(36)}`,
     _type: 'bonus',
     market: 'global',
     active: false,
