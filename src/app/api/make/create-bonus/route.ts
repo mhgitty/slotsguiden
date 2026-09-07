@@ -53,7 +53,16 @@ export async function POST(req: NextRequest) {
   const casino = clean(f.casino)
   const bonus = clean(f.bonus)
   if (!casino || !bonus) {
-    return NextResponse.json({ error: 'casino and bonus are required' }, { status: 400 })
+    // Diagnostic: echo back what actually arrived so a misconfigured Make
+    // mapping is obvious (which keys came through, and whether they were empty).
+    return NextResponse.json({
+      error: 'casino and bonus are required',
+      contentType: ct || null,
+      receivedKeys: Object.keys(f),
+      receivedValues: Object.fromEntries(Object.keys(f).map((k) => [k, (f[k] || '').slice(0, 40)])),
+      casinoPresent: !!casino,
+      bonusPresent: !!bonus,
+    }, { status: 400 })
   }
 
   const slug = slugify(f.slug || `${casino}-${bonus}`)

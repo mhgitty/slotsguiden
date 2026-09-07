@@ -10,10 +10,12 @@ interface ProviderBoxProps {
 }
 
 function hrefFor(item: ProviderBoxItem): string {
-  const segment = item._type === 'software' ? 'software' : 'payment'
+  // Software lives at /spiludviklere/[slug], payment methods at
+  // /betalingsmetoder/[slug] — NOT under /online-casino/.
+  const base = item._type === 'software' ? '/spiludviklere' : '/betalingsmetoder'
   const slug = item.slug?.current
-  if (!slug) return `/online-casino/${segment}/`
-  return `/online-casino/${segment}/${slug}/`
+  if (!slug) return `${base}/`
+  return `${base}/${slug}/`
 }
 
 export async function ProviderBox({ value }: ProviderBoxProps) {
