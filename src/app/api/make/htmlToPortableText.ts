@@ -19,6 +19,20 @@ export function canonicalizeUrl(url: string): string {
     .replace(/https?:\/\/(?:[a-z0-9-]+\.)*vercel\.app/gi, 'https://slotsguiden.dk')
 }
 
+const SITE = 'https://slotsguiden.dk'
+
+// Force an internal link to an absolute slotsguiden.dk URL. The AI sometimes
+// writes internal links as bare paths ("/mobil-casino/"); links in the body
+// should always be full URLs. External (affiliate etc.) links are left alone.
+function absoluteHref(raw: string): string {
+  let u = canonicalizeUrl((raw || '').trim())
+  if (u.startsWith('//')) u = 'https:' + u
+  else if (u.startsWith('/')) u = SITE + u
+  else if (/^www\.slotsguiden\.dk/i.test(u)) u = 'https://' + u
+  else if (/^slotsguiden\.dk/i.test(u)) u = 'https://' + u
+  return u
+}
+
 const HEADING_STYLE: Record<string, string> = { h1: 'h2', h2: 'h2', h3: 'h3', h4: 'h4', h5: 'h4', h6: 'h4' }
 
 // ── Inline: turn a node's children into spans + link markDefs ─────────────────
@@ -37,7 +51,7 @@ function inlineSpans(node: Node, activeMarks: string[], markDefs: MarkDef[]): Sp
     if (tag === 'strong' || tag === 'b') { out.push(...inlineSpans(el, [...activeMarks, 'strong'], markDefs)); continue }
     if (tag === 'em' || tag === 'i') { out.push(...inlineSpans(el, [...activeMarks, 'em'], markDefs)); continue }
     if (tag === 'a') {
-      const href = canonicalizeUrl(el.getAttribute('href') || '')
+      const href = absoluteHref(el.getAttribute('href') || '')
       if (href) {
         const external = /^https?:\/\//i.test(href) && !/slotsguiden\.dk/i.test(href)
         const def: MarkDef = { _key: key(), _type: 'link', href, blank: external, nofollow: external }
