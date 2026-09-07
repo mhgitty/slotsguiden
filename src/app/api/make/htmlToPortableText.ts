@@ -78,6 +78,30 @@ function htmlBlock(html: string): Block {
   return { _type: 'htmlBlock', _key: key(), html: canonicalizeUrl(html) }
 }
 
+// A "Fordele og ulemper" table (2 columns: pros | cons) → a prosConsBlock, so it
+// renders as the styled pros/cons cards instead of a raw HTML table. Any other
+// table falls back to htmlBlock (returns null here).
+function prosConsFromTable(table: HTMLElement, headingText: string): Block | null {
+  const rows = table.querySelectorAll('tr')
+  if (!rows.length) return null
+  const rowCells = rows.map((r) => r.querySelectorAll('td, th').map((c) => c.text.trim()))
+  const headerJoined = (rowCells[0] || []).join(' ').toLowerCase()
+  const headerHasLabels = /fordel/.test(headerJoined) && /ulemp/.test(headerJoined)
+  const headingSays = /fordel|ulemp/.test((headingText || '').toLowerCase())
+  if (!headerHasLabels && !headingSays) return null
+  const start = headerHasLabels ? 1 : 0
+  const pros: string[] = []
+  const cons: string[] = []
+  for (let i = start; i < rowCells.length; i++) {
+    const a = rowCells[i][0]
+    const b = rowCells[i][1]
+    if (a) pros.push(a)
+    if (b) cons.push(b)
+  }
+  if (!pros.length && !cons.length) return null
+  return { _type: 'prosConsBlock', _key: key(), pros, cons }
+}
+
 // crude HTML entity decode for the few entities the AI emits
 function decode(s: string): string {
   return s
@@ -98,6 +122,7 @@ export function htmlToPortableText(rawHtml: string): Block[] {
   const blocks: Block[] = []
   let faqItems: { question: string; answer: string }[] | null = null
   let pendingQuestion: string | null = null
+  let lastHeading = '' // remembered so a following table knows its section
 
   const flushFaq = () => {
     if (faqItems && faqItems.length) {
@@ -138,6 +163,7 @@ export function htmlToPortableText(rawHtml: string): Block[] {
     }
 
     if (isHeading(tag)) {
+      lastHeading = el.text.trim()
       if (tag === 'h2' && isFaqHeading(el.text)) {
         blocks.push(textBlock(el, 'h2')) // keep the FAQ heading visible
         faqItems = []                     // enter FAQ mode
@@ -153,7 +179,9 @@ export function htmlToPortableText(rawHtml: string): Block[] {
       blocks.push(...listBlocks(el, 'number'))
     } else if (tag === 'blockquote') {
       blocks.push(textBlock(el, 'blockquote'))
-    } else if (tag === 'table' || tag === 'figure') {
+    } else if (tag === 'table') {
+      blocks.push(prosConsFromTable(el, lastHeading) || htmlBlock(el.toString()))
+    } else if (tag === 'figure') {
       blocks.push(htmlBlock(el.toString()))
     } else if (tag === 'div' || tag === 'section' || tag === 'article') {
       // unwrap simple containers, recurse into their children
