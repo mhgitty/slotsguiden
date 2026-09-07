@@ -35,29 +35,51 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'server not configured (SANITY_WRITE_TOKEN / project id missing)' }, { status: 500 })
   }
 
-  // ── Read fields from form-data, urlencoded, or JSON ──
-  const f: Record<string, string> = {}
+  // ── Read fields — bulletproof against whatever Make sends ──
+  // We read the raw body ONCE, then try JSON and urlencoded parsing regardless
+  // of the declared content-type (Make often mislabels it). This way the route
+  // works whether Make posts JSON, form-urlencoded, or a raw string.
   const ct = (req.headers.get('content-type') || '').toLowerCase()
-  try {
-    if (ct.includes('application/json')) {
-      const j = await req.json()
-      for (const k of Object.keys(j || {})) f[k] = clean(j[k])
-    } else {
-      const fd = await req.formData()
-      fd.forEach((v, k) => { f[k] = typeof v === 'string' ? v : '' })
-    }
-  } catch {
-    return NextResponse.json({ error: 'could not parse request body' }, { status: 400 })
+  const raw = await req.text().catch(() => '')
+  const f: Record<string, string> = {}
+
+  const fromJson = (s: string): boolean => {
+    try {
+      const j = JSON.parse(s)
+      if (j && typeof j === 'object' && !Array.isArray(j)) {
+        for (const k of Object.keys(j)) f[k] = clean(j[k])
+        return Object.keys(f).length > 0
+      }
+    } catch { /* not JSON */ }
+    return false
+  }
+  const fromUrlEncoded = (s: string): boolean => {
+    try {
+      const p = new URLSearchParams(s)
+      let any = false
+      p.forEach((v, k) => { f[k] = (v ?? '').trim(); any = true })
+      return any
+    } catch { /* not urlencoded */ }
+    return false
+  }
+
+  const trimmed = (raw || '').trim()
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    fromJson(trimmed) || fromUrlEncoded(raw)
+  } else {
+    fromUrlEncoded(raw) || fromJson(trimmed)
   }
 
   const casino = clean(f.casino)
   const bonus = clean(f.bonus)
   if (!casino || !bonus) {
     // Diagnostic: echo back what actually arrived so a misconfigured Make
-    // mapping is obvious (which keys came through, and whether they were empty).
+    // request is obvious — an empty rawLength means Make sent no body at all.
     return NextResponse.json({
       error: 'casino and bonus are required',
       contentType: ct || null,
+      rawLength: raw.length,
+      rawPreview: raw.slice(0, 120),
       receivedKeys: Object.keys(f),
       receivedValues: Object.fromEntries(Object.keys(f).map((k) => [k, (f[k] || '').slice(0, 40)])),
       casinoPresent: !!casino,
