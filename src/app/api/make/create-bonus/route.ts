@@ -109,15 +109,24 @@ export async function POST(req: NextRequest) {
     ...(bodyHtml ? { body: [{ _type: 'htmlBlock', _key: 'aicontent', html: bodyHtml }] } : {}),
   }
 
-  const res = await fetch(`https://${PROJECT}.api.sanity.io/v${API_VER}/data/mutate/${DATASET}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
-    body: JSON.stringify({ mutations: [{ create: doc }] }),
-  })
+  // Sanity write, wrapped so a network blip returns a clean JSON error rather
+  // than an unhandled exception (which Make would see as a bare 502/ConnectionError).
+  let res: Response
+  try {
+    res = await fetch(`https://${PROJECT}.api.sanity.io/v${API_VER}/data/mutate/${DATASET}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
+      body: JSON.stringify({ mutations: [{ create: doc }] }),
+    })
+  } catch (err) {
+    // 422 (not 5xx) so Make surfaces this as a readable DataError with the body,
+    // instead of a bare "ConnectionError" that hides the reason.
+    return NextResponse.json({ error: 'could not reach Sanity', detail: String(err) }, { status: 422 })
+  }
 
   const out = await res.json().catch(() => ({}))
   if (!res.ok) {
-    return NextResponse.json({ error: 'sanity mutate failed', status: res.status, detail: out }, { status: 502 })
+    return NextResponse.json({ error: 'sanity mutate failed', status: res.status, detail: out }, { status: 422 })
   }
   return NextResponse.json({ ok: true, id: doc._id, slug, results: (out as any).results ?? out })
 }
