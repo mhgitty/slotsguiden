@@ -14,7 +14,7 @@ interface AuthorBarProps {
 }
 
 function AuthorLink({ person, label }: { person: Author; label: string }) {
-  const href = person.slug?.current ? `/author/${person.slug.current}/` : null
+  const href = person.slug?.current ? `/redaktion/${person.slug.current}/` : null
   return (
     <div style={{ fontSize: '12px', color: 'var(--text-faint)', lineHeight: 1.3 }}>
       {label}{' '}

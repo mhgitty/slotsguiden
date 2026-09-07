@@ -103,7 +103,7 @@ export function AuthorBio({ author, compact = false }: AuthorBioProps) {
         </div>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: compact ? '18px' : '17px', fontWeight: 700, color: 'var(--text)', marginBottom: hasSocials ? '12px' : '0' }}>
           {author.slug?.current ? (
-            <Link href={`/author/${author.slug.current}/`} style={{ color: 'var(--text)', textDecoration: 'none' }}>
+            <Link href={`/redaktion/${author.slug.current}/`} style={{ color: 'var(--text)', textDecoration: 'none' }}>
               {author.name}
             </Link>
           ) : author.name}

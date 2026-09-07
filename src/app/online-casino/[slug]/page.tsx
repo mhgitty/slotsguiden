@@ -150,7 +150,7 @@ export default async function ReviewPage({ params }: Props) {
           ? {
               '@type': 'Person',
               name: author.name,
-              ...(author.slug?.current ? { url: `${BASE}/author/${author.slug.current}/` } : {}),
+              ...(author.slug?.current ? { url: `${BASE}/redaktion/${author.slug.current}/` } : {}),
             }
           : { '@type': 'Organization', name: 'Slotsguiden', url: BASE },
         publisher: {

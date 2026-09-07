@@ -111,7 +111,7 @@ export async function CalloutBlock({ value }: CalloutBlockProps) {
           <div style={{ lineHeight: 1.3 }}>
             {person.slug?.current ? (
               <Link
-                href={`/author/${person.slug.current}/`}
+                href={`/redaktion/${person.slug.current}/`}
                 style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text)', textDecoration: 'none' }}
               >
                 {person.name}
