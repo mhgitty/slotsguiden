@@ -13,7 +13,7 @@ export const redirectType = defineType({
       initialValue: 'global',
       options: {
         list: [
-          { title: '🌍 Global  →  /go/[code]', value: 'global' },
+          { title: '🌍 Global  →  /r/[code]', value: 'global' },
         ],
         layout: 'radio',
       },
@@ -30,7 +30,7 @@ export const redirectType = defineType({
       name: 'code',
       title: 'Kode (URL)',
       type: 'slug',
-      description: 'The code used in the URL: /go/[code]',
+      description: 'The code used in the URL: /r/[code]',
       options: { source: 'title' },
       validation: (r) => r.required(),
     }),
@@ -59,7 +59,7 @@ export const redirectType = defineType({
   preview: {
     select: { title: 'title', code: 'code.current', active: 'active', destination: 'destination' },
     prepare({ title, code, active, destination }: any) {
-      const prefix = '/go'
+      const prefix = '/r'
       return {
         title: `${active === false ? '⏸ ' : ''}${title}`,
         subtitle: `${prefix}/${code} → ${destination}`,
