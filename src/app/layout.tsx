@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Figtree } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import { AdminBar } from '@/components/AdminBar'
@@ -53,6 +54,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const popupBonus = await getPopupBonus().catch(() => null)
   return (
     <html lang="da" className={figtree.variable}>
+      <head>
+        {/* Google "preferred sources" / follow button loader */}
+        <Script async src="https://news.google.com/swg/js/v1/publisher.js" strategy="afterInteractive" />
+      </head>
       <body>
         {isPreview && <PreviewBanner />}
         <AdminBar />

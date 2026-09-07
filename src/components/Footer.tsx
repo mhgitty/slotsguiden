@@ -114,6 +114,12 @@ export async function Footer({
               {tagline}
             </p>
             <SocialLinks links={socialLinks} />
+
+            {/* Google "preferred sources" / follow button (rendered by publisher.js loaded in <head>) */}
+            <div style={{ marginTop: '18px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-faint)', marginBottom: '8px' }}>Følg os på Google</div>
+              <div {...{ 'google-add-preferred-source-btn': '' }} data-theme="dark" />
+            </div>
           </div>
 
           {/* Link columns — each gets equal space */}

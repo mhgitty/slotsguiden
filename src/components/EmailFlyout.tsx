@@ -72,7 +72,11 @@ export function EmailFlyout() {
         body: JSON.stringify({
           data: {
             type: 'subscription',
-            attributes: { email: value, custom_source: 'Slotsguiden – Gratis spins flyout' },
+            attributes: {
+              custom_source: 'Slotsguiden – Gratis spins flyout',
+              // Klaviyo requires the email nested inside a profile resource.
+              profile: { data: { type: 'profile', attributes: { email: value } } },
+            },
             relationships: { list: { data: { type: 'list', id: LIST_ID } } },
           },
         }),
