@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { htmlToPortableText, canonicalizeUrl } from '../htmlToPortableText'
 
 // Make.com → Sanity bridge: creates a DRAFT "free spins til eksisterende kunder"
 // bonus. Fields arrive form-encoded (or JSON); the mutation is assembled here with
@@ -104,6 +105,25 @@ export async function POST(req: NextRequest) {
   const slug = slugify(f.slug || `${casino}-${bonus}`)
   const bodyHtml = clean(f.bodyHtml)
 
+  // Parse the AI HTML into proper Portable Text blocks (headings, lists, FAQ,
+  // etc.). If anything goes wrong, fall back to a single raw htmlBlock so we
+  // never lose the content.
+  let body: unknown[] | undefined
+  if (bodyHtml) {
+    try {
+      const blocks = htmlToPortableText(bodyHtml)
+      body = blocks.length ? blocks : [{ _type: 'htmlBlock', _key: 'aicontent', html: canonicalizeUrl(bodyHtml) }]
+    } catch {
+      body = [{ _type: 'htmlBlock', _key: 'aicontent', html: canonicalizeUrl(bodyHtml) }]
+    }
+  }
+
+  // Stat fields from the sheet. minimumIndbetaling is a number in the schema.
+  const minDeposit = (() => {
+    const n = parseFloat((clean(f.minimumIndbetaling) || '').replace(',', '.').replace(/[^\d.]/g, ''))
+    return Number.isFinite(n) ? n : undefined
+  })()
+
   // Draft so it lands in Studio for review (like the old WordPress "draft").
   const doc: Record<string, unknown> = {
     _id: `drafts.autobonus-${asciiId(slug) || 'bonus'}-${Date.now().toString(36)}`,
@@ -119,8 +139,13 @@ export async function POST(req: NextRequest) {
     ...(clean(f.metaTitle) ? { metaTitle: clean(f.metaTitle) } : {}),
     ...(clean(f.metaDescription) ? { metaDescription: clean(f.metaDescription) } : {}),
     ...(clean(f.bonusText) ? { freeSpinsEksisterendeBeskrivelse: clean(f.bonusText) } : {}),
-    ...(clean(f.offerUrl) ? { offerUrl: clean(f.offerUrl) } : {}),
-    ...(bodyHtml ? { body: [{ _type: 'htmlBlock', _key: 'aicontent', html: bodyHtml }] } : {}),
+    ...(clean(f.offerUrl) ? { offerUrl: canonicalizeUrl(clean(f.offerUrl)) } : {}),
+    ...(minDeposit !== undefined ? { minimumIndbetaling: minDeposit } : {}),
+    ...(clean(f.spinVaerdi) ? { spinVaerdi: clean(f.spinVaerdi) } : {}),
+    ...(clean(f.maksGevinst) ? { maksGevinst: clean(f.maksGevinst) } : {}),
+    ...(clean(f.gennemspilskrav) ? { gennemspilskrav: clean(f.gennemspilskrav) } : {}),
+    ...(clean(f.minimumOdds) ? { minimumOdds: clean(f.minimumOdds) } : {}),
+    ...(body ? { body } : {}),
   }
 
   // Sanity write, wrapped so a network blip returns a clean JSON error rather
