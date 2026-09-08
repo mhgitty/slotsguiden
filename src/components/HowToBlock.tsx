@@ -1,3 +1,5 @@
+import { Icon } from '@/components/Icon'
+
 interface HowToItem {
   title?: string
   body?: string
@@ -6,12 +8,31 @@ interface HowToItem {
 interface HowToBlockProps {
   value: {
     title?: string
+    intro?: string
+    duration?: string
     items?: HowToItem[]
   }
 }
 
+// Convert a human duration ("5 minutter", "2 timer") into an ISO-8601 duration
+// (PT5M / PT2H) for schema.org totalTime. Returns undefined when unparseable.
+function toISODuration(s?: string): string | undefined {
+  if (!s) return undefined
+  const n = parseInt(s.replace(/[.,]/g, ''), 10)
+  if (!Number.isFinite(n)) return undefined
+  if (/tim|hour|hr/i.test(s)) return `PT${n}H`
+  if (/min/i.test(s)) return `PT${n}M`
+  if (/sek|sec/i.test(s)) return `PT${n}S`
+  if (/dag|day/i.test(s)) return `P${n}D`
+  return undefined
+}
+
 export function HowToBlock({ value }: HowToBlockProps) {
   if (!value?.items?.length) return null
+
+  const intro = value.intro?.trim()
+  const duration = value.duration?.trim()
+  const isoDuration = toISODuration(duration)
 
   // Emit HowTo structured data from the steps (mirrors the FAQ block's FAQPage schema).
   const steps = value.items.filter((s) => s?.title || s?.body)
@@ -19,6 +40,7 @@ export function HowToBlock({ value }: HowToBlockProps) {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: value.title || 'Sådan gør du',
+    ...(isoDuration ? { totalTime: isoDuration } : {}),
     step: steps.map((s, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
@@ -36,17 +58,50 @@ export function HowToBlock({ value }: HowToBlockProps) {
         />
       )}
 
-      {value.title && (
-        <h2 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(18px, 2.5vw, 24px)',
-          fontWeight: 700,
-          color: 'var(--text)',
-          letterSpacing: '-0.02em',
-          marginBottom: '16px',
+      {(value.title || duration) && (
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: intro ? '10px' : '16px' }}>
+          {value.title && (
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(18px, 2.5vw, 24px)',
+              fontWeight: 700,
+              color: 'var(--text)',
+              letterSpacing: '-0.02em',
+              margin: 0,
+            }}>
+              {value.title}
+            </h2>
+          )}
+          {duration && (
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--green-light)',
+              color: 'var(--green-dark)',
+              fontSize: '13px',
+              fontWeight: 700,
+              padding: '5px 12px',
+              borderRadius: '999px',
+              whiteSpace: 'nowrap',
+            }}>
+              <Icon name="clock-circle" size={15} color="var(--green-dark)" />
+              {duration}
+            </span>
+          )}
+        </div>
+      )}
+
+      {intro && (
+        <p style={{
+          fontSize: '15.5px',
+          color: 'var(--text-muted)',
+          lineHeight: 1.7,
+          margin: '0 0 20px',
+          maxWidth: '760px',
         }}>
-          {value.title}
-        </h2>
+          {intro}
+        </p>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

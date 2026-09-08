@@ -655,6 +655,19 @@ export const bodyField = defineField({
           initialValue: 'How It Works',
         },
         {
+          name: 'intro',
+          title: 'Intro (optional)',
+          type: 'text',
+          rows: 2,
+          description: 'Short lead-in shown under the title, above the steps',
+        },
+        {
+          name: 'duration',
+          title: 'Time to complete (optional)',
+          type: 'string',
+          description: 'E.g. "5 minutter" — shown as a badge and used for HowTo structured data',
+        },
+        {
           name: 'items',
           title: 'Steps',
           type: 'array',
