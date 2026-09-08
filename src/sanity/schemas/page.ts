@@ -174,7 +174,7 @@ export const bodyField = defineField({
           initialValue: 'info',
         },
         {
-          name: 'author', title: 'Quoted by (optional)', type: 'reference',
+          name: 'author', title: 'Quoted by (optional)', type: 'reference', weak: true,
           to: [{ type: 'author' }],
           description: 'Credits this box to an author — shows their photo, name and role underneath',
         },
@@ -350,7 +350,7 @@ export const bodyField = defineField({
         {
           name: 'items', title: 'Pick specific ones (optional)', type: 'array',
           description: 'Leave empty to automatically show the first entries',
-          of: [{ type: 'reference', to: [{ type: 'paymentMethod' }, { type: 'software' }] }],
+          of: [{ type: 'reference', weak: true, to: [{ type: 'paymentMethod' }, { type: 'software' }] }],
         },
         {
           name: 'limit', title: 'How many to show', type: 'number',
@@ -530,6 +530,7 @@ export const bodyField = defineField({
           name: 'bookmaker',
           title: 'Select casino',
           type: 'reference',
+          weak: true,
           to: [{ type: 'bookmaker' }],
         },
         { name: 'customTitle', title: 'Title', type: 'string' },
@@ -560,6 +561,7 @@ export const bodyField = defineField({
           name: 'bonus',
           title: 'Select bonus',
           type: 'reference',
+          weak: true, // weak so expired bonuses can be deleted
           to: [{ type: 'bonus' }],
         },
         { name: 'customTitle', title: 'Title', type: 'string' },
@@ -750,6 +752,7 @@ export const pageType = defineType({
       name: 'author',
       title: 'Author',
       type: 'reference',
+      weak: true,
       to: [{ type: 'author' }],
       group: 'content',
       description: 'Shown in hero and as author card at the bottom of the page',
@@ -758,6 +761,7 @@ export const pageType = defineType({
       name: 'factChecker',
       title: 'Fact checker',
       type: 'reference',
+      weak: true,
       to: [{ type: 'author' }],
       group: 'content',
       description: 'Shown next to the author in the hero section',

@@ -90,6 +90,7 @@ export const bonusType = defineType({
       name: 'bookmaker',
       title: 'Casino',
       type: 'reference',
+      weak: true,
       group: 'info',
       to: [{ type: 'bookmaker' }],
       description: 'Which casino does this bonus belong to?',

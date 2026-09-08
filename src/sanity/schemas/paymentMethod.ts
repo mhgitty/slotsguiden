@@ -79,7 +79,7 @@ export const paymentMethodType = defineType({
       title: 'Casinoer i sammenligningslisten',
       type: 'array',
       description: 'Casinoer, der understøtter denne betalingsmetode, vises automatisk. Træk for at ændre rækkefølgen. Nye casinoer, der tilføjer denne betalingsmetode, tilføjes automatisk nederst.',
-      of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bookmaker' }] }],
     }),
     defineField({
       name: 'paymentCategory',

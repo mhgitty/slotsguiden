@@ -33,7 +33,7 @@ const sectionReviewsArchive = {
       name: 'casinos',
       title: 'Vælg casinoer (valgfri)',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bookmaker' }] }],
       description: 'Vælg og træk i rækkefølge for at bestemme præcis hvilke casinoer der vises (og i hvilken rækkefølge). Lad stå tom for at vise de højest ratede automatisk. Søgefeltet søger altid i alle casinoer.',
     }),
   ],

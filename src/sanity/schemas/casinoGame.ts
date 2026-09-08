@@ -53,7 +53,7 @@ export const casinoGameType = defineType({
       type: 'array',
       group: 'general',
       description: 'Casinos where players can play this game.',
-      of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bookmaker' }] }],
     }),
     defineField({
       name: 'logo',

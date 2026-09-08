@@ -135,7 +135,7 @@ const COMPARISON_TABLE_FRAGMENT = `
   showComparisonHeroButton, comparisonHeroButtonText,
   "comparisonTable": comparisonTemplate-> {
     tableType, showMoreButton, visibleCount, moreButtonLabel,
-    bonuses[]-> {
+    bonuses[defined(@->)]-> {
       _id, title, slug, active,
       oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
       offerUrl, terms, casinoNavn,
@@ -151,21 +151,21 @@ const COMPARISON_TABLE_FRAGMENT = `
         name, slug, score,
         "logoSquare": logoSquare { "url": asset->url, alt },
         "logo": logo { "url": asset->url, alt },
-        "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
-        "software": software[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
+        "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
+        "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
       }
     },
-    bookmakers[]-> {
+    bookmakers[defined(@->)]-> {
       _id, name, slug, usp, score,
       indbetalingsbonus, minIndbetaling, gennemspilskrav,
       url, terms, market,
       "logo": logo { "url": asset->url, alt },
       "logoSquare": logoSquare { "url": asset->url, alt },
-      "paymentMethods": paymentMethods[]-> {
+      "paymentMethods": paymentMethods[defined(@->)]-> {
         _id, name, "slug": slug.current,
         "logo": logo { "url": asset->url, alt }
       },
-      "software": software[]-> {
+      "software": software[defined(@->)]-> {
         _id, name, "slug": slug.current,
         "logo": logo { "url": asset->url, alt }
       }
@@ -297,9 +297,9 @@ export async function getBookmakerBySlug(slug: string) {
       "logo": logo { "url": asset->url, alt },
       "logoSquare": logoSquare { "url": asset->url, alt },
       "ogImage": ogImage { "url": asset->url, alt },
-      "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
-      "software": software[]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
-      "aktBonuses": aktuelleBonusser[]->{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
+      "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
+      "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
+      "aktBonuses": aktuelleBonusser[defined(@->)]->{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
       "refBonuses": *[_type == "bonus" && references(^._id) && (market == "global" || !defined(market))]{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
       metaTitle, metaDescription
     }`,
@@ -543,8 +543,8 @@ const CASINO_CARD_FIELDS = `
   indbetalingsbonus, minIndbetaling, gennemspilskrav,
   "logo": logo { "url": asset->url, alt },
   "logoSquare": logoSquare { "url": asset->url, alt },
-  "paymentMethods": paymentMethods[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
-  "software": software[]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
+  "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
+  "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
 `
 
 export async function getPaymentMethodBySlug(slug: string) {
@@ -557,7 +557,7 @@ export async function getPaymentMethodBySlug(slug: string) {
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
-      "pinnedCasinos": casinos[]-> { ${CASINO_CARD_FIELDS} },
+      "pinnedCasinos": casinos[defined(@->)]-> { ${CASINO_CARD_FIELDS} },
       "autoCasinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) { ${CASINO_CARD_FIELDS} }
     }`,
     { slug }
@@ -610,7 +610,7 @@ export async function getSoftwareBySlug(slug: string) {
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
       "logo": logo { "url": asset->url, alt },
-      "pinnedCasinos": casinos[]-> { ${CASINO_CARD_FIELDS} },
+      "pinnedCasinos": casinos[defined(@->)]-> { ${CASINO_CARD_FIELDS} },
       "autoCasinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) { ${CASINO_CARD_FIELDS} },
       ${COMPARISON_TABLE_FRAGMENT}
     }`,
@@ -692,7 +692,7 @@ const CASINO_GAME_FIELDS = `
   "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
   "body":  body[]  { ..., _type == "image" => { ..., "url": asset->url } },
   metaTitle, metaDescription,
-  "casinos": casinos[]-> {
+  "casinos": casinos[defined(@->)]-> {
     _id, name, slug, usp, url,
     "logo": logo { "url": asset->url, alt }
   }

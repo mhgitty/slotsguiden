@@ -180,6 +180,7 @@ export const siteSettingsType = defineType({
       name: 'defaultAuthor',
       title: 'Default author',
       type: 'reference',
+      weak: true,
       to: [{ type: 'author' }],
       group: 'general',
       description: 'Shown as author card at the bottom of all pages, casino and bonus pages',

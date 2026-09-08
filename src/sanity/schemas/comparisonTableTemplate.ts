@@ -56,6 +56,7 @@ export const comparisonTableTemplateType = defineType({
       of: [
         {
           type: 'reference',
+          weak: true, // weak so expired bonuses can be deleted
           to: [{ type: 'bonus' }],
           options: {
             disableNew: true,
@@ -80,6 +81,7 @@ export const comparisonTableTemplateType = defineType({
       of: [
         {
           type: 'reference',
+          weak: true,
           to: [{ type: 'bookmaker' }],
           options: {
             disableNew: true,

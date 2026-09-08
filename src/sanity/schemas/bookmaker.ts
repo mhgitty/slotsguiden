@@ -169,7 +169,7 @@ export const bookmakerType = defineType({
       title: 'Payment Methods',
       type: 'array',
       group: 'content',
-      of: [{ type: 'reference', to: [{ type: 'paymentMethod' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'paymentMethod' }] }],
       description: 'Payment methods accepted by this casino',
     }),
     defineField({
@@ -177,7 +177,7 @@ export const bookmakerType = defineType({
       title: 'Software Providers',
       type: 'array',
       group: 'content',
-      of: [{ type: 'reference', to: [{ type: 'software' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'software' }] }],
       description: 'Game software providers used by this casino',
     }),
 
@@ -186,7 +186,7 @@ export const bookmakerType = defineType({
       title: 'Current bonuses (Aktuelle bonusser)',
       type: 'array',
       group: 'content',
-      of: [{ type: 'reference', to: [{ type: 'bonus' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bonus' }] }], // weak so expired bonuses can be deleted
       description: 'Active bonuses tied to this casino',
     }),
 

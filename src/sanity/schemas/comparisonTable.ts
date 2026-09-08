@@ -26,6 +26,7 @@ export const comparisonTableFields = [
     name: 'comparisonTemplate',
     title: '📊 Sammenligningsskabelon',
     type: 'reference',
+    weak: true,
     to: [{ type: 'comparisonTableTemplate' }],
     options: { disableNew: false },
     description: 'Vælg en skabelon. Ændringer i skabelonen slår igennem på alle sider der bruger den.',

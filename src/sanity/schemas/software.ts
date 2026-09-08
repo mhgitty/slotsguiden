@@ -98,7 +98,7 @@ export const softwareType = defineType({
       type: 'array',
       group: 'general',
       description: 'Casinoer, der bruger denne spiludvikler, vises automatisk. Træk for at ændre rækkefølgen. Nye casinoer, der tilføjer denne spiludvikler, tilføjes automatisk nederst.',
-      of: [{ type: 'reference', to: [{ type: 'bookmaker' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bookmaker' }] }],
     }),
 
     // ── Stats ───────────────────────────────────────────────────────────────────
