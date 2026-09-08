@@ -79,7 +79,7 @@ export async function getPosts(limit = 20, categorySlug?: string) {
   return client.fetch(
     `${filter} | order(publishedAt desc) [0...$limit] {
       _id, title, slug, excerpt, publishedAt, readingTime,
-      "featuredImage": featuredImage { "url": asset->url, alt },
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       category-> { name, slug, emoji }
     }`,
     { limit, categorySlug: categorySlug ?? '' }
@@ -95,21 +95,21 @@ export async function getPostBySlug(slug: string) {
         _type == "casinoKortBlock" => {
           ...,
           customTitle, customBody, pros, cons,
-          "imageUrl": image.asset->url,
+          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
           "bookmaker": bookmaker-> {
             name, score, url,
-            "logoUrl": logo.asset->url,
+            "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
             "logoAlt": logo.alt,
           }
         },
         _type == "bonusKortBlock" => {
           ...,
           customTitle, customBody,
-          "imageUrl": image.asset->url,
+          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
           "bonus": bonus-> {
             "name": coalesce(bookmaker->name, casinoNavn, title),
             "bonusText": title,
-            "logoUrl": coalesce(casinoLogo.asset->url, bookmaker->logo.asset->url),
+            "logoUrl": coalesce(casinoLogo.asset->url + "?fm=webp&fit=max&w=1200&q=75", bookmaker->logo.asset->url + "?fm=webp&fit=max&w=1200&q=75"),
             "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
             "score": bookmaker->score,
             "offerUrl": offerUrl,
@@ -117,11 +117,11 @@ export async function getPostBySlug(slug: string) {
           }
         }
       },
-      "featuredImage": featuredImage { "url": asset->url, alt },
-      "ogImage": ogImage { "url": asset->url, alt },
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       metaTitle, metaDescription,
       category-> { name, slug, emoji },
-      author-> { name, slug, bio, linkedin, "imageUrl": image.asset->url }
+      author-> { name, slug, bio, linkedin, "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75" }
     }`,
     { slug }
   )
@@ -139,35 +139,35 @@ const COMPARISON_TABLE_FRAGMENT = `
       _id, title, slug, active,
       oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
       offerUrl, terms, casinoNavn,
-      "casinoLogo":       casinoLogo       { "url": asset->url, alt },
-      "casinoLogoSquare": casinoLogoSquare { "url": asset->url, alt },
-      "kampagneBillede":  kampagneBillede  { "url": asset->url, alt },
+      "casinoLogo":       casinoLogo       { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "casinoLogoSquare": casinoLogoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "kampagneBillede":  kampagneBillede  { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       // Extra fields for the "free spins til eksisterende kunder" card design:
       "gridTitle": freeSpinsEksisterendeTitel,
       "gridDescription": freeSpinsEksisterendeBeskrivelse,
       kampagneSlut, spinVaerdi, maksGevinst,
-      "campaignImage": kampagneBillede { "url": asset->url, alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
+      "campaignImage": kampagneBillede { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
       "bookmaker": bookmaker-> {
         name, slug, score,
-        "logoSquare": logoSquare { "url": asset->url, alt },
-        "logo": logo { "url": asset->url, alt },
-        "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
-        "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
+        "logoSquare": logoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+        "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+        "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt } },
+        "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt } }
       }
     },
     bookmakers[defined(@->)]-> {
       _id, name, slug, usp, score,
       indbetalingsbonus, minIndbetaling, gennemspilskrav,
       url, terms, market,
-      "logo": logo { "url": asset->url, alt },
-      "logoSquare": logoSquare { "url": asset->url, alt },
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "logoSquare": logoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "paymentMethods": paymentMethods[defined(@->)]-> {
         _id, name, "slug": slug.current,
-        "logo": logo { "url": asset->url, alt }
+        "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
       },
       "software": software[defined(@->)]-> {
         _id, name, "slug": slug.current,
-        "logo": logo { "url": asset->url, alt }
+        "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
       }
     }
   }
@@ -185,21 +185,21 @@ const PAGE_FIELDS = `
     _type == "casinoKortBlock" => {
       ...,
       customTitle, customBody, pros, cons,
-      "imageUrl": image.asset->url,
+      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
       "bookmaker": bookmaker-> {
         name, score, url,
-        "logoUrl": logo.asset->url,
+        "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
         "logoAlt": logo.alt,
       }
     },
     _type == "bonusKortBlock" => {
       ...,
       customTitle, customBody,
-      "imageUrl": image.asset->url,
+      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
       "bonus": bonus-> {
         "name": coalesce(bookmaker->name, casinoNavn, title),
         "bonusText": coalesce(oddsBonusTitel, title),
-        "logoUrl": coalesce(casinoLogo.asset->url, bookmaker->logo.asset->url),
+        "logoUrl": coalesce(casinoLogo.asset->url + "?fm=webp&fit=max&w=1200&q=75", bookmaker->logo.asset->url + "?fm=webp&fit=max&w=1200&q=75"),
         "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
         "score": bookmaker->score,
         "offerUrl": offerUrl,
@@ -215,15 +215,15 @@ const PAGE_FIELDS = `
   "a3Title": parent->parent->parent->title,
   "a4Slug": parent->parent->parent->parent->slug.current,
   "a4Title": parent->parent->parent->parent->title,
-  "featuredImage": featuredImage { "url": asset->url, alt },
+  "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
   lastUpdated, hideAuthor,
   "author": author-> {
     name, slug, bio, linkedin, x, facebook,
-    "imageUrl": image.asset->url
+    "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75"
   },
   "factChecker": factChecker-> {
     name, slug, linkedin,
-    "imageUrl": image.asset->url
+    "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75"
   },
   ${COMPARISON_TABLE_FRAGMENT}
 `
@@ -282,8 +282,8 @@ export async function getBookmakers() {
       _id, name, slug, usp, score,
       indbetalingsbonus, minIndbetaling,
       gennemspilskrav, url, terms,
-      "logo": logo { "url": asset->url, alt },
-      "logoSquare": logoSquare { "url": asset->url, alt }
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "logoSquare": logoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -294,11 +294,11 @@ export async function getBookmakerBySlug(slug: string) {
       _id, _createdAt, _updatedAt, titel, name, slug, usp, score, trustpilot, freeSpinsBonus,
       indbetalingsbonus, minIndbetaling, gennemspilskrav,
       url, terms, lanceringsdato, license, body,
-      "logo": logo { "url": asset->url, alt },
-      "logoSquare": logoSquare { "url": asset->url, alt },
-      "ogImage": ogImage { "url": asset->url, alt },
-      "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
-      "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url, "alt": logo.alt },
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "logoSquare": logoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75", "alt": logo.alt },
+      "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75", "alt": logo.alt },
       "aktBonuses": aktuelleBonusser[defined(@->)]->{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
       "refBonuses": *[_type == "bonus" && references(^._id) && (market == "global" || !defined(market))]{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
       metaTitle, metaDescription
@@ -315,8 +315,8 @@ export async function getBonuses(limit = 50) {
       _id, title, slug,
       oddsBonusTitel, minimumOdds, minimumIndbetaling, gennemspilskrav,
       offerUrl, terms, casinoNavn,
-      "casinoLogo":    casinoLogo    { "url": asset->url, alt },
-      "kampagneBillede": kampagneBillede { "url": asset->url, alt },
+      "casinoLogo":    casinoLogo    { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "kampagneBillede": kampagneBillede { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "bookmaker": bookmaker-> { name, slug }
     }`,
     { limit }
@@ -333,7 +333,7 @@ export async function getBonusesForListing(limit = 300) {
       "slug": slug.current,
       "casinoName": coalesce(casinoNavn, bookmaker->name),
       "score": bookmaker->score,
-      "logo": coalesce(casinoLogoSquare, casinoLogo, bookmaker->logoSquare, bookmaker->logo) { "url": asset->url, alt }
+      "logo": coalesce(casinoLogoSquare, casinoLogo, bookmaker->logoSquare, bookmaker->logo) { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`,
     { limit }
   )
@@ -355,8 +355,8 @@ export async function getFreeSpinsGridBonuses() {
       "title": freeSpinsEksisterendeTitel,
       "description": freeSpinsEksisterendeBeskrivelse,
       kampagneSlut,
-      "campaignImage": kampagneBillede { "url": asset->url, alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
-      "logoSquare": casinoLogoSquare { "url": asset->url, alt },
+      "campaignImage": kampagneBillede { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
+      "logoSquare": casinoLogoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       minimumIndbetaling, spinVaerdi, gennemspilskrav, maksGevinst, terms
     }`
   )
@@ -382,7 +382,7 @@ export async function getPopupBonus() {
       "headline": coalesce(oddsBonusTitel, title),
       minimumIndbetaling, gennemspilskrav, offerUrl, terms,
       "slug": slug.current,
-      "logo": coalesce(casinoLogoSquare, casinoLogo) { "url": asset->url, alt }
+      "logo": coalesce(casinoLogoSquare, casinoLogo) { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -394,14 +394,14 @@ export async function getBonusBySlug(slug: string) {
       minimumOdds, minimumIndbetaling, gennemspilskrav,
       maksGevinst, bonuskode, spinVaerdi,
       offerUrl, terms, casinoNavn,
-      "casinoLogo":       casinoLogo       { "url": asset->url, alt },
-      "casinoLogoSquare": casinoLogoSquare { "url": asset->url, alt },
-      "kampagneBillede":  kampagneBillede  { "url": asset->url, alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
+      "casinoLogo":       casinoLogo       { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "casinoLogoSquare": casinoLogoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "kampagneBillede":  kampagneBillede  { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
       kampagneSlut,
-      "ogImage":          ogImage          { "url": asset->url, alt },
+      "ogImage":          ogImage          { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "bookmaker": bookmaker-> {
         name, slug,
-        "logo": logo { "url": asset->url, alt }
+        "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
       }
     }`,
     { slug }
@@ -422,11 +422,11 @@ const headerNavProjection = () =>
 export const getSiteSettings = cache(async () => {
   return client.fetch(
     `*[_type == "siteSettings"][0] {
-      "logoUrl": logo.asset->url,
-      "logoWhiteUrl": logoWhite.asset->url,
+      "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
+      "logoWhiteUrl": logoWhite.asset->url + "?fm=webp&fit=max&w=1200&q=75",
       "defaultAuthor": defaultAuthor-> {
         _id, name, slug, bio, linkedin, x, facebook,
-        "imageUrl": image.asset->url
+        "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75"
       },
       ${headerNavProjection()},
       footerTagline,
@@ -451,12 +451,12 @@ export const getSiteSettings = cache(async () => {
       footerMediaLogos[] {
         alt,
         url,
-        "imageUrl": image.asset->url
+        "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75"
       },
       footerTrustIcons[] {
         alt,
         url,
-        "imageUrl": image.asset->url
+        "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75"
       },
       footerNote,
       footerDisclaimer,
@@ -490,21 +490,21 @@ export async function getHomepage() {
         _type == "casinoKortBlock" => {
           ...,
           customTitle, customBody, pros, cons,
-          "imageUrl": image.asset->url,
+          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
           "bookmaker": bookmaker-> {
             name, score, url,
-            "logoUrl": logo.asset->url,
+            "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
             "logoAlt": logo.alt,
           }
         },
         _type == "bonusKortBlock" => {
           ...,
           customTitle, customBody,
-          "imageUrl": image.asset->url,
+          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
           "bonus": bonus-> {
             "name": coalesce(bookmaker->name, casinoNavn, title),
             "bonusText": title,
-            "logoUrl": coalesce(casinoLogo.asset->url, bookmaker->logo.asset->url),
+            "logoUrl": coalesce(casinoLogo.asset->url + "?fm=webp&fit=max&w=1200&q=75", bookmaker->logo.asset->url + "?fm=webp&fit=max&w=1200&q=75"),
             "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
             "score": bookmaker->score,
             "offerUrl": offerUrl,
@@ -520,7 +520,7 @@ export async function getHomepage() {
         "items": items[] { _key, title, description, icon, href, "bullets": bullets[] }
       },
       metaTitle, metaDescription,
-      "featuredImage": featuredImage { "url": asset->url, alt }
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -533,7 +533,7 @@ export async function getPaymentMethods() {
       _id, name, slug, paymentCategory,
       transactionFees, withdrawalTime, eligibleForBonuses,
       "casinoCount": count(*[_type == "bookmaker" && references(^._id) && defined(score)]),
-      "logo": logo { "url": asset->url, alt }
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -541,10 +541,10 @@ export async function getPaymentMethods() {
 const CASINO_CARD_FIELDS = `
   _id, name, slug, score, usp, url, terms, market,
   indbetalingsbonus, minIndbetaling, gennemspilskrav,
-  "logo": logo { "url": asset->url, alt },
-  "logoSquare": logoSquare { "url": asset->url, alt },
-  "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } },
-  "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url, alt } }
+  "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+  "logoSquare": logoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+  "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt } },
+  "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt } }
 `
 
 export async function getPaymentMethodBySlug(slug: string) {
@@ -554,9 +554,9 @@ export async function getPaymentMethodBySlug(slug: string) {
       paymentCategory, transactionFees, eligibleForBonuses,
       metaTitle, metaDescription,
       showCasinoComparison, comparisonTitle, comparisonLimit, comparisonMoreLabel,
-      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
-      "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
-      "logo": logo { "url": asset->url, alt },
+      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+      "body": body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "pinnedCasinos": casinos[defined(@->)]-> { ${CASINO_CARD_FIELDS} },
       "autoCasinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) { ${CASINO_CARD_FIELDS} }
     }`,
@@ -571,7 +571,7 @@ export async function getSpillemaskiner() {
     `*[_type == "spillemaskine" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) {
       _id, name, titel, "slug": slug.current,
       "date": coalesce(publishedAt, _createdAt),
-      "featuredImage": featuredImage { "url": asset->url, alt }
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -580,10 +580,10 @@ export async function getSpillemaskineBySlug(slug: string) {
   return client.fetch(
     `*[_type == "spillemaskine" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, name, titel, slug, metaTitle, metaDescription, publishedAt, lastUpdated,
-      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
-      "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
-      "featuredImage": featuredImage { "url": asset->url, alt },
-      "ogImage": ogImage { "url": asset->url, alt }
+      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+      "body": body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`,
     { slug }
   )
@@ -596,7 +596,7 @@ export async function getSoftwareProviders() {
     `*[_type == "software" && (market == "global" || !defined(market))] | order(name asc) {
       _id, name, slug, rtp, amountOfSlots, gameCategories,
       "casinoCount": count(*[_type == "bookmaker" && references(^._id) && defined(score)]),
-      "logo": logo { "url": asset->url, alt }
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -607,9 +607,9 @@ export async function getSoftwareBySlug(slug: string) {
       _id, name, titel, slug, metaTitle, metaDescription,
       rtp, amountOfSlots, licenses, gameCategories, highestRtpSlot, bonusBuys,
       showCasinoComparison, comparisonTitle, comparisonLimit, comparisonMoreLabel,
-      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
-      "body": body[] { ..., _type == "image" => { ..., "url": asset->url } },
-      "logo": logo { "url": asset->url, alt },
+      "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+      "body": body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "pinnedCasinos": casinos[defined(@->)]-> { ${CASINO_CARD_FIELDS} },
       "autoCasinos": *[_type == "bookmaker" && references(^._id)] | order(score desc) { ${CASINO_CARD_FIELDS} },
       ${COMPARISON_TABLE_FRAGMENT}
@@ -624,9 +624,9 @@ export async function getLigaStillingerBySlug(slug: string) {
   return client.fetch(
     `*[_type == "ligaStillinger" && slug.current == $slug][0] {
       _id, title, leagueName, intro, slug, leagueId, seasonId,
-      "logo": logo { "url": asset->url, alt },
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       metaTitle, metaDescription, lastUpdated,
-      body[] { ..., _type == "image" => { ..., "url": asset->url } }
+      body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } }
     }`,
     { slug }
   )
@@ -644,11 +644,11 @@ export async function getAuthorBySlug(slug: string) {
   return clientNoCdn.fetch(
     `*[_type == "author" && slug.current == $slug][0] {
       _id, name, slug, role, bio, intro, education, expertise, linkedin, x, facebook,
-      "imageUrl": image.asset->url,
+      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
       metaTitle, metaDescription,
       "body": body[] {
         ...,
-        _type == "image" => { ..., "url": asset->url }
+        _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" }
       }
     }`,
     { slug }
@@ -659,7 +659,7 @@ export async function getReviewsByAuthor(authorId: string, limit = 20) {
   return client.fetch(
     `*[_type == "bookmaker" && defined(slug.current)] | order(_createdAt desc) [0...$limit] {
       _id, name, slug, usp, score, market,
-      "logo": logo { "url": asset->url, alt }
+      "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`,
     { authorId, limit }
   )
@@ -670,7 +670,7 @@ export async function getPostsByAuthor(authorId: string, limit = 20) {
     `*[_type == "post" && defined(publishedAt) && author._ref == $authorId]
      | order(publishedAt desc) [0...$limit] {
       _id, title, slug, excerpt, publishedAt, readingTime,
-      "featuredImage": featuredImage { "url": asset->url, alt },
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       category-> { name, slug, emoji }
     }`,
     { authorId, limit }
@@ -687,14 +687,14 @@ export async function getAuthorPaths() {
 
 const CASINO_GAME_FIELDS = `
   _id, name, titel, slug, market,
-  "logo":    logo    { "url": asset->url, alt },
-  "ogImage": ogImage { "url": asset->url, alt },
-  "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url } },
-  "body":  body[]  { ..., _type == "image" => { ..., "url": asset->url } },
+  "logo":    logo    { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+  "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+  "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
+  "body":  body[]  { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
   metaTitle, metaDescription,
   "casinos": casinos[defined(@->)]-> {
     _id, name, slug, usp, url,
-    "logo": logo { "url": asset->url, alt }
+    "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
   }
 `
 
@@ -719,7 +719,7 @@ export async function getCasinoGuides() {
   return client.fetch(
     `*[_type == "casinoGuide" && (market == "global" || !defined(market)) && defined(slug.current)] | order(title asc) {
       _id, title, "slug": slug.current, metaDescription, lastUpdated,
-      "featuredImage": featuredImage { "url": asset->url, alt }
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
     }`
   )
 }
@@ -855,7 +855,7 @@ export const getAuthorById = cache(async (id: string): Promise<QuoteAuthor | nul
   if (!id) return null
   return client.fetch(
     `*[_type == "author" && _id == $id][0] {
-      _id, name, role, slug, "imageUrl": image.asset->url
+      _id, name, role, slug, "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75"
     }`,
     { id }
   )
@@ -878,7 +878,7 @@ export async function getProviderBoxItems(opts: {
 }): Promise<ProviderBoxItem[]> {
   const type = opts.provider === 'software' ? 'software' : 'paymentMethod'
   const ids = (opts.ids || []).filter(Boolean)
-  const projection = `_id, _type, name, slug, "logo": logo { "url": asset->url, alt }`
+  const projection = `_id, _type, name, slug, "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }`
 
   if (ids.length > 0) {
     const rows: ProviderBoxItem[] = await client.fetch(

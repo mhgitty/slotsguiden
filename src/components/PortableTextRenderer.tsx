@@ -171,7 +171,7 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
         const ref = value.asset._ref.replace('image-', '').replace(/-(\w+)$/, '.$1')
         return (
           <img
-            src={`https://cdn.sanity.io/images/${pid}/production/${ref}`}
+            src={`https://cdn.sanity.io/images/${pid}/production/${ref}?fm=webp&fit=max&w=1200&q=75`}
             alt={value.alt || ''}
             style={{ width: '100%', borderRadius: '8px', margin: '24px 0', display: 'block' }}
           />
