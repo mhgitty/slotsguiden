@@ -75,6 +75,7 @@ export const relatedPagesFields = [
           name: 'page',
           title: 'Page',
           type: 'reference',
+          weak: true, // weak so a linked page can still be deleted
           to: [
             { type: 'page' }, { type: 'casinoGuide' }, { type: 'bookmaker' },
             { type: 'bonus' }, { type: 'paymentMethod' }, { type: 'software' },
@@ -260,6 +261,7 @@ export const bodyField = defineField({
             fields: [
               {
                 name: 'page', title: 'Page', type: 'reference',
+                weak: true, // weak so a linked page can still be deleted
                 to: [
                   { type: 'page' }, { type: 'casinoGuide' }, { type: 'bookmaker' },
                   { type: 'bonus' }, { type: 'paymentMethod' }, { type: 'software' },

@@ -27,6 +27,7 @@ export const hreflangGroupType = defineType({
       description: 'Pick every page this hreflang group applies to.',
       of: [{
         type: 'reference',
+        weak: true, // weak so a linked page can still be deleted
         to: [
           { type: 'homepage' },
           { type: 'page' },
