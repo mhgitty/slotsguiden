@@ -41,11 +41,15 @@ export default async function PaymentMethodPage({ params }: Props) {
   const canonical = `${BASE}/betalingsmetoder/${slug}/`
   const heading = pm.titel || pm.name
 
-  // Comparison list: pinned casinos first (editor order), then any auto-matched
-  // casino that isn't already pinned — deduped by _id.
+  // Comparison list: show ONLY the curated "Casinoer i sammenligningslisten"
+  // (pm.pinnedCasinos), in the editor's chosen order. Auto-matched casinos are
+  // used solely as a fallback when the curated list is empty, so removing a
+  // casino from the list actually removes it from the page.
+  const curated = (pm.pinnedCasinos ?? []).filter((c: any) => c?._id)
+  const source = curated.length > 0 ? curated : (pm.autoCasinos ?? [])
   const seen = new Set<string>()
   const comparisonCasinos: any[] = []
-  for (const c of [...(pm.pinnedCasinos ?? []), ...(pm.autoCasinos ?? [])]) {
+  for (const c of source) {
     if (c?._id && !seen.has(c._id)) { seen.add(c._id); comparisonCasinos.push(c) }
   }
   const showComparison = pm.showCasinoComparison !== false && comparisonCasinos.length > 0
