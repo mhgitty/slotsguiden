@@ -681,10 +681,43 @@ export const bodyField = defineField({
             title: 'Step',
             fields: [
               { name: 'title', title: 'Step title', type: 'string' },
-              { name: 'body',  title: 'Body text',  type: 'text', rows: 3 },
+              {
+                name: 'body',
+                title: 'Body text',
+                type: 'array',
+                of: [{
+                  type: 'block',
+                  styles: [{ title: 'Normal', value: 'normal' }],
+                  lists: [],
+                  marks: {
+                    decorators: [
+                      { title: 'Bold', value: 'strong' },
+                      { title: 'Italic', value: 'em' },
+                    ],
+                    annotations: [
+                      {
+                        name: 'link',
+                        type: 'object',
+                        title: 'Link',
+                        fields: [
+                          { name: 'href',     type: 'url',     title: 'URL' },
+                          { name: 'blank',    type: 'boolean', title: 'Open in new tab', initialValue: false },
+                          { name: 'nofollow', type: 'boolean', title: 'Nofollow (rel="nofollow")', initialValue: false },
+                        ],
+                      },
+                    ],
+                  },
+                }],
+              },
             ],
             preview: {
-              select: { title: 'title', subtitle: 'body' },
+              select: { title: 'title', body: 'body' },
+              prepare({ title, body }: any) {
+                const txt = Array.isArray(body)
+                  ? body.map((b: any) => (b.children || []).map((c: any) => c.text).join('')).join(' ')
+                  : ''
+                return { title: title || 'Trin', subtitle: txt.slice(0, 60) }
+              },
             },
           }],
         },

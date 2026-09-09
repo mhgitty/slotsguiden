@@ -1,8 +1,13 @@
+import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { Icon } from '@/components/Icon'
+
+// Step body is rich text (Portable Text) — supports links, bold and italic.
+// (Older data may still be a plain string; both are handled below.)
+type StepBody = string | any[]
 
 interface HowToItem {
   title?: string
-  body?: string
+  body?: StepBody
 }
 
 interface HowToBlockProps {
@@ -12,6 +17,37 @@ interface HowToBlockProps {
     duration?: string
     items?: HowToItem[]
   }
+}
+
+const hasBody = (b?: StepBody): boolean => (Array.isArray(b) ? b.length > 0 : !!b && !!String(b).trim())
+
+// Flatten Portable Text (or a string) to plain text — used for schema.org.
+function bodyToText(b?: StepBody): string {
+  if (!b) return ''
+  if (typeof b === 'string') return b
+  return b.map((blk: any) => (blk?.children || []).map((c: any) => c?.text || '').join('')).join(' ').trim()
+}
+
+// Inline rich-text rendering for a step body: paragraphs + link / bold / italic.
+const stepBodyComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <p style={{ fontSize: '14.5px', color: 'var(--text-muted)', lineHeight: 1.75, margin: '0 0 8px' }}>{children}</p>
+    ),
+  },
+  marks: {
+    strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => <em>{children}</em>,
+    link: ({ value, children }: any) => {
+      const rel = ['noopener', 'noreferrer', value?.nofollow ? 'nofollow' : ''].filter(Boolean).join(' ')
+      return (
+        <a href={value?.href} target={value?.blank ? '_blank' : '_self'} rel={rel}
+          style={{ color: 'var(--green)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
+          {children}
+        </a>
+      )
+    },
+  },
 }
 
 // Convert a human duration ("5 minutter", "2 timer") into an ISO-8601 duration
@@ -35,18 +71,21 @@ export function HowToBlock({ value }: HowToBlockProps) {
   const isoDuration = toISODuration(duration)
 
   // Emit HowTo structured data from the steps (mirrors the FAQ block's FAQPage schema).
-  const steps = value.items.filter((s) => s?.title || s?.body)
+  const steps = value.items.filter((s) => s?.title || hasBody(s?.body))
   const howToSchema = steps.length > 0 ? {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: value.title || 'Sådan gør du',
     ...(isoDuration ? { totalTime: isoDuration } : {}),
-    step: steps.map((s, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: s.title || `Trin ${i + 1}`,
-      ...(s.body ? { text: s.body } : {}),
-    })),
+    step: steps.map((s, i) => {
+      const text = bodyToText(s.body)
+      return {
+        '@type': 'HowToStep',
+        position: i + 1,
+        name: s.title || `Trin ${i + 1}`,
+        ...(text ? { text } : {}),
+      }
+    }),
   } : null
 
   return (
@@ -145,22 +184,17 @@ export function HowToBlock({ value }: HowToBlockProps) {
                   fontSize: 'clamp(17px, 2vw, 20px)',
                   fontWeight: 800,
                   color: 'var(--text)',
-                  margin: item.body ? '0 0 8px' : '0',
+                  margin: hasBody(item.body) ? '0 0 8px' : '0',
                   letterSpacing: '-0.01em',
                   lineHeight: 1.25,
                 }}>
                   {item.title}
                 </h3>
               )}
-              {item.body && (
-                <p style={{
-                  fontSize: '14.5px',
-                  color: 'var(--text-muted)',
-                  lineHeight: 1.75,
-                  margin: 0,
-                }}>
-                  {item.body}
-                </p>
+              {hasBody(item.body) && (
+                Array.isArray(item.body)
+                  ? <div style={{ marginBottom: '-8px' }}><PortableText value={item.body} components={stepBodyComponents} /></div>
+                  : <p style={{ fontSize: '14.5px', color: 'var(--text-muted)', lineHeight: 1.75, margin: 0 }}>{item.body as string}</p>
               )}
             </div>
           </div>
