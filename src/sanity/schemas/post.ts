@@ -26,8 +26,8 @@ export const postType = defineType({
     defineField({ name: 'readingTime', title: 'Reading time (minutes)', type: 'number', group: 'content' }),
     defineField({ name: 'publishedAt', title: 'Published date', type: 'datetime', group: 'content' }),
     defineField({ name: 'lastUpdated', title: 'Last updated', type: 'datetime', group: 'content' }),
-    defineField({ name: 'metaTitle', title: 'Meta title', type: 'string', group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } }, title: 'Meta title', type: 'string', group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
     defineField({
       name: 'ogImage', title: 'OG image (optional)', type: 'image', group: 'seo',
       description: 'Override the featured image with a separate image for social media',

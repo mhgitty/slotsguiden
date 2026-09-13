@@ -215,8 +215,8 @@ export const homepageType = defineType({
       ],
     }),
     // ── SEO ────────────────────────────────────────────────────────────────
-    defineField({ name: 'metaTitle',       title: 'Meta title',       type: 'string', group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } },       title: 'Meta title',       type: 'string', group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
     defineField({
       name: 'featuredImage', title: 'OG image', type: 'image', group: 'seo',
       description: 'Image shown when the page is shared on social media',

@@ -79,14 +79,14 @@ export const casinoGameType = defineType({
     { ...bodyField, title: 'Intro', name: 'intro', group: 'content' } as any,
     { ...bodyField, group: 'content' } as any,
     defineField({
-      name: 'metaTitle',
+      name: 'metaTitle', options: { search: { weight: 0 } },
       title: 'Meta Title',
       type: 'string',
       group: 'seo',
       description: 'SEO title tag. Max 60 characters.',
     }),
     defineField({
-      name: 'metaDescription',
+      name: 'metaDescription', options: { search: { weight: 0 } },
       title: 'Meta Description',
       type: 'string',
       group: 'seo',

@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { bodyField, relatedPagesFields } from './page'
+import { bodyField, relatedPagesFields, inlineRichTextOf } from './page'
 
 export const bookmakerType = defineType({
   name: 'bookmaker',
@@ -153,10 +153,11 @@ export const bookmakerType = defineType({
     defineField({
       name: 'terms',
       title: 'Terms',
-      type: 'text',
-      rows: 3,
+      type: 'array',
+      of: inlineRichTextOf(),
       group: 'info',
-      description: 'Short terms text — shown below bonus details. HTML is allowed (e.g. <a href="…">links</a> to the operator T&C).',
+      options: { search: { weight: 0 } },
+      description: 'Short terms text shown below bonus details. Use the link button to add links (no HTML needed).',
     }),
 
     // ── Page content ──────────────────────────────────────────────────────────
@@ -191,8 +192,8 @@ export const bookmakerType = defineType({
     }),
 
     // ── SEO ───────────────────────────────────────────────────────────────────
-    defineField({ name: 'metaTitle', title: 'Meta title', type: 'string', group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } }, title: 'Meta title', type: 'string', group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
     defineField({
       name: 'ogImage',
       title: 'OG image',

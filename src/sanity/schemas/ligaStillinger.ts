@@ -76,13 +76,13 @@ export const ligaStillingerType = defineType({
       description: 'Vises under standings-tabellen på frontend.',
     }),
     defineField({
-      name: 'metaTitle',
+      name: 'metaTitle', options: { search: { weight: 0 } },
       title: 'Meta titel',
       type: 'string',
       group: 'seo',
     }),
     defineField({
-      name: 'metaDescription',
+      name: 'metaDescription', options: { search: { weight: 0 } },
       title: 'Meta beskrivelse',
       type: 'text',
       rows: 2,

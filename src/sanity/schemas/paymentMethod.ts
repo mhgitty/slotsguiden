@@ -110,13 +110,13 @@ export const paymentMethodType = defineType({
     ...relatedPagesFields,
     ...comparisonTableFields,
     defineField({
-      name: 'metaTitle',
+      name: 'metaTitle', options: { search: { weight: 0 } },
       title: 'Meta Title',
       type: 'string',
       description: 'SEO title tag. Max 60 characters.',
     }),
     defineField({
-      name: 'metaDescription',
+      name: 'metaDescription', options: { search: { weight: 0 } },
       title: 'Meta Description',
       type: 'string',
       description: 'SEO meta description. 140–155 characters.',

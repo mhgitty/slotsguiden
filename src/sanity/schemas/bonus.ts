@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { bodyField, relatedPagesFields } from './page'
+import { bodyField, relatedPagesFields, inlineRichTextOf } from './page'
 
 export const bonusType = defineType({
   name: 'bonus',
@@ -173,10 +173,11 @@ export const bonusType = defineType({
     defineField({
       name: 'terms',
       title: 'Terms and conditions',
-      type: 'text',
-      rows: 3,
+      type: 'array',
+      of: inlineRichTextOf(),
       group: 'details',
-      description: 'HTML is allowed (e.g. <a href="…">links</a> to the operator T&C).',
+      options: { search: { weight: 0 } },
+      description: 'Short T&C text. Use the link button to add links (no HTML needed).',
     }),
     defineField({
       name: 'bonuskode',
@@ -215,8 +216,8 @@ export const bonusType = defineType({
     ...relatedPagesFields.map((f) => ({ ...f, group: 'content' })),
 
     // ── SEO ───────────────────────────────────────────────────────────────────
-    defineField({ name: 'metaTitle',       title: 'Meta title',       type: 'string',             group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3,      group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } },       title: 'Meta title',       type: 'string',             group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3,      group: 'seo' }),
     defineField({
       name: 'schemaAudience',
       title: 'Målgruppe (Offer-schema)',

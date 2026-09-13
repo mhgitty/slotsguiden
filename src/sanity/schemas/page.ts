@@ -27,6 +27,9 @@ export const introField = defineField({
   name: 'intro',
   title: 'Intro text',
   type: 'array',
+  // Keep long body/intro content out of Studio search ranking so results stay
+  // focused on titles and short fields (weight 0 = excluded from search).
+  options: { search: { weight: 0 } },
   of: [{
     type: 'block',
     styles: [{ title: 'Normal', value: 'normal' }],
@@ -52,6 +55,35 @@ export const introField = defineField({
     },
   }],
 })
+
+// Reusable inline rich-text config (Normal blocks + bold/italic + links, no
+// headings/lists) — used for short fields like `terms` where editors need to
+// add links without writing HTML. Returned as a factory so each field gets a
+// fresh object rather than sharing one.
+export const inlineRichTextOf = () => ([{
+  type: 'block',
+  styles: [{ title: 'Normal', value: 'normal' }],
+  lists: [],
+  marks: {
+    decorators: [
+      { title: 'Bold',   value: 'strong' },
+      { title: 'Italic', value: 'em' },
+    ],
+    annotations: [
+      {
+        name: 'link',
+        type: 'object',
+        title: 'Link',
+        fields: [
+          { name: 'href',     type: 'url',     title: 'URL',
+            validation: (r: any) => r.uri({ scheme: ['http', 'https', 'mailto', 'tel'] }) },
+          { name: 'blank',    type: 'boolean', title: 'Open in new tab', initialValue: false },
+          { name: 'nofollow', type: 'boolean', title: 'Nofollow',        initialValue: false },
+        ],
+      },
+    ],
+  },
+}])
 
 // ── Related pages (bottom of page) ────────────────────────────────────────────
 // Shared by every content type that renders a "Related pages" block.
@@ -104,6 +136,10 @@ export const bodyField = defineField({
   name: 'body',
   title: 'Content',
   type: 'array',
+  // Exclude long-form content from Studio search ranking (weight 0). This keeps
+  // search matches on titles/short fields, propagated to every type that reuses
+  // this field.
+  options: { search: { weight: 0 } },
   of: [
     {
       type: 'block',
@@ -830,8 +866,8 @@ export const pageType = defineType({
       initialValue: false,
       description: 'When enabled, the author bar and author card are not shown on this page (e.g. About us, Privacy Policy)',
     }),
-    defineField({ name: 'metaTitle', title: 'Meta title', type: 'string', group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } }, title: 'Meta title', type: 'string', group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
     defineField({
       name: 'featuredImage', title: 'OG image', type: 'image', group: 'seo',
       options: { hotspot: true },

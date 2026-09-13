@@ -41,8 +41,8 @@ export const authorType = defineType({
     { ...bodyField, group: 'content' } as any,
 
     // SEO
-    defineField({ name: 'metaTitle',       title: 'Meta title',       type: 'string',          group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3,   group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } },       title: 'Meta title',       type: 'string',          group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3,   group: 'seo' }),
   ],
   preview: {
     select: { title: 'name', subtitle: 'role', media: 'image' },

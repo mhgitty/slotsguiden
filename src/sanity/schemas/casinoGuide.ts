@@ -43,8 +43,8 @@ export const casinoGuideType = defineType({
     defineField({ name: 'factChecker', title: 'Fact checker', type: 'reference', weak: true, to: [{ type: 'author' }], group: 'content' }),
     defineField({ name: 'lastUpdated', title: 'Last updated', type: 'date', group: 'content' }),
     defineField({ name: 'hideAuthor', title: 'Hide author', type: 'boolean', group: 'content', initialValue: false }),
-    defineField({ name: 'metaTitle', title: 'Meta title', type: 'string', group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } }, title: 'Meta title', type: 'string', group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
     defineField({
       name: 'featuredImage', title: 'OG image', type: 'image', group: 'seo',
       options: { hotspot: true },

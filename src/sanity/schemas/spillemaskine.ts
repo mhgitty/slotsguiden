@@ -58,8 +58,8 @@ export const spillemaskineType = defineType({
     { ...bodyField, group: 'content' } as any,
     ...relatedPagesFields.map((f) => ({ ...f, group: 'content' })),
 
-    defineField({ name: 'metaTitle', title: 'Meta title', type: 'string', group: 'seo' }),
-    defineField({ name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
+    defineField({ name: 'metaTitle', options: { search: { weight: 0 } }, title: 'Meta title', type: 'string', group: 'seo' }),
+    defineField({ name: 'metaDescription', options: { search: { weight: 0 } }, title: 'Meta description', type: 'text', rows: 3, group: 'seo' }),
     defineField({
       name: 'ogImage',
       title: 'OG image',
