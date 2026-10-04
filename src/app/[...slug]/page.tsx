@@ -2,6 +2,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { HeroSection } from '@/components/HeroSection'
 import { buildHeroQuickLinks } from '@/lib/heroQuickLinks'
+import { ogImageUrl } from '@/lib/og'
 import { ComparisonTable } from '@/components/ComparisonTable'
 import { AuthorBio } from '@/components/AuthorBio'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
@@ -33,8 +34,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = replaceDateVars(page.metaTitle || page.title)
   const description = replaceDateVars(page.metaDescription || blocksToPlainText(page.intro))
   const canonical = `${BASE}${buildPath(slug)}`
-  const ogImg = (page as any).ogImage
-  return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: ogImg?.url ? [{ url: ogImg.url }] : [{ url: `${BASE}/og.png` }] } }
+  const img = page.featuredImage?.url ? page.featuredImage : null
+  return {
+    title, description, alternates: { canonical },
+    openGraph: {
+      title, description, url: canonical, type: 'article',
+      images: [{ url: ogImageUrl(img?.url), width: 1200, height: 630, alt: img?.alt || title }],
+    },
+    twitter: { card: 'summary_large_image', title, description, images: [ogImageUrl(img?.url)] },
+  }
 }
 
 export default async function DynamicPage({ params }: Props) {

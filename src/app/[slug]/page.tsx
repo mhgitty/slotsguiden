@@ -3,6 +3,7 @@ import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { HeroSection } from '@/components/HeroSection'
 import { buildHeroQuickLinks } from '@/lib/heroQuickLinks'
+import { ogImageUrl } from '@/lib/og'
 import { AuthorBar } from '@/components/AuthorBar'
 import { AuthorBio } from '@/components/AuthorBio'
 import { ComparisonTable } from '@/components/ComparisonTable'
@@ -62,11 +63,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         publishedTime: post.publishedAt,
         modifiedTime: post.lastUpdated || post.publishedAt,
         authors: post.author?.name ? [post.author.name] : undefined,
-        ...(img ? { images: [{ url: img.url, alt: img.alt || title }] } : {}),
+        images: [{ url: ogImageUrl(img?.url), width: 1200, height: 630, alt: img?.alt || title }],
       },
       twitter: {
+        card: 'summary_large_image',
         title, description,
-        ...(img ? { images: [img.url] } : {}),
+        images: [ogImageUrl(img?.url)],
       },
     }
   }
@@ -76,7 +78,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const title = replaceDateVars(page.metaTitle || page.title)
     const description = replaceDateVars(page.metaDescription || blocksToPlainText(page.intro))
     const canonical = `${BASE}/${slug}/`
-    return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical } }
+    const img = page.featuredImage?.url ? page.featuredImage : null
+    return {
+      title, description, alternates: { canonical },
+      openGraph: {
+        title, description, url: canonical,
+        images: [{ url: ogImageUrl(img?.url), width: 1200, height: 630, alt: img?.alt || title }],
+      },
+      twitter: { card: 'summary_large_image', title, description, images: [ogImageUrl(img?.url)] },
+    }
   }
 
   return {}
