@@ -7,6 +7,7 @@ import { PreviewBanner } from '@/components/PreviewBanner'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import { BonusPopup } from '@/components/BonusPopup'
 import { EmailFlyout } from '@/components/EmailFlyout'
+import { TrackingPlacement } from '@/components/TrackingPlacement'
 import { getPopupBonus } from '@/lib/sanity'
 import './globals.css'
 
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <BonusPopup bonus={popupBonus} />
         <EmailFlyout />
         <GoogleAnalytics />
+        <TrackingPlacement />
       </body>
     </html>
   )

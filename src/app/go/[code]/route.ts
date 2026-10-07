@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { client } from '@/lib/sanity'
+import { buildRedirectDestination } from '@/lib/redirectDestination'
 
+// Affiliate tracking redirect: /CODE → destination (302), forwarding any
+// incoming query params (e.g. ?placement=/page/) onto the destination URL.
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
   const { code } = await params
@@ -17,5 +20,5 @@ export async function GET(
     return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL ?? 'https://slotsguiden.dk'), 302)
   }
 
-  return NextResponse.redirect(redirect.destination, 302)
+  return NextResponse.redirect(buildRedirectDestination(redirect.destination, req), 302)
 }
