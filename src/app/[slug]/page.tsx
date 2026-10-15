@@ -11,6 +11,7 @@ import { PortableTextRenderer } from '@/components/PortableTextRenderer'
 import { TableOfContents } from '@/components/TableOfContents'
 import { MobileToc } from '@/components/MobileToc'
 import { AuthorMeta } from '@/components/AuthorMeta'
+import { ExcerptReadMore } from '@/components/ExcerptReadMore'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { RelatedPages } from '@/components/RelatedPages'
@@ -155,16 +156,32 @@ export default async function SlugPage({ params }: Props) {
               { label: 'Hjem', href: '/' },
               { label: slugLabel(slug) },
             ]} />
-            {post.category && (
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(10,95,62,0.1)', color: 'var(--green)', fontSize: '12px', fontWeight: 500, padding: '3px 12px', borderRadius: '20px', marginBottom: '16px' }}>
-                {post.category.emoji} {post.category.name}
+            <div className={post.featuredImage?.url ? 'post-hero-grid' : undefined}>
+              <div>
+                {post.category && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(10,95,62,0.1)', color: 'var(--green)', fontSize: '12px', fontWeight: 500, padding: '3px 12px', borderRadius: '20px', marginBottom: '16px' }}>
+                    {post.category.emoji} {post.category.name}
+                  </div>
+                )}
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, letterSpacing: '-0.03em', marginBottom: author ? '20px' : '16px', maxWidth: '720px' }}>
+                  {replaceDateVars(post.title)}
+                </h1>
+                <AuthorBar author={author} updatedAt={post.lastUpdated || post.publishedAt} />
+                {post.excerpt && <ExcerptReadMore text={replaceDateVars(post.excerpt)} words={100} />}
               </div>
-            )}
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, letterSpacing: '-0.03em', marginBottom: author ? '20px' : '16px', maxWidth: '720px' }}>
-              {replaceDateVars(post.title)}
-            </h1>
-            <AuthorBar author={author} updatedAt={post.lastUpdated || post.publishedAt} />
-            {post.excerpt && <p style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: '640px' }}>{replaceDateVars(post.excerpt)}</p>}
+              {post.featuredImage?.url && (
+                <div className="post-hero-media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={post.featuredImage.url}
+                    alt={post.featuredImage.alt || replaceDateVars(post.title)}
+                    width={1200}
+                    height={750}
+                    loading="eager"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

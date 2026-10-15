@@ -1086,3 +1086,24 @@ html { scroll-behavior: smooth; }
 @media (max-width: 700px) {
   .pagelinks-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── Blog post hero: text + featured image (half/half) ─────────────────── */
+.post-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-top: 18px;
+}
+.post-hero-media img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+@media (max-width: 860px) {
+  .post-hero-grid { grid-template-columns: 1fr; gap: 22px; }
+  .post-hero-media img { aspect-ratio: 16 / 9; }
+}
