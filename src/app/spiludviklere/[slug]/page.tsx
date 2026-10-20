@@ -1,9 +1,8 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
-import { SoftwareHero } from '@/components/SoftwareHero'
+import { DirectoryHero } from '@/components/hero/DirectoryHero'
 import { ComparisonTable } from '@/components/ComparisonTable'
 import { CasinoComparisonTable } from '@/components/CasinoComparisonTable'
 import { RelatedPages } from '@/components/RelatedPages'
@@ -72,34 +71,32 @@ export default async function SoftwareSlugPage({ params }: Props) {
       <HreflangLinks docId={(provider as any)._id} />
       <Navbar />
 
-      {/* Breadcrumbs */}
-      <div style={{ background: '#f3f8f5' /* matches the top of --bg-hero so the band below continues seamlessly */, paddingTop: '32px', paddingBottom: '0' }}>
-        <div style={{ maxWidth: '1250px', margin: '0 auto', padding: '0 15px' }}>
-          <Breadcrumbs crumbs={[
-            { label: 'Hjem',     href: '/' },
-            { label: 'Spiludviklere', href: '/spiludviklere/' },
-            { label: provider.name },
-          ]} />
-        </div>
-      </div>
-
-      {/* Hero */}
-      <SoftwareHero
+      <DirectoryHero
+        kind="software"
         name={provider.name}
-        titel={replaceDateVars(provider.titel)}
+        title={replaceDateVars((provider as any).titel || provider.name)}
         logo={provider.logo}
-        rtp={provider.rtp}
-        amountOfSlots={provider.amountOfSlots}
-        licenses={provider.licenses}
-        gameCategories={provider.gameCategories}
-        highestRtpSlot={provider.highestRtpSlot}
-        bonusBuys={provider.bonusBuys}
-        intro={provider.intro}
+        intro={(provider as any).intro}
+        stats={[
+          { icon: 'graph-up', label: 'RTP', value: (provider as any).rtp },
+          { icon: 'gamepad', label: 'Antal slots', value: (provider as any).amountOfSlots },
+          { icon: 'shield-check', label: 'Licens', value: /spillemyndighed/i.test((provider as any).licenses || '') ? 'Spillemyndigheden' : (provider as any).licenses },
+          { icon: 'cup-star', label: 'Højeste RTP-slot', value: (provider as any).highestRtpSlot },
+          { icon: 'wallet-money', label: 'Bonus buys', value: (provider as any).bonusBuys },
+        ]}
+        cats={String((provider as any).gameCategories || '').split(',').map((c: string) => c.trim()).filter(Boolean)}
+        topPick={showComparison ? comparisonCasinos[0] : null}
+        casinoCount={comparisonCasinos.length}
+        crumbs={[
+          { label: 'Hjem', href: '/' },
+          { label: 'Spiludviklere', href: '/spiludviklere/' },
+          { label: provider.name },
+        ]}
       />
 
       {/* Casino comparison list — casinos that use this software provider */}
       {showComparison && (
-        <div className="section" style={{ paddingBottom: (provider.body && provider.body.length > 0) ? '0' : undefined }}>
+        <div className="section scroll-anchor" id="casino-liste" style={{ paddingBottom: (provider.body && provider.body.length > 0) ? '0' : undefined }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px' }}>
             {comparisonTitle}
           </h2>

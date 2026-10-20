@@ -1,7 +1,6 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { PaymentMethodHero } from '@/components/PaymentMethodHero'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { DirectoryHero } from '@/components/hero/DirectoryHero'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
 import { MobileToc } from '@/components/MobileToc'
 import { TableOfContents } from '@/components/TableOfContents'
@@ -72,31 +71,30 @@ export default async function PaymentMethodPage({ params }: Props) {
       <JsonLd data={jsonLd} />
       <Navbar />
 
-      {/* Breadcrumbs */}
-      <div style={{ background: '#f3f8f5' /* matches the top of --bg-hero so the band below continues seamlessly */, paddingTop: '32px', paddingBottom: '0' }}>
-        <div style={{ maxWidth: '1250px', margin: '0 auto', padding: '0 15px' }}>
-          <Breadcrumbs crumbs={[
-            { label: 'Hjem', href: '/' },
-            { label: 'Betalingsmetoder', href: '/betalingsmetoder/' },
-            { label: pm.name || heading },
-          ]} />
-        </div>
-      </div>
-
-      <PaymentMethodHero
+      <DirectoryHero
+        kind="payment"
         name={pm.name}
-        titel={replaceDateVars(heading)}
+        title={replaceDateVars(heading)}
         logo={pm.logo}
-        paymentCategory={pm.paymentCategory}
-        withdrawalTime={pm.withdrawalTime}
-        transactionFees={pm.transactionFees}
-        eligibleForBonuses={pm.eligibleForBonuses}
         intro={pm.intro}
+        stats={[
+          { icon: 'card', label: 'Kategori', value: pm.paymentCategory },
+          { icon: 'bolt', label: 'Udbetalingstid', value: pm.withdrawalTime },
+          { icon: 'sale', label: 'Gebyrer', value: pm.transactionFees },
+          { icon: 'gift', label: 'Giver bonus', value: pm.eligibleForBonuses },
+        ]}
+        topPick={showComparison ? comparisonCasinos[0] : null}
+        casinoCount={comparisonCasinos.length}
+        crumbs={[
+          { label: 'Hjem', href: '/' },
+          { label: 'Betalingsmetoder', href: '/betalingsmetoder/' },
+          { label: pm.name || heading },
+        ]}
       />
 
       {/* Casino comparison list — casinos supporting this payment method */}
       {showComparison && (
-        <div className="section" style={{ paddingBottom: pm.body ? '0' : undefined }}>
+        <div className="section scroll-anchor" id="casino-liste" style={{ paddingBottom: pm.body ? '0' : undefined }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px' }}>
             {comparisonTitle}
           </h2>

@@ -279,8 +279,8 @@ export async function getBookmakerBySlug(slug: string) {
       "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "paymentMethods": paymentMethods[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75", "alt": logo.alt },
       "software": software[defined(@->)]->{ _id, name, "slug": slug.current, "logo": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75", "alt": logo.alt },
-      "aktBonuses": aktuelleBonusser[defined(@->)]->{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
-      "refBonuses": *[_type == "bonus" && references(^._id) && (market == "global" || !defined(market))]{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl },
+      "aktBonuses": aktuelleBonusser[defined(@->)]->{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl, active, kampagneSlut },
+      "refBonuses": *[_type == "bonus" && references(^._id) && (market == "global" || !defined(market))]{ _id, "label": oddsBonusTitel, title, "slug": slug.current, offerUrl, active, kampagneSlut },
       metaTitle, metaDescription
     }`,
     { slug }
@@ -377,11 +377,12 @@ export async function getBonusBySlug(slug: string) {
       "casinoLogo":       casinoLogo       { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "casinoLogoSquare": casinoLogoSquare { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "kampagneBillede":  kampagneBillede  { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt, "w": asset->metadata.dimensions.width, "h": asset->metadata.dimensions.height },
-      kampagneSlut,
+      kampagneStart, kampagneSlut, active,
       "ogImage":          ogImage          { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "bookmaker": bookmaker-> {
-        name, slug,
-        "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
+        name, "slug": slug.current, score,
+        "logo": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+        "logoSquare": logoSquare { "url": asset->url + "?fm=webp&fit=max&w=200&q=80", alt }
       }
     }`,
     { slug }
