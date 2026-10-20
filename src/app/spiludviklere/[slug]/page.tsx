@@ -9,7 +9,8 @@ import { RelatedPages } from '@/components/RelatedPages'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
 import { TableOfContents } from '@/components/TableOfContents'
 import { MobileToc } from '@/components/MobileToc'
-import { getSoftwareBySlug, client } from '@/lib/sanity'
+import { getSoftwareBySlug, getSlotsByProvider, client } from '@/lib/sanity'
+import { SlotGrid } from '@/components/slot/SlotGrid'
 import { replaceDateVars } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -42,6 +43,8 @@ export default async function SoftwareSlugPage({ params }: Props) {
   const { slug } = await params
   const provider = await getSoftwareBySlug(slug).catch(() => null)
   if (!provider) notFound()
+  const slots: any[] = await getSlotsByProvider((provider as any)._id).catch(() => [])
+  const demoCount = slots.filter((g) => g.hasDemo).length
 
   const canonical = `${BASE}/spiludviklere/${slug}/`
 
@@ -87,6 +90,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
         cats={String((provider as any).gameCategories || '').split(',').map((c: string) => c.trim()).filter(Boolean)}
         topPick={showComparison ? comparisonCasinos[0] : null}
         casinoCount={comparisonCasinos.length}
+        slotCount={slots.length}
         crumbs={[
           { label: 'Hjem', href: '/' },
           { label: 'Spiludviklere', href: '/spiludviklere/' },
@@ -101,6 +105,17 @@ export default async function SoftwareSlugPage({ params }: Props) {
             {comparisonTitle}
           </h2>
           <CasinoComparisonTable casinos={comparisonCasinos} maxVisible={(provider as any).comparisonLimit} moreLabel={(provider as any).comparisonMoreLabel || undefined} />
+        </div>
+      )}
+
+      {/* Slots from this provider, linked via each slot's "Spiludvikler" field */}
+      {slots.length > 0 && (
+        <div className="section scroll-anchor" id="spil" style={{ paddingBottom: (provider.body && provider.body.length > 0) ? '0' : undefined }}>
+          <div className="sgs-head">
+            <h2>Spil fra {provider.name}</h2>
+            <p>{slots.length} {slots.length === 1 ? 'spillemaskine' : 'spillemaskiner'} på Slotsguiden{demoCount > 0 ? ` · ${demoCount} med gratis demo` : ''}</p>
+          </div>
+          <SlotGrid games={slots} step={20} tools={slots.length > 20} showProvider={false} />
         </div>
       )}
 

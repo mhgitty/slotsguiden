@@ -18,7 +18,8 @@ export interface SlotCasino {
 export function slotName(name: string = ''): string {
   return name
     .replace(/\s+(anmeldelse|review)\b.*$/i, '')
-    .replace(/\s+[–-]\s+gratis demo$/i, '')
+    .replace(/\s*gratis spillemaskine demo\b.*$/i, '')
+    .replace(/\s*[–—-]?\s*gratis demo\b.*$/i, '')
     .trim() || name
 }
 

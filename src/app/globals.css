@@ -2198,13 +2198,6 @@ a.bk-name:hover { color: var(--green); }
 .sl-rel-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .sl-rel-h a { font-size: 13.5px; font-weight: 700; color: var(--green); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
 .sl-rel-g { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
-.sl-card { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #fff; text-decoration: none; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); transition: box-shadow .2s, transform .2s; }
-.sl-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.sl-card img, .sl-card-ph { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: grid; place-items: center; background: var(--bg-raised); color: var(--text-faint); }
-.sl-card div { padding: 9px 11px 11px; display: grid; gap: 3px; }
-.sl-card b { font-size: 14px; color: var(--text); line-height: 1.3; }
-.sl-card small { font-size: 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; }
-.sl-card small.dm { color: var(--btn); font-weight: 700; }
 
 @media (max-width: 1080px) {
   .sl-head { grid-template-columns: auto minmax(0, 1fr); }
@@ -2244,4 +2237,92 @@ a.bk-name:hover { color: var(--green); }
   .sl-rel-g { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .sl-rel-g > :nth-child(n+4) { display: flex; }
   .sl-rel-g > :nth-child(n+5) { display: none; }
+}
+
+/* ══ Slot cards and slot grids (archive, provider pages, slot pages) ═════ */
+.sgs-head { margin-bottom: 16px; }
+.sgs-head h2 { font-family: var(--font-display); font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin: 0; }
+.sgs-head p { margin: 4px 0 0; color: var(--text-muted); font-size: 14.5px; }
+.sgs-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+.sgs-search {
+  flex: 1 1 280px; display: flex; align-items: center; gap: 9px; height: 46px; padding: 0 14px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-faint);
+  box-shadow: var(--shadow-sm); transition: border-color .15s, box-shadow .15s;
+}
+.sgs-search:focus-within { border-color: var(--btn); box-shadow: 0 0 0 3px rgba(17,128,77,.14); }
+.sgs-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 15px; color: var(--text); }
+.sgs-toggle {
+  display: inline-flex; align-items: center; gap: 7px; height: 46px; padding: 0 14px; border-radius: 12px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font: inherit; font-size: 14px; font-weight: 700; white-space: nowrap;
+}
+.sgs-toggle svg { color: var(--text-faint); }
+.sgs-toggle[aria-pressed="true"] { background: var(--green-light); border-color: var(--btn); color: var(--green); }
+.sgs-toggle[aria-pressed="true"] svg { color: var(--btn); }
+.sgs-s { display: none; }
+.sgs-sort { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 6px 0 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); font-size: 13px; color: var(--text-muted); }
+.sgs-sort select { border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 700; color: var(--text); padding: 8px 4px; cursor: pointer; outline: 0; }
+.sgs-provs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0 4px; margin-bottom: 14px; }
+.sgs-provs::-webkit-scrollbar { display: none; }
+.sgs-provs button {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font: inherit; font-size: 13.5px; font-weight: 700; white-space: nowrap;
+}
+.sgs-provs button span { font-size: 12px; font-weight: 600; color: var(--text-faint); }
+.sgs-provs button:hover { border-color: var(--mint-2); }
+.sgs-provs button[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: #fff; }
+.sgs-provs button[aria-pressed="true"] span { color: rgba(255,255,255,.7); }
+.sgs-count { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+.sgs-count button { border: 0; background: none; padding: 0; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--green); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sgs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.sgs-more { text-align: center; margin-top: 26px; }
+.sgs-more .sg-btn-ghost { font-size: 15px; padding: 12px 26px; cursor: pointer; font-family: inherit; }
+.sgs-more span { color: var(--text-faint); font-weight: 600; }
+
+.sc {
+  display: flex; flex-direction: column; min-width: 0; text-decoration: none; color: var(--text);
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+  box-shadow: var(--shadow-sm); transition: box-shadow .2s, transform .2s, border-color .2s;
+}
+.sc:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--mint-2); }
+.sc-media { position: relative; display: block; aspect-ratio: 4 / 3; background: var(--bg-raised); overflow: hidden; }
+.sc-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+.sc:hover .sc-media img { transform: scale(1.05); }
+.sc-ph { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 40px; font-weight: 800; color: var(--mint-2); background: var(--green-deep); }
+.sc-demo {
+  position: absolute; left: 8px; top: 8px; display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px 4px 8px; border-radius: 999px; background: rgba(6,63,41,.88); color: #fff;
+  font-size: 11px; font-weight: 800; letter-spacing: .02em; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.sc-demo svg { color: #7fe0a6; }
+.sc-hover { position: absolute; inset: 0; display: grid; place-items: center; background: linear-gradient(to top, rgba(4,20,13,.72), rgba(4,20,13,.25)); opacity: 0; transition: opacity .2s; }
+.sc-hover > span { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 999px; background: var(--btn); color: #fff; font-size: 13.5px; font-weight: 800; box-shadow: 0 8px 18px -6px rgba(0,0,0,.5); transform: translateY(6px); transition: transform .2s; }
+.sc:hover .sc-hover, .sc:focus-visible .sc-hover { opacity: 1; }
+.sc:hover .sc-hover > span { transform: none; }
+.sc-body { display: flex; flex-direction: column; gap: 3px; padding: 11px 13px 13px; flex: 1; }
+.sc-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-prov { font-size: 12.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-meta { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 12px; color: var(--text-muted); }
+.sc-meta b { color: var(--text); font-weight: 700; }
+.sc-vol { display: inline-flex; align-items: center; gap: 6px; }
+.sc-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 11px; font-style: normal; }
+.sc-bars i { display: block; width: 3px; border-radius: 1px; background: var(--border); }
+.sc-bars i:nth-child(1) { height: 5px; }
+.sc-bars i:nth-child(2) { height: 8px; }
+.sc-bars i:nth-child(3) { height: 11px; }
+.sc-bars[data-l="1"] i:nth-child(-n+1), .sc-bars[data-l="2"] i:nth-child(-n+2), .sc-bars[data-l="3"] i { background: var(--btn); }
+.sc-bars[data-l="3"] i { background: var(--rose); }
+.sl-rel-g.sgs-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1080px) {
+  .sl-rel-g.sgs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .sgs-grid, .sl-rel-g.sgs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .sgs-search { flex-basis: 100%; }
+  .sgs-toggle, .sgs-sort { flex: 1 1 0; min-width: 0; justify-content: center; height: 42px; font-size: 13px; padding: 0 10px; }
+  .sgs-l { display: none; }
+  .sgs-s { display: inline; }
+  .sc-body { padding: 9px 10px 11px; }
+  .sc-name { font-size: 14px; }
+  .sc-meta { font-size: 11.5px; gap: 3px 10px; }
+  .sc-hover { display: none; }
 }

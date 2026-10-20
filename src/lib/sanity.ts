@@ -535,8 +535,25 @@ export async function getSpillemaskiner() {
     `*[_type == "spillemaskine" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) {
       _id, name, titel, "slug": slug.current,
       "date": coalesce(publishedAt, _createdAt),
-      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      ${SLOT_CARD}
     }`
+  )
+}
+
+/** Fields for the shared slot card (SlotCard). */
+export const SLOT_CARD = `
+  "img": featuredImage.asset->url + "?fm=webp&fit=crop&w=480&h=360&q=72",
+  "hasDemo": defined(demoUrl), rtp, volatilitet,
+  "provider": provider-> { name, "slug": slug.current }`
+
+export async function getSlotsByProvider(providerId: string) {
+  return client.fetch(
+    `*[_type == "spillemaskine" && provider._ref == $id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
+      | order(defined(demoUrl) desc, coalesce(publishedAt, _createdAt) desc) {
+      _id, name, "slug": slug.current, "date": coalesce(publishedAt, _createdAt), ${SLOT_CARD}
+    }`,
+    { id: providerId }
   )
 }
 
@@ -561,8 +578,7 @@ export async function getSpillemaskineBySlug(slug: string) {
       "providerCasinos": provider->casinos[]-> ${SLOT_CASINO},
       "related": *[_type == "spillemaskine" && defined(^.provider._ref) && provider._ref == ^.provider._ref && _id != ^._id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
         | order(defined(demoUrl) desc, coalesce(publishedAt, _createdAt) desc)[0...5] {
-          name, "slug": slug.current, "hasDemo": defined(demoUrl),
-          "img": featuredImage.asset->url + "?fm=webp&fit=crop&w=360&h=270&q=75"
+          _id, name, "slug": slug.current, ${SLOT_CARD}
         }
     }`,
     { slug }

@@ -11,7 +11,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { RelatedPages } from '@/components/RelatedPages'
 import { BonusGrid } from '@/components/BonusGrid'
-import { SpillemaskinerArchive } from '@/components/SpillemaskinerArchive'
+import { SlotGrid } from '@/components/slot/SlotGrid'
 import { getPageBySlug, getSiteSettings, getSpillemaskiner } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
@@ -83,8 +83,10 @@ export default async function SpillemaskinerPage() {
         breadcrumbs={[{ label: 'Hjem', href: '/' }, { label: crumbLabel }]}
       />
 
-      {/* Games archive: first 20 + "show more" */}
-      <SpillemaskinerArchive games={games as any[]} initialCount={20} />
+      {/* Games archive: search, provider filter, sort, 30 at a time */}
+      <div className="section" id="spil">
+        <SlotGrid games={games as any[]} step={30} providerFilter />
+      </div>
 
       {page.showBonusGrid && <BonusGrid title={page.bonusGridTitle} />}
 

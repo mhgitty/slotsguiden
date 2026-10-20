@@ -18,6 +18,8 @@ interface Props {
   /** First casino in the page's comparison list */
   topPick?: any | null
   casinoCount: number
+  /** Slots on Slotsguiden from this provider (software pages) */
+  slotCount?: number
   listAnchor?: string
   crumbs: { label: string; href?: string }[]
 }
@@ -28,7 +30,7 @@ const KIND = {
 }
 
 // Shared hero for payment-method and game-provider pages
-export function DirectoryHero({ kind, name, title, logo, intro, stats, cats, topPick, casinoCount, listAnchor = 'casino-liste', crumbs }: Props) {
+export function DirectoryHero({ kind, name, title, logo, intro, stats, cats, topPick, casinoCount, slotCount = 0, listAnchor = 'casino-liste', crumbs }: Props) {
   const k = KIND[kind]
   const shown = stats.filter((s) => s.value && String(s.value).trim())
   const hasIntro = Array.isArray(intro) ? intro.length > 0 : !!intro
@@ -56,6 +58,7 @@ export function DirectoryHero({ kind, name, title, logo, intro, stats, cats, top
                   <div className="mh-chips">
                     <span className="mh-chip"><Icon name={k.icon} size={13} />{k.chip}</span>
                     {casinoCount > 0 && <span className="mh-chip grey">{casinoCount} casinoer</span>}
+                    {slotCount > 0 && <a className="mh-chip grey" href="#spil">{slotCount} spil</a>}
                   </div>
                   <h1 className="mh-h1">{title}</h1>
                 </div>

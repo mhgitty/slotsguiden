@@ -9,6 +9,7 @@ import { Icon } from '@/components/Icon'
 import { Terms } from '@/components/Terms'
 import { SlotDemo } from '@/components/slot/SlotDemo'
 import { SlotPicker, type PickerCasino } from '@/components/slot/SlotPicker'
+import { SlotCard } from '@/components/slot/SlotCard'
 import { slotName, pickCasinos, offerOf, minDeposit } from '@/components/slot/slotUtils'
 import { getSpillemaskineBySlug, client } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
@@ -264,19 +265,10 @@ export default async function SpillemaskinePage({ params }: Props) {
         <section className="sl-rel">
           <div className="sl-rel-h">
             <h2 className="sl-h2">Flere spil fra {g.provider.name}</h2>
-            {providerHref && <Link href={providerHref}>Alt om {g.provider.name} <Icon name="alt-arrow-right" size={14} /></Link>}
+            {providerHref && <Link href={`${providerHref}#spil`}>Alle spil fra {g.provider.name} <Icon name="alt-arrow-right" size={14} /></Link>}
           </div>
-          <div className="sl-rel-g">
-            {g.related.map((r: any) => (
-              <Link className="sl-card" key={r.slug} href={`/online-spillemaskiner/${r.slug}/`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {r.img ? <img src={r.img} alt="" width={360} height={270} loading="lazy" /> : <span className="sl-card-ph"><Icon name="gamepad" size={32} /></span>}
-                <div>
-                  <b>{slotName(r.name)}</b>
-                  {r.hasDemo ? <small className="dm"><Icon name="play" size={13} /> Gratis demo</small> : <small>Anmeldelse</small>}
-                </div>
-              </Link>
-            ))}
+          <div className="sgs-grid sl-rel-g">
+            {g.related.map((r: any) => <SlotCard key={r._id || r.slug} g={r} showProvider={false} />)}
           </div>
         </section>
       )}
