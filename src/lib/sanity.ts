@@ -415,9 +415,15 @@ export async function getBonusBySlug(slug: string) {
 const navSlugFields = () =>
   `"pageSlug": pageRef->slug.current, "pageParentSlug": pageRef->parent->slug.current, "pageParent2Slug": pageRef->parent->parent->slug.current, "pageParent3Slug": pageRef->parent->parent->parent->slug.current, "pageParent4Slug": pageRef->parent->parent->parent->parent->slug.current, "bookmakerSlug": bookmakerRef->slug.current, "softwareSlug": softwareRef->slug.current, "paymentMethodSlug": paymentMethodRef->slug.current, "postSlug": postRef->slug.current, "casinoGuideSlug": casinoGuideRef->slug.current`
 const navChildren = (depth: number): string =>
-  depth <= 0 ? '' : `, children[] { label, url, ${navSlugFields()}${navChildren(depth - 1)} }`
+  depth <= 0 ? '' : `, children[] { label, url, description, icon, ${navSlugFields()}${navChildren(depth - 1)} }`
+// Featured casino shown in a mega-menu panel (same fields the casino cards use)
+const navFeatured = `"featured": featuredCasino-> {
+    _id, name, "slug": slug.current, score, indbetalingsbonus, url, terms, minIndbetaling, gennemspilskrav,
+    "logo": coalesce(logoSquare.asset->url, logo.asset->url) + "?fm=webp&fit=max&w=200&q=80"
+  }`
 const headerNavProjection = () =>
-  `headerNav[] { label, url, isHighlighted, icon, ${navSlugFields()}${navChildren(3)} }`
+  `headerNav[] { label, url, isHighlighted, icon, featuredLabel, panelNote, ${navFeatured}, ${navSlugFields()}${navChildren(3)} },
+      headerCta, newsletterTitle, newsletterText, rgText`
 
 export const getSiteSettings = cache(async () => {
   return client.fetch(

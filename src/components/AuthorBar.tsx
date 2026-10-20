@@ -13,15 +13,18 @@ interface AuthorBarProps {
   updatedAt?: string | null
 }
 
-function AuthorLink({ person, label }: { person: Author; label: string }) {
+function Person({ person, label }: { person: Author; label: string }) {
   const href = person.slug?.current ? `/redaktion/${person.slug.current}/` : null
   return (
-    <div style={{ fontSize: '12px', color: 'var(--text-faint)', lineHeight: 1.3 }}>
-      {label}{' '}
-      {href
-        ? <Link href={href} style={{ color: 'var(--green)', fontWeight: 600, textDecoration: 'none' }}>{person.name}</Link>
-        : <span style={{ color: 'var(--text)', fontWeight: 600 }}>{person.name}</span>
-      }
+    <div className="ab-cell">
+      {person.imageUrl
+        // eslint-disable-next-line @next/next/no-img-element
+        ? <img src={person.imageUrl} alt={person.name} width={36} height={36} className="ab-av" />
+        : <span className="ab-av ab-av-empty" aria-hidden="true">{person.name.charAt(0)}</span>}
+      <div>
+        <small>{label}</small>
+        {href ? <Link href={href} className="ab-name">{person.name}</Link> : <span className="ab-name">{person.name}</span>}
+      </div>
     </div>
   )
 }
@@ -30,52 +33,21 @@ export function AuthorBar({ author, factChecker, updatedAt }: AuthorBarProps) {
   if (!author && !factChecker && !updatedAt) return null
 
   const dateStr = updatedAt
-    ? new Date(updatedAt).toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(updatedAt).toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })
     : null
 
   if (!author && !factChecker && !dateStr) return null
 
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: '16px',
-      marginBottom: '20px', flexWrap: 'wrap',
-    }}>
-      {author && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {author.imageUrl && (
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--border)' }}>
-              <img src={author.imageUrl} alt={author.name} style={{ width: '40px', height: '40px', objectFit: 'cover', display: 'block' }} />
-            </div>
-          )}
+    <div className="ab">
+      {author && <Person person={author} label="Skrevet af" />}
+      {factChecker && <Person person={factChecker} label="Faktatjekket af" />}
+      {dateStr && (
+        <div className="ab-cell">
           <div>
-            <AuthorLink person={author} label="Forfatter:" />
-            {dateStr && (
-              <div style={{ fontSize: '12px', color: 'var(--text-faint)', lineHeight: 1.3 }}>
-                Senest opdateret: <span style={{ color: 'var(--text-muted)' }}>{dateStr}</span>
-              </div>
-            )}
+            <small>Senest opdateret</small>
+            <time className="ab-name ab-date" dateTime={updatedAt ?? undefined}>{dateStr}</time>
           </div>
-        </div>
-      )}
-
-      {author && factChecker && (
-        <div style={{ width: '1px', height: '36px', background: 'var(--border)', flexShrink: 0 }} />
-      )}
-
-      {factChecker && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {factChecker.imageUrl && (
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--border)' }}>
-              <img src={factChecker.imageUrl} alt={factChecker.name} style={{ width: '40px', height: '40px', objectFit: 'cover', display: 'block' }} />
-            </div>
-          )}
-          <AuthorLink person={factChecker} label="Faktatjekket af:" />
-        </div>
-      )}
-
-      {!author && dateStr && (
-        <div style={{ fontSize: '12px', color: 'var(--text-faint)' }}>
-          Senest opdateret: <span style={{ color: 'var(--text-muted)' }}>{dateStr}</span>
         </div>
       )}
     </div>

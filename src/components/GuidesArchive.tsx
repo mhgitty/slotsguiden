@@ -61,7 +61,7 @@ export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle ca
               padding: '10px 14px 10px 38px',
               fontSize: '14px', color: 'var(--text)',
               background: 'var(--bg-card)', border: '1px solid var(--border)',
-              borderRadius: '10px', outline: 'none',
+              borderRadius: '12px', outline: 'none', boxShadow: 'var(--shadow-sm)',
             }}
           />
           {query && (
@@ -80,35 +80,24 @@ export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle ca
           Ingen guider matcher &ldquo;{query}&rdquo;.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '18px' }}>
+        <div className="sgg-grid">
           {filtered.map((g) => {
             const href = `${hrefPrefix}/${g.slug}/`
+            const desc = g.metaDescription
+              ? (g.metaDescription.length > 120 ? g.metaDescription.slice(0, 120).trimEnd() + '…' : g.metaDescription)
+              : ''
             return (
-              <Link key={g._id} href={href} style={{
-                display: 'flex', flexDirection: 'column', textDecoration: 'none',
-                background: 'var(--bg-card)', border: '1px solid var(--border)',
-                borderRadius: '14px', overflow: 'hidden',
-              }}>
-                {g.featuredImage?.url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={g.featuredImage.url} alt={g.featuredImage.alt || g.title}
-                    style={{ width: '100%', height: '140px', objectFit: 'cover', display: 'block', borderBottom: '1px solid var(--border)' }} />
-                )}
-                <div style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <Icon name="book-2" size={18} color="var(--green)" style={{ flexShrink: 0 }} />
-                    <span style={{ fontFamily: 'var(--font-display)', fontSize: '15.5px', fontWeight: 700, color: 'var(--text)', lineHeight: 1.3 }}>
-                      {g.title}
-                    </span>
-                  </div>
-                  {g.metaDescription && (
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '0 0 14px', lineHeight: 1.5 }}>
-                      {g.metaDescription.length > 120 ? g.metaDescription.slice(0, 120) + '…' : g.metaDescription}
-                    </p>
+              <Link key={g._id} href={href} className="sgg-card">
+                <div className="sgg-media">
+                  {g.featuredImage?.url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={g.featuredImage.url} alt={g.featuredImage.alt || g.title} loading="lazy" />
                   )}
-                  <span style={{ marginTop: 'auto', display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13.5px', fontWeight: 600, color: 'var(--green)' }}>
-                    Læs guide <Icon name="arrow-right" size={14} color="var(--green)" />
-                  </span>
+                </div>
+                <div className="sgg-body">
+                  <span className="sgg-title">{g.title}</span>
+                  {desc && <p className="sgg-desc">{desc}</p>}
+                  <span className="sgg-more">Læs guide <Icon name="arrow-right" size={14} /></span>
                 </div>
               </Link>
             )
@@ -118,12 +107,7 @@ export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle ca
 
       {seeAllHref && (
         <div style={{ textAlign: 'center', marginTop: '22px' }}>
-          <Link href={seeAllHref} style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'var(--bg-raised)', border: '1px solid var(--border)',
-            color: 'var(--text)', padding: '11px 20px', borderRadius: '10px',
-            fontSize: '14px', fontWeight: 600, textDecoration: 'none',
-          }}>
+          <Link href={seeAllHref} className="sg-btn-ghost">
             {seeAllLabel}
             <Icon name="arrow-right" size={16} />
           </Link>

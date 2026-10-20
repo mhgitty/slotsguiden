@@ -19,9 +19,9 @@ export function PostCard({ title, slug, excerpt, publishedAt, readingTime, featu
     : null
 
   return (
-    <Link href={`/${slug.current}/`} style={{ textDecoration: 'none' }}>
-      <article style={{
-        background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px',
+    <Link href={`/${slug.current}/`} style={{ textDecoration: 'none' }} className="sg-lift-link">
+      <article className="sg-lift" style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px', boxShadow: 'var(--shadow-sm)',
         overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column',
       }}>
         {/* Featured image */}
@@ -41,7 +41,7 @@ export function PostCard({ title, slug, excerpt, publishedAt, readingTime, featu
           {category && (
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '5px', alignSelf: 'flex-start',
-              background: 'rgba(10,95,62,0.12)', color: 'var(--green)', fontSize: '11.5px', fontWeight: 500,
+              background: 'var(--green-light)', color: 'var(--green-dark)', fontSize: '11.5px', fontWeight: 700,
               padding: '3px 10px', borderRadius: '20px', marginBottom: '12px',
             }}>
               {category.emoji} {category.name}

@@ -331,13 +331,7 @@ function ProviderCardsSection({
               className={`provider-card${isDesktopOnly ? ' provider-card--desktop-only' : ''}`}
             >
               {/* Logo area */}
-              <div style={{
-                width: '100%', height: '90px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: '16px',
-                padding: '10px',
-                overflow: 'hidden',
-              }}>
+              <div className="pt-logo">
                 {item.logo?.url ? (
                   <Image
                     src={item.logo.url}
@@ -361,28 +355,13 @@ function ProviderCardsSection({
               </div>
 
               {/* Name + arrow row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', width: '100%', marginBottom: '4px' }}>
-                <span style={{ fontSize: '16.5px', fontWeight: 700, color: 'var(--text)', lineHeight: 1.3 }}>
-                  {item.name}
-                </span>
-                <div style={{
-                  flexShrink: 0,
-                  width: '28px', height: '28px',
-                  borderRadius: '50%',
-                  background: 'var(--green)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <Icon name="alt-arrow-right" size={14} color="#fff" />
+              <div className="pt-row">
+                <div className="pt-id">
+                  <span className="pt-name">{item.name}</span>
+                  {item.casinoCount > 0 && <span className="pt-count">{item.casinoCount} {casinoLabel}</span>}
                 </div>
+                <span className="pt-arrow" aria-hidden="true"><Icon name="arrow-right" size={14} /></span>
               </div>
-
-              {/* Casino count */}
-              {item.casinoCount > 0 && (
-                <div style={{ fontSize: '14px', color: 'var(--text-muted)', width: '100%' }}>
-                  <strong style={{ color: 'var(--text)', fontWeight: 700 }}>{item.casinoCount}</strong>
-                  {' '}{casinoLabel}
-                </div>
-              )}
             </Link>
           )
         })}
@@ -391,14 +370,7 @@ function ProviderCardsSection({
       {/* See all button */}
       {(hasMore || true) && (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <Link href={seeAllHref} style={{
-            display: 'inline-block',
-            border: '1px solid var(--border)',
-            borderRadius: '8px',
-            padding: '10px 24px',
-            fontSize: '14px', fontWeight: 600, color: 'var(--text)',
-            textDecoration: 'none',
-          }}>
+          <Link href={seeAllHref} className="sg-btn-ghost">
             {seeAllLabel}
           </Link>
         </div>

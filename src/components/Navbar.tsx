@@ -1,8 +1,6 @@
-import Link from 'next/link'
-import Image from 'next/image'
 import { getSiteSettings } from '@/lib/sanity'
-import { MobileMenu } from './MobileMenu'
-import { Icon } from './Icon'
+import { SiteHeader } from './header/SiteHeader'
+import type { NavItem, NavLink, HeaderCta } from './header/types'
 
 const DEFAULT_NAV = [
   { label: 'Hjem',               url: '/',                       isHighlighted: false, children: [] },
@@ -10,6 +8,8 @@ const DEFAULT_NAV = [
   { label: 'Bonusser',           url: '/online-casino/bonus/',   isHighlighted: false, children: [] },
   { label: 'Guider & Artikler', url: '/blog/',                  isHighlighted: false, children: [] },
 ]
+
+const DEFAULT_CTA: HeaderCta = { label: 'Top 10 casinoer', href: '/online-casino/' }
 
 function resolveUrl(item: {
   url?: string; pageSlug?: string; pageParentSlug?: string; pageParent2Slug?: string; pageParent3Slug?: string; pageParent4Slug?: string;
@@ -27,100 +27,33 @@ function resolveUrl(item: {
   return item.url || '/'
 }
 
-interface ResolvedNavChild { label: string; href: string; children?: ResolvedNavChild[] }
-interface ResolvedNavItem { label: string; href: string; isHighlighted: boolean; icon?: string; children: ResolvedNavChild[] }
+const mapLink = (n: any): NavLink => ({
+  label: n.label,
+  href: resolveUrl(n),
+  description: n.description || undefined,
+  icon: n.icon || undefined,
+  children: (n.children || []).map(mapLink),
+})
 
-// Recursive dropdown renderer — handles any nesting depth (sub-menus of sub-menus).
-function NavDropdownTree({ items }: { items: ResolvedNavChild[] }) {
-  return (
-    <>
-      {items.map((child) =>
-        child.children && child.children.length > 0 ? (
-          <div key={child.href + child.label} className="nav-dropdown-sub">
-            <Link href={child.href} className="nav-dropdown-item nav-dropdown-item-has-children">
-              {child.label}
-              <Icon name="alt-arrow-right" size={13} style={{ flexShrink: 0, opacity: 0.5 }} />
-            </Link>
-            <div className="nav-dropdown nav-dropdown-flyout">
-              <NavDropdownTree items={child.children} />
-            </div>
-          </div>
-        ) : (
-          <Link key={child.href + child.label} href={child.href} className="nav-dropdown-item">
-            {child.label}
-          </Link>
-        )
-      )}
-    </>
-  )
-}
-
-export async function Navbar({ navItems, logoHref = '/' }: { navItems?: ResolvedNavItem[]; logoHref?: string } = {}) {
+export async function Navbar({ navItems }: { navItems?: NavItem[]; logoHref?: string } = {}) {
+  const settings = await getSiteSettings().catch(() => null)
   let nav = navItems
   if (!nav) {
-    const settings = await getSiteSettings().catch(() => null)
     const raw: any[] = settings?.headerNav?.length ? settings.headerNav : DEFAULT_NAV
-    const mapNode = (item: any): any => ({
+    nav = raw.map((item: any): NavItem => ({
       label: item.label,
       href: resolveUrl(item),
-      isHighlighted: item.isHighlighted ?? false,
       icon: item.icon ?? undefined,
-      children: (item.children || []).map(mapNode),
-    })
-    nav = raw.map(mapNode)
+      isHighlighted: item.isHighlighted ?? false,
+      featuredLabel: item.featuredLabel ?? undefined,
+      panelNote: item.panelNote ?? undefined,
+      featured: item.featured?._id ? item.featured : null,
+      children: (item.children || []).map(mapLink),
+    }))
   }
+  const cta: HeaderCta = settings?.headerCta?.label
+    ? { label: settings.headerCta.label, href: settings.headerCta.url || DEFAULT_CTA.href }
+    : DEFAULT_CTA
 
-  return (
-    <header className="navbar">
-      <div className="navbar-inner">
-        <Link href={logoHref} className="navbar-logo">
-          <Image
-            src="/logo.webp"
-            alt="Slotsguiden"
-            height={36}
-            width={200}
-            style={{ height: '36px', width: 'auto', display: 'block' }}
-            priority
-          />
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="navbar-nav">
-          {nav.map((item) => {
-            const inner = (
-              <>
-                {item.icon && <Icon name={item.icon} size={16} color="#ffffff" style={{ flexShrink: 0 }} />}
-                {item.label}
-              </>
-            )
-            if (!item.children.length) {
-              return (
-                <Link
-                  key={item.href + item.label}
-                  href={item.href}
-                  className={`nav-link${item.isHighlighted ? ' nav-link-cta' : ''}`}
-                >
-                  {inner}
-                </Link>
-              )
-            }
-            return (
-              <div key={item.href + item.label} className="nav-item-dropdown">
-                <Link href={item.href} className={`nav-link nav-link-has-children${item.isHighlighted ? ' nav-link-cta' : ''}`}>
-                  {inner}
-                  <Icon name="alt-arrow-down" size={14} color="#ffffff" style={{ marginLeft: '2px', flexShrink: 0, opacity: 0.7 }} />
-                </Link>
-                <div className="nav-dropdown">
-                  <NavDropdownTree items={item.children} />
-                </div>
-              </div>
-            )
-          })}
-        </nav>
-
-        {/* Mobile burger — client component */}
-        <MobileMenu items={nav} />
-      </div>
-    </header>
-  )
+  return <SiteHeader nav={nav} cta={cta} />
 }

@@ -40,7 +40,7 @@ export function SocialLinks({ links }: { links?: SocialLinkData | null }) {
           rel="noopener noreferrer"
           aria-label={`Følg os på ${p.label}`}
           style={{
-            width: '36px', height: '36px', borderRadius: '8px',
+            width: '38px', height: '38px', borderRadius: '12px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
             color: '#fff', transition: 'background 0.15s',

@@ -21,6 +21,7 @@ function extractHeadings(body: any[]): Heading[] {
 
 export function TableOfContents({ body }: { body: any[] }) {
   const [activeId, setActiveId] = useState<string>('')
+  const [progress, setProgress] = useState(0)
   const navRef = useRef<HTMLElement>(null)
   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({})
   const headings = extractHeadings(body)
@@ -45,6 +46,21 @@ export function TableOfContents({ body }: { body: any[] }) {
     return () => observer.disconnect()
   }, [headings.length])
 
+  // Reading progress through the page (0–100)
+  useEffect(() => {
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(max > 0 ? Math.min(100, Math.max(0, Math.round((window.scrollY / max) * 100))) : 0)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); if (raf) cancelAnimationFrame(raf) }
+  }, [])
+
   // Auto-scroll the TOC so the active item stays visible
   useEffect(() => {
     if (!activeId || !navRef.current) return
@@ -63,42 +79,21 @@ export function TableOfContents({ body }: { body: any[] }) {
   if (!headings.length) return null
 
   return (
-    <div style={{
-      background: 'var(--bg-card)',
-      border: '1px solid var(--border)',
-      borderRadius: '12px',
-      padding: '20px 24px',
-      marginBottom: '32px',
-    }}>
-      <h4 style={{
-        fontFamily: 'var(--font-display)',
-        fontSize: '11px',
-        fontWeight: 700,
-        color: 'var(--text-faint)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.8px',
-        marginBottom: '14px',
-      }}>
-        Indholdsfortegnelse
-      </h4>
+    <div className="sg-toc">
+      <div className="sg-toc-top">
+        <span>Indhold</span>
+        <span className="sg-toc-pct" aria-hidden="true">{progress}%</span>
+      </div>
+      <div className="sg-toc-bar" aria-hidden="true"><i style={{ width: `${progress}%` }} /></div>
 
-      <nav ref={navRef} style={{ overflowY: 'auto', maxHeight: '60vh' }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      <nav ref={navRef} className="sg-toc-nav" aria-label="Indholdsfortegnelse">
+        <ul>
           {headings.map(({ id, text }) => (
             <li key={id} ref={(el) => { itemRefs.current[id] = el }}>
               <a
                 href={`#${id}`}
-                style={{
-                  display: 'block',
-                  fontSize: '15px',
-                  lineHeight: 1.5,
-                  color: activeId === id ? 'var(--green)' : 'var(--text-muted)',
-                  textDecoration: 'none',
-                  padding: '4px 0 4px 8px',
-                  borderLeft: activeId === id ? '2px solid var(--green)' : '2px solid transparent',
-                  transition: 'color 0.15s, border-color 0.15s',
-                  fontWeight: activeId === id ? 500 : 400,
-                }}
+                className={activeId === id ? 'is-active' : undefined}
+                aria-current={activeId === id ? 'location' : undefined}
                 onClick={(e) => {
                   e.preventDefault()
                   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })

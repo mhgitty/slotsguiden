@@ -112,6 +112,19 @@ const subNavItem = {
   title: 'Menupunkt',
   fields: [
     ...linkFields,
+    defineField({
+      name: 'description',
+      title: 'Beskrivelse (menu)',
+      type: 'string',
+      description: 'Kort linje under linket i menuen, fx "Pengene på kontoen hurtigt". Holdes under ca. 40 tegn.',
+      validation: (r) => r.max(60),
+    }),
+    defineField({
+      name: 'icon',
+      title: 'Ikon (menu)',
+      type: 'string',
+      description: 'Solar-ikonnavn, fx bolt, gift, crown, shield-check, smartphone. Se icon-sets.iconify.design/solar',
+    }),
     defineField({ name: 'children', title: 'Undermenu', type: 'array', description: 'Tilføj punkter for at lave en dybere undermenu', of: [subNavItem2] }),
   ],
   preview: navPreview,
@@ -127,6 +140,26 @@ const navItemFields = [
     description: 'Solar icon name — renders in green duotone. Good picks: gift, crown, star, diamond, cup-star, shield-star, card, wallet, book-2, chart-2, joystick, cpu. Browse all at icon-sets.iconify.design/solar',
   }),
   defineField({ name: 'isHighlighted', title: 'Highlighted (CTA button)', type: 'boolean', initialValue: false }),
+  defineField({
+    name: 'featuredCasino',
+    title: 'Fremhævet casino i menuen',
+    type: 'reference',
+    to: [{ type: 'bookmaker' }],
+    weak: true,
+    description: 'Vises til højre i menupanelet med bonus, knap og vilkår. Lad stå tom for ingen.',
+  }),
+  defineField({
+    name: 'featuredLabel',
+    title: 'Overskrift over fremhævet casino',
+    type: 'string',
+    description: 'Fx "Månedens casino" eller "Dagens free spins".',
+  }),
+  defineField({
+    name: 'panelNote',
+    title: 'Note i bunden af menupanelet',
+    type: 'string',
+    description: 'Kort linje i bunden af panelet, fx "Alle casinoer har dansk licens fra Spillemyndigheden".',
+  }),
   defineField({
     name: 'children',
     title: 'Dropdown',
@@ -224,6 +257,39 @@ export const siteSettingsType = defineType({
           },
         },
       }],
+    }),
+
+    defineField({
+      name: 'headerCta',
+      title: 'Knap i headeren',
+      type: 'object',
+      group: 'header',
+      description: 'Den hvide knap til højre i headeren. Tom = "Top 10 casinoer" til /online-casino/.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({ name: 'label', title: 'Tekst', type: 'string' }),
+        defineField({ name: 'url', title: 'Link', type: 'string', description: 'Relativ sti, fx /online-casino/' }),
+      ],
+    }),
+    defineField({
+      name: 'newsletterTitle',
+      title: 'Nyhedsbrev: overskrift',
+      type: 'string',
+      group: 'footer',
+      description: 'Øverst i footeren. Tom = "Få ugens bedste free spins i indbakken".',
+    }),
+    defineField({
+      name: 'newsletterText',
+      title: 'Nyhedsbrev: tekst',
+      type: 'string',
+      group: 'footer',
+    }),
+    defineField({
+      name: 'rgText',
+      title: 'Spil ansvarligt: tekst',
+      type: 'string',
+      group: 'footer',
+      description: 'Teksten i "Spil ansvarligt"-boksen. Tom = standardtekst med StopSpillet og ROFUS.',
     }),
 
     // ── Footer ──────────────────────────────────────────────────────────────────
