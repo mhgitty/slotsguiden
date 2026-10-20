@@ -540,14 +540,30 @@ export async function getSpillemaskiner() {
   )
 }
 
+const SLOT_CASINO = `{
+  _id, name, score, url, indbetalingsbonus, freeSpinsBonus, minIndbetaling, gennemspilskrav, terms,
+  "slug": slug.current,
+  "logoUrl": coalesce(logoSquare.asset->url, logo.asset->url) + "?fm=webp&fit=max&w=120&q=80"
+}`
+
 export async function getSpillemaskineBySlug(slug: string) {
   return client.fetch(
     `*[_type == "spillemaskine" && slug.current == $slug && (market == "global" || !defined(market))][0] {
-      _id, name, titel, slug, metaTitle, metaDescription, publishedAt, lastUpdated,
+      _id, _updatedAt, name, titel, slug, metaTitle, metaDescription, publishedAt, lastUpdated,
+      demoUrl, rtp, volatilitet, maksGevinst, layout, gevinstsystem, indsats, udgivet, funktioner,
+      "provider": provider-> { name, "slug": slug.current },
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
-      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
-      "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt }
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", "thumb": asset->url + "?fm=webp&fit=crop&w=200&h=200&q=80", alt },
+      "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "ownCasinos": casinos[]-> ${SLOT_CASINO},
+      "defaultCasinos": *[_type == "siteSettings"][0].slotCasinos[]-> ${SLOT_CASINO},
+      "providerCasinos": provider->casinos[]-> ${SLOT_CASINO},
+      "related": *[_type == "spillemaskine" && defined(^.provider._ref) && provider._ref == ^.provider._ref && _id != ^._id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
+        | order(defined(demoUrl) desc, coalesce(publishedAt, _createdAt) desc)[0...5] {
+          name, "slug": slug.current, "hasDemo": defined(demoUrl),
+          "img": featuredImage.asset->url + "?fm=webp&fit=crop&w=360&h=270&q=75"
+        }
     }`,
     { slug }
   )

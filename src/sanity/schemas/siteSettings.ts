@@ -180,6 +180,7 @@ export const siteSettingsType = defineType({
     { name: 'general', title: '⚙️ General' },
     { name: 'header',  title: '🔝 Header' },
     { name: 'footer',  title: '🔻 Footer' },
+    { name: 'slots',   title: '🎰 Slot pages' },
   ],
   fields: [
     // ── Logos ───────────────────────────────────────────────────────────────────
@@ -461,6 +462,16 @@ export const siteSettingsType = defineType({
           },
         },
       }],
+    }),
+    // ── Slot pages ────────────────────────────────────────────────────────────
+    defineField({
+      name: 'slotCasinos',
+      title: 'Standard casinos on slot pages',
+      type: 'array',
+      group: 'slots',
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bookmaker' }] }],
+      validation: (r) => r.max(8),
+      description: 'The casinos in the "Spil for rigtige penge" picker next to every slot demo, in this order. The first one is pre-selected. A slot can override this in its own "Spil & demo" tab. Empty = the best-rated casinos with the slot\'s provider.',
     }),
   ],
   preview: {

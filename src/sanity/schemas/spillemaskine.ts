@@ -7,6 +7,7 @@ export const spillemaskineType = defineType({
   type: 'document',
   groups: [
     { name: 'info', title: 'Info' },
+    { name: 'game', title: '🎰 Spil & demo' },
     { name: 'content', title: 'Content' },
     { name: 'seo', title: 'SEO' },
   ],
@@ -54,8 +55,64 @@ export const spillemaskineType = defineType({
     defineField({ name: 'publishedAt', title: 'Published date', type: 'datetime', group: 'info' }),
     defineField({ name: 'lastUpdated', title: 'Last updated', type: 'datetime', group: 'info' }),
 
+
+    // ── Spil & demo ──────────────────────────────────────────────────────────
+    defineField({
+      name: 'demoUrl',
+      title: 'Demo URL',
+      type: 'url',
+      group: 'game',
+      description: 'The link the demo box loads (the iframe "src"), e.g. https://demogamesfree.pragmaticplay.net/hub-demo/openGame.do?…&gameSymbol=vs20olympgate. Leave empty if there is no demo.',
+      validation: (r) => r.uri({ scheme: ['https'] }),
+    }),
+    defineField({
+      name: 'provider',
+      title: 'Spiludvikler',
+      type: 'reference',
+      weak: true,
+      to: [{ type: 'software' }],
+      group: 'game',
+      description: 'Shown under the title and used for "Flere spil fra …".',
+    }),
+    defineField({ name: 'rtp', title: 'RTP', type: 'string', group: 'game', description: 'e.g. 96,50%' }),
+    defineField({
+      name: 'volatilitet',
+      title: 'Volatilitet',
+      type: 'string',
+      group: 'game',
+      options: { list: ['Lav', 'Lav-middel', 'Middel', 'Middel-høj', 'Høj', 'Meget høj'] },
+    }),
+    defineField({ name: 'maksGevinst', title: 'Maks. gevinst', type: 'string', group: 'game', description: 'e.g. 5.000x indsatsen' }),
+    defineField({ name: 'layout', title: 'Hjul / rækker', type: 'string', group: 'game', description: 'e.g. 6 × 5' }),
+    defineField({ name: 'gevinstsystem', title: 'Gevinstsystem / gevinstlinjer', type: 'string', group: 'game', description: 'e.g. Cluster pays, 20 linjer, 117.649 Megaways' }),
+    defineField({ name: 'indsats', title: 'Indsats (min.–maks.)', type: 'string', group: 'game', description: 'e.g. 0,20–100 kr.' }),
+    defineField({ name: 'udgivet', title: 'Udgivet', type: 'string', group: 'game', description: 'e.g. Februar 2021' }),
+    defineField({ name: 'funktioner', title: 'Bonusfunktioner', type: 'string', group: 'game', description: 'e.g. Free spins, multiplikatorer, Bonus Buy' }),
+    defineField({
+      name: 'casinos',
+      title: 'Casinoer ved demoen',
+      type: 'array',
+      group: 'game',
+      of: [{ type: 'reference', weak: true, to: [{ type: 'bookmaker' }] }],
+      validation: (r) => r.max(8),
+      description: 'Optional. The casinos in the "Spil for rigtige penge" picker, in this order. Empty = the standard list from Site settings → Slot pages.',
+    }),
+
     { ...introField, group: 'content' } as any,
-    { ...bodyField, group: 'content' } as any,
+    {
+      ...bodyField,
+      group: 'content',
+      of: [
+        ...(bodyField as any).of,
+        {
+          type: 'object',
+          name: 'slotSpecsBlock',
+          title: 'Nøgletal (fra Spil & demo)',
+          fields: [defineField({ name: 'note', title: 'Note', type: 'string', readOnly: true, initialValue: 'Shows the key facts from the "Spil & demo" tab here.' })],
+          preview: { prepare: () => ({ title: '🎰 Nøgletal', subtitle: 'Key-fact tiles from the Spil & demo tab' }) },
+        },
+      ],
+    } as any,
     ...relatedPagesFields.map((f) => ({ ...f, group: 'content' })),
 
     defineField({ name: 'metaTitle', options: { search: { weight: 0 } }, title: 'Meta title', type: 'string', group: 'seo' }),
