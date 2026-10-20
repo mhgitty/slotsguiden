@@ -85,6 +85,32 @@ export const inlineRichTextOf = () => ([{
   },
 }])
 
+// Rich text for the body of casino/bonus cards: paragraphs, lists, bold/italic
+// and links (same link options as the main body).
+export const cardBodyOf = () => ([{
+  type: 'block',
+  styles: [{ title: 'Normal', value: 'normal' }],
+  lists: [{ title: 'Bullet list', value: 'bullet' }, { title: 'Numbered list', value: 'number' }],
+  marks: {
+    decorators: [
+      { title: 'Bold',   value: 'strong' },
+      { title: 'Italic', value: 'em' },
+    ],
+    annotations: [
+      {
+        name: 'link',
+        type: 'object',
+        title: 'Link',
+        fields: [
+          { name: 'href',     type: 'url',     title: 'URL' },
+          { name: 'blank',    type: 'boolean', title: 'Open in new tab', initialValue: false },
+          { name: 'nofollow', type: 'boolean', title: 'Nofollow', initialValue: false },
+        ],
+      },
+    ],
+  },
+}])
+
 // ── Related pages (bottom of page) ────────────────────────────────────────────
 // Shared by every content type that renders a "Related pages" block.
 export const relatedPagesFields = [
@@ -569,21 +595,23 @@ export const bodyField = defineField({
           weak: true,
           to: [{ type: 'bookmaker' }],
         },
-        { name: 'customTitle', title: 'Title', type: 'string' },
-        { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
+        { name: 'customTitle', title: 'Title (shown as h3)', type: 'string', description: 'Fx "CasinoMoto – 100% op til 1.000 kr.". Tom = casinoets navn.' },
+        { name: 'rank', title: 'Placering', type: 'number', description: 'Vises som et lille tal på logoet. 1 = guld.', validation: (r: any) => r.min(1).max(99).integer() },
+        { name: 'label', title: 'Mærkat', type: 'string', description: 'Kort mærkat over titlen, fx "Bedste online casino i Danmark 2026".' },
+        { name: 'image', title: 'Image', type: 'image', options: { hotspot: true }, fields: [{ name: 'alt', title: 'Alt text', type: 'string' }] },
         {
           name: 'customBody',
           title: 'Body text',
           type: 'array',
-          of: [{ type: 'block', styles: [{ title: 'Normal', value: 'normal' }], lists: [{ title: 'Bullet list', value: 'bullet' }, { title: 'Numbered list', value: 'number' }], marks: { decorators: [{ title: 'Bold', value: 'strong' }, { title: 'Italic', value: 'em' }] } }],
+          of: cardBodyOf(),
         },
         { name: 'pros', title: '✅ Pros', type: 'array', of: [{ type: 'string' }] },
         { name: 'cons', title: '❌ Cons', type: 'array', of: [{ type: 'string' }] },
       ],
       preview: {
-        select: { customTitle: 'customTitle', name: 'bookmaker.name', logo: 'bookmaker.logo' },
-        prepare({ customTitle, name, logo }: any) {
-          return { title: customTitle || name || 'Casino card', subtitle: name, media: logo }
+        select: { customTitle: 'customTitle', name: 'bookmaker.name', logo: 'bookmaker.logo', rank: 'rank' },
+        prepare({ customTitle, name, logo, rank }: any) {
+          return { title: `${rank ? rank + '. ' : ''}${customTitle || name || 'Casino card'}`, subtitle: `🎰 ${name || 'Intet casino valgt'}`, media: logo }
         },
       },
     },
@@ -606,7 +634,7 @@ export const bodyField = defineField({
           name: 'customBody',
           title: 'Body text',
           type: 'array',
-          of: [{ type: 'block', styles: [{ title: 'Normal', value: 'normal' }], lists: [{ title: 'Bullet list', value: 'bullet' }, { title: 'Numbered list', value: 'number' }], marks: { decorators: [{ title: 'Bold', value: 'strong' }, { title: 'Italic', value: 'em' }] } }],
+          of: cardBodyOf(),
         },
       ],
       preview: {

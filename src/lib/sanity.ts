@@ -46,6 +46,32 @@ async function draftAwareFetch<R>(
   return fallback(query, params, options)
 }
 
+// Body card blocks (casino + bonus cards): live data from the referenced docs
+const CARD_BLOCKS = `
+    _type == "casinoKortBlock" => {
+      ...,
+      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
+      "bookmaker": bookmaker-> {
+        name, score, url, "slug": slug.current, indbetalingsbonus, minIndbetaling, gennemspilskrav, terms,
+        "logoUrl": coalesce(logoSquare.asset->url, logo.asset->url) + "?fm=webp&fit=max&w=200&q=80",
+        "logoAlt": coalesce(logoSquare.alt, logo.alt),
+      }
+    },
+    _type == "bonusKortBlock" => {
+      ...,
+      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
+      "bonus": bonus-> {
+        "name": coalesce(bookmaker->name, casinoNavn, title),
+        "bonusText": coalesce(oddsBonusTitel, title),
+        "logoUrl": coalesce(casinoLogo.asset->url, bookmaker->logoSquare.asset->url, bookmaker->logo.asset->url) + "?fm=webp&fit=max&w=200&q=80",
+        "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
+        "score": bookmaker->score,
+        "reviewSlug": bookmaker->slug.current,
+        "slug": slug.current,
+        offerUrl, terms, minimumIndbetaling, gennemspilskrav, spinVaerdi, maksGevinst,
+      }
+    }`
+
 export const client = {
   fetch: <R = any>(query: string, params: any = {}, options: any = {}): Promise<R> =>
     draftAwareFetch<R>((q, p, o) => publishedClient.fetch<R>(q, p, o), query, params, options),
@@ -92,30 +118,7 @@ export async function getPostBySlug(slug: string) {
       _id, title, slug, excerpt, publishedAt, lastUpdated, readingTime,
       "body": body[] {
         ...,
-        _type == "casinoKortBlock" => {
-          ...,
-          customTitle, customBody, pros, cons,
-          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-          "bookmaker": bookmaker-> {
-            name, score, url,
-            "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-            "logoAlt": logo.alt,
-          }
-        },
-        _type == "bonusKortBlock" => {
-          ...,
-          customTitle, customBody,
-          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-          "bonus": bonus-> {
-            "name": coalesce(bookmaker->name, casinoNavn, title),
-            "bonusText": title,
-            "logoUrl": coalesce(casinoLogo.asset->url + "?fm=webp&fit=max&w=1200&q=75", bookmaker->logo.asset->url + "?fm=webp&fit=max&w=1200&q=75"),
-            "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
-            "score": bookmaker->score,
-            "offerUrl": offerUrl,
-            "terms": terms,
-          }
-        }
+        ${CARD_BLOCKS}
       },
       "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
@@ -182,30 +185,7 @@ const PAGE_FIELDS = `
   customQuickLinks[]{ label, targetHeading },
   "body": body[] {
     ...,
-    _type == "casinoKortBlock" => {
-      ...,
-      customTitle, customBody, pros, cons,
-      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-      "bookmaker": bookmaker-> {
-        name, score, url,
-        "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-        "logoAlt": logo.alt,
-      }
-    },
-    _type == "bonusKortBlock" => {
-      ...,
-      customTitle, customBody,
-      "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-      "bonus": bonus-> {
-        "name": coalesce(bookmaker->name, casinoNavn, title),
-        "bonusText": coalesce(oddsBonusTitel, title),
-        "logoUrl": coalesce(casinoLogo.asset->url + "?fm=webp&fit=max&w=1200&q=75", bookmaker->logo.asset->url + "?fm=webp&fit=max&w=1200&q=75"),
-        "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
-        "score": bookmaker->score,
-        "offerUrl": offerUrl,
-        "terms": terms,
-      }
-    }
+    ${CARD_BLOCKS}
   },
   "a1Slug": parent->slug.current,
   "a1Title": parent->title,
@@ -493,30 +473,7 @@ export async function getHomepage() {
       "heroCards": heroCards[] { _key, title, icon, href },
       "body": body[] {
         ...,
-        _type == "casinoKortBlock" => {
-          ...,
-          customTitle, customBody, pros, cons,
-          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-          "bookmaker": bookmaker-> {
-            name, score, url,
-            "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-            "logoAlt": logo.alt,
-          }
-        },
-        _type == "bonusKortBlock" => {
-          ...,
-          customTitle, customBody,
-          "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",
-          "bonus": bonus-> {
-            "name": coalesce(bookmaker->name, casinoNavn, title),
-            "bonusText": title,
-            "logoUrl": coalesce(casinoLogo.asset->url + "?fm=webp&fit=max&w=1200&q=75", bookmaker->logo.asset->url + "?fm=webp&fit=max&w=1200&q=75"),
-            "logoAlt": coalesce(casinoLogo.alt, bookmaker->logo.alt),
-            "score": bookmaker->score,
-            "offerUrl": offerUrl,
-            "terms": terms,
-          }
-        }
+        ${CARD_BLOCKS}
       },
       "sections": sections[] {
         _type, _key,

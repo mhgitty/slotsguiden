@@ -1,18 +1,12 @@
 import { PortableText } from '@portabletext/react'
-import { Terms } from './Terms'
+import Link from 'next/link'
+import { Icon } from '@/components/Icon'
+import { Terms } from '@/components/Terms'
+import { CardFold } from '@/components/CardFold'
+import { cardBodyComponents, ptLength } from '@/components/cardBody'
+import { replaceDateVars } from '@/lib/dateVars'
 
-const bodyComponents = {
-  block: { normal: ({ children }: any) => <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 8px', lineHeight: 1.65 }}>{children}</p> },
-  list: {
-    bullet: ({ children }: any) => <ul style={{ paddingLeft: '18px', margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.65 }}>{children}</ul>,
-    number: ({ children }: any) => <ol style={{ paddingLeft: '18px', margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.65 }}>{children}</ol>,
-  },
-  listItem: { bullet: ({ children }: any) => <li>{children}</li>, number: ({ children }: any) => <li>{children}</li> },
-  marks: {
-    strong: ({ children }: any) => <strong style={{ color: 'var(--text)', fontWeight: 600 }}>{children}</strong>,
-    em: ({ children }: any) => <em>{children}</em>,
-  },
-}
+const FOLD_AT = 420
 
 interface BonusKortData {
   customTitle?: string
@@ -24,69 +18,67 @@ interface BonusKortData {
     logoUrl: string | null
     logoAlt: string | null
     score: number | null
+    reviewSlug?: string
+    slug?: string
     offerUrl: string
-    terms: string | null
+    terms: string | any[] | null
+    minimumIndbetaling?: number | null
+    gennemspilskrav?: string | null
+    spinVaerdi?: string | null
+    maksGevinst?: string | null
   }
 }
 
-export function BonusKort({ value }: { value: BonusKortData }) {
-  const bonus = value.bonus
-  if (!bonus) return null
+// "0x", "0 x", "Ingen" → no wagering
+const isZero = (v?: string | null) => !!v && /^(0\s*x?|ingen)$/i.test(v.trim())
+const clean = (v?: string | null) => (v ?? '').trim().replace(/\.$/, '')
 
-  const name = value.customTitle || bonus.name
-  const stars = bonus.score ? Math.round(bonus.score / 2) : null
+export function BonusKort({ value }: { value: BonusKortData }) {
+  const b = value.bonus
+  if (!b) return null
+
+  const title = replaceDateVars(value.customTitle || b.bonusText || b.name)
+  const chips: { k: string; v: string; good?: boolean }[] = []
+  if (b.minimumIndbetaling != null) chips.push({ k: 'Min. indbetaling', v: `${b.minimumIndbetaling} kr.`, good: b.minimumIndbetaling === 0 })
+  if (clean(b.gennemspilskrav)) chips.push({ k: 'Omsætningskrav', v: clean(b.gennemspilskrav), good: isZero(b.gennemspilskrav) })
+  if (clean(b.spinVaerdi)) chips.push({ k: 'Spinværdi', v: clean(b.spinVaerdi) })
+  if (clean(b.maksGevinst)) chips.push({ k: 'Maks. gevinst', v: clean(b.maksGevinst) === '∞' ? 'Ingen grænse' : clean(b.maksGevinst) })
+  const hasBody = (value.customBody?.length ?? 0) > 0
 
   return (
-    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden', margin: '24px 0' }}>
-      <div style={{ padding: '20px' }}>
-
-        {/* Logo + name + bonus text + score */}
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', marginBottom: '14px' }}>
-          {bonus.logoUrl && (
-            <div style={{ flexShrink: 0, width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden' }}>
-              <img src={bonus.logoUrl} alt={bonus.logoAlt || name} style={{ width: '60px', height: '60px', objectFit: 'cover', display: 'block' }} />
-            </div>
-          )}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: 700, color: 'var(--text)', margin: '0 0 3px' }}>{name}</h3>
-            {bonus.bonusText && (
-              <div style={{ fontSize: '14px', color: 'var(--green)', fontWeight: 600, marginBottom: '3px' }}>{bonus.bonusText}</div>
-            )}
-            {stars !== null && (
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
-                <span style={{ marginLeft: '4px' }}>{bonus.score?.toFixed(1)}/10</span>
-              </div>
-            )}
+    <article className="bk">
+      <div className="bk-main">
+        <div className="bk-top">
+          {b.logoUrl
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={b.logoUrl} alt={b.logoAlt || b.name} width={48} height={48} loading="lazy" />
+            : <span className="kc-logo-fallback">{b.name.slice(0, 2)}</span>}
+          <div>
+            {b.reviewSlug ? <Link href={`/online-casino/${b.reviewSlug}/`} className="bk-name">{b.name}</Link> : <span className="bk-name">{b.name}</span>}
+            {b.score != null && <span className="kc-stars"><Icon name="star" size={13} color="var(--gold)" />{b.score.toFixed(1)}<span>/10</span></span>}
           </div>
         </div>
-
-        {/* Image */}
-        {value.imageUrl && (
-          <img src={value.imageUrl} alt={name} style={{ width: '100%', borderRadius: '8px', display: 'block', marginBottom: '14px', maxHeight: '260px', objectFit: 'cover' }} />
-        )}
-
-        {/* Rich text body */}
-        {value.customBody && value.customBody.length > 0 && (
-          <div style={{ marginBottom: '14px' }}>
-            <PortableText value={value.customBody} components={bodyComponents} />
+        <h3 className="bk-title">{title}</h3>
+        {chips.length > 0 && (
+          <div className="bk-chips">
+            {chips.map((c) => <span key={c.k} className={`bk-chip${c.good ? ' is-good' : ''}`}>{c.k} <b>{c.v}</b></span>)}
           </div>
         )}
-
-        {/* CTA */}
-        {bonus.offerUrl && (
-          <a href={bonus.offerUrl} target="_blank" rel="nofollow noopener noreferrer sponsored"
-            style={{ display: 'block', background: 'var(--btn)', color: '#fff', padding: '13px 24px', borderRadius: '8px', fontSize: '15px', fontWeight: 600, textDecoration: 'none', textAlign: 'center', marginBottom: bonus.terms ? '10px' : '0' }}>
-            Hent bonus nu →
+        {hasBody && (
+          <CardFold fold={ptLength(value.customBody) > FOLD_AT}>
+            <PortableText value={value.customBody!} components={cardBodyComponents} />
+          </CardFold>
+        )}
+      </div>
+      <aside className="bk-side">
+        {b.offerUrl && (
+          <a className="sg-cta" href={b.offerUrl} target="_blank" rel="nofollow noopener noreferrer sponsored">
+            Hent bonus <Icon name="arrow-right" size={16} color="#fff" />
           </a>
         )}
-
-        {/* Terms */}
-        {bonus.terms && (
-          <p style={{ fontSize: '10px', color: 'var(--text-faint)', margin: 0, lineHeight: 1.5 }}><Terms html={bonus.terms} /></p>
-        )}
-
-      </div>
-    </div>
+        {b.slug && <Link className="kc-review" href={`/casino-kampagner/${b.slug}/`}>Se kampagnen <Icon name="arrow-right" size={14} /></Link>}
+        {b.terms && <div className="bk-terms"><Terms html={b.terms} /></div>}
+      </aside>
+    </article>
   )
 }
