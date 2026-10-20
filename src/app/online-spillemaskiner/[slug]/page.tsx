@@ -1,4 +1,5 @@
 import { Navbar } from '@/components/Navbar'
+import { sized } from '@/lib/img'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
@@ -108,7 +109,7 @@ export default async function SpillemaskinePage({ params }: Props) {
   const body: any[] = g.body || []
   const specsAt = body.findIndex((b) => b?._type === 'slotSpecsBlock')
   const hasSpecs = !!(g.provider?.name || SPECS.some((x) => g[x.key]) || g.funktioner)
-  const poster = g.featuredImage?.url || null
+  const poster = g.featuredImage?.url ? sized(g.featuredImage.url, 600) : null
   const thumb = g.featuredImage?.thumb || null
   const providerHref = g.provider?.slug ? `/spiludviklere/${g.provider.slug}/` : null
 

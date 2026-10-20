@@ -1,4 +1,5 @@
 import { PortableText } from '@portabletext/react'
+import { responsive } from '@/lib/img'
 import Link from 'next/link'
 import { Icon } from '@/components/Icon'
 import { Terms } from '@/components/Terms'
@@ -96,7 +97,7 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
           )}
           {value.imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img className="kc-media" src={value.imageUrl} alt={value.image?.alt || `${bm.name} forside`} loading="lazy" />
+            <img className="kc-media" {...responsive(value.imageUrl, '(max-width: 760px) calc(100vw - 60px), 340px', [400, 700, 1000])} alt={value.image?.alt || `${bm.name} forside`} loading="lazy" decoding="async" />
           )}
         </div>
       )}

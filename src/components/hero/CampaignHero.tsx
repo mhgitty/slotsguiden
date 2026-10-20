@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { responsive } from '@/lib/img'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Icon } from '@/components/Icon'
 import { Terms } from '@/components/Terms'
@@ -55,7 +56,7 @@ export function CampaignHero({ b, title, casinoName, logo }: { b: any; title: st
               {img && (
                 <div className="mh-banner">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.url} alt={img.alt || title} width={img.w || undefined} height={img.h || undefined} />
+                  <img {...responsive(img.url, '(max-width: 760px) calc(100vw - 50px), 520px', [500, 800, 1100])} alt={img.alt || title} width={img.w || undefined} height={img.h || undefined} fetchPriority="high" />
                   {expired && end
                     ? <span className="mh-chip red">Udløbet {fmt(end)}</span>
                     : audience ? <span className="mh-chip">{audience}</span> : null}

@@ -11,6 +11,7 @@ import { ProsConsBlock } from './ProsConsBlock'
 import { LatestPostsBlock } from './LatestPostsBlock'
 import { TableBlock } from './TableBlock'
 import { headingId } from '@/lib/headingId'
+import { responsive } from '@/lib/img'
 import { CasinoKort } from './CasinoKort'
 import { BonusKort } from './BonusKort'
 import { HowToBlock } from './HowToBlock'
@@ -169,11 +170,23 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
       image: ({ value }: any) => {
         if (!value?.asset?._ref || !pid) return null
         const ref = value.asset._ref.replace('image-', '').replace(/-(\w+)$/, '.$1')
+        const dims = ref.match(/-(\d+)x(\d+)\./)
+        const w = dims ? +dims[1] : undefined
+        const h = dims ? +dims[2] : undefined
+        const img = responsive(
+          `https://cdn.sanity.io/images/${pid}/production/${ref}?fm=webp&fit=max&w=1200&q=75`,
+          '(max-width: 900px) calc(100vw - 30px), 860px',
+          [480, 800, 1200].filter((x) => !w || x <= w || x === 480),
+        )
         return (
           <img
-            src={`https://cdn.sanity.io/images/${pid}/production/${ref}?fm=webp&fit=max&w=1200&q=75`}
+            {...img}
             alt={value.alt || ''}
-            style={{ width: '100%', borderRadius: '8px', margin: '24px 0', display: 'block' }}
+            width={w}
+            height={h}
+            loading="lazy"
+            decoding="async"
+            style={{ width: '100%', height: 'auto', borderRadius: '8px', margin: '24px 0', display: 'block' }}
           />
         )
       },

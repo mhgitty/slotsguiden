@@ -34,3 +34,7 @@ Thumbs.db
 # cleanup / temp
 _to_delete/
 *.tgz
+
+# Local migration backups and reports
+*-backup-*.json
+*-report*.txt

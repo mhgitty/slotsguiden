@@ -1,4 +1,5 @@
 import { Navbar } from '@/components/Navbar'
+import { responsive } from '@/lib/img'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { HeroSection } from '@/components/HeroSection'
@@ -173,7 +174,8 @@ export default async function SlugPage({ params }: Props) {
                 <div className="post-hero-media">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={post.featuredImage.url}
+                    {...responsive(post.featuredImage.url, '(max-width: 900px) calc(100vw - 30px), 600px', [480, 800, 1200])}
+                    fetchPriority="high"
                     alt={post.featuredImage.alt || replaceDateVars(post.title)}
                     width={1200}
                     height={750}

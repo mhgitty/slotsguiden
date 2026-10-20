@@ -10,7 +10,10 @@ import {
   getPaymentMethods,
   getSoftwareProviders,
   getCasinoGuides,
+  getNewestDemoSlots,
+  getSiteCounts,
 } from '@/lib/sanity'
+import { SlotCard } from '@/components/slot/SlotCard'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -23,9 +26,11 @@ interface SectionPaymentMethods extends SectionBase { _type: 'sectionPaymentMeth
 interface SectionSoftware       extends SectionBase { _type: 'sectionSoftware';       title?: string; intro?: any[] }
 interface SectionCtaBanner      extends SectionBase { _type: 'sectionCtaBanner';      icon?: string; title: string; body?: string; buttonLabel?: string; buttonUrl?: string; style?: string }
 interface SectionHighlights     extends SectionBase { _type: 'sectionHighlights';     title?: string; intro?: string; items?: { _key: string; title: string; bullets?: string[] }[] }
+interface SectionSlots          extends SectionBase { _type: 'sectionSlots';          title?: string; intro?: any[]; count?: number; slots?: any[] }
+interface SectionTrust          extends SectionBase { _type: 'sectionTrust';          items?: { _key: string; value: string; label?: string; icon?: string; href?: string }[] }
 interface SectionGameTypes      extends SectionBase { _type: 'sectionGameTypes';      title?: string; items?: { _key: string; title: string; description?: string; icon?: string; href?: string }[] }
 
-type AnySection = SectionCasinoList | SectionReviewsArchive | SectionGuidesArchive | SectionPaymentMethods | SectionSoftware | SectionCtaBanner | SectionHighlights | SectionGameTypes
+type AnySection = SectionSlots | SectionTrust | SectionCasinoList | SectionReviewsArchive | SectionGuidesArchive | SectionPaymentMethods | SectionSoftware | SectionCtaBanner | SectionHighlights | SectionGameTypes
 
 // ── Casino list ───────────────────────────────────────────────────────────────
 
@@ -379,6 +384,51 @@ function ProviderCardsSection({
   )
 }
 
+// ── Popular slots ───────────────────────────────────────────────────────────
+
+function SlotsSection({ section, fill }: { section: SectionSlots; fill: any[] }) {
+  const max = section.count ?? 10
+  const picked = (section.slots || []).filter(Boolean)
+  const seen = new Set(picked.map((g) => g._id))
+  const list = [...picked, ...fill.filter((g) => !seen.has(g._id))].slice(0, max)
+  if (!list.length) return null
+  return (
+    <div className="section">
+      <div className="hs-head">
+        <h2>{section.title || 'Populære spillemaskiner'}</h2>
+        <Link href="/online-spillemaskiner/">Alle spillemaskiner <Icon name="alt-arrow-right" size={14} /></Link>
+      </div>
+      {section.intro && section.intro.length > 0 && <p className="hs-intro"><RichIntro value={section.intro} /></p>}
+      <div className="sgs-grid hs-slots">
+        {list.map((g) => <SlotCard key={g._id} g={g} />)}
+      </div>
+    </div>
+  )
+}
+
+// ── Trust strip ─────────────────────────────────────────────────────────────
+
+function TrustSection({ section, counts }: { section: SectionTrust; counts: Record<string, number> }) {
+  const fill = (t?: string) => (t || '').replace(/\{(casinos|slots|demos)\}/g, (_, k) => String(counts?.[k] ?? ''))
+  const items = (section.items || []).filter((i) => i?.value)
+  if (!items.length) return null
+  return (
+    <div className="section hs-trust-wrap">
+      <ul className="hs-trust">
+        {items.map((i) => {
+          const inner = (
+            <>
+              <span className="hs-trust-ic"><Icon name={i.icon || 'shield-check'} size={22} /></span>
+              <span><b>{fill(i.value)}</b>{i.label && <small>{fill(i.label)}</small>}</span>
+            </>
+          )
+          return <li key={i._key}>{i.href ? <Link href={i.href}>{inner}</Link> : <div>{inner}</div>}</li>
+        })}
+      </ul>
+    </div>
+  )
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export async function HomeSections({ sections }: { sections: AnySection[] }) {
@@ -390,6 +440,12 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
   const needsSoftware   = sections.some(s => s._type === 'sectionSoftware')
   const needsReviews    = sections.some(s => s._type === 'sectionReviewsArchive')
   const needsGuides     = sections.some(s => s._type === 'sectionGuidesArchive')
+  const needsSlots      = sections.some(s => s._type === 'sectionSlots')
+  const needsCounts     = sections.some(s => s._type === 'sectionTrust')
+  const [slotFill, counts] = await Promise.all([
+    needsSlots ? getNewestDemoSlots(30).catch(() => []) : Promise.resolve([]),
+    needsCounts ? getSiteCounts().catch(() => ({})) : Promise.resolve({}),
+  ])
 
   const [bookmakers, payments, software, reviewCasinos, guides] = await Promise.all([
     needsBookmakers
@@ -504,6 +560,12 @@ export async function HomeSections({ sections }: { sections: AnySection[] }) {
                 casinoLabel="casinoer"
               />
             ) : null
+
+          case 'sectionSlots':
+            return <SlotsSection key={section._key} section={section as SectionSlots} fill={slotFill as any[]} />
+
+          case 'sectionTrust':
+            return <TrustSection key={section._key} section={section as SectionTrust} counts={counts as any} />
 
           case 'sectionCtaBanner':
             return <CtaBannerSection key={section._key} section={section} />

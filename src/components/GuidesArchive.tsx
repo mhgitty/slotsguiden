@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import { responsive } from '@/lib/img'
 import Link from 'next/link'
 import { Icon } from './Icon'
 import { replaceDateVars } from '@/lib/dateVars'
@@ -91,7 +92,7 @@ export function GuidesArchive({ guides, hrefPrefix = '/guides', title = 'Alle ca
                 <div className="sgg-media">
                   {g.featuredImage?.url && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={g.featuredImage.url} alt={g.featuredImage.alt || g.title} loading="lazy" />
+                    <img {...responsive(g.featuredImage.url, '(max-width: 760px) 100vw, 380px', [400, 760])} alt={g.featuredImage.alt || g.title} loading="lazy" decoding="async" />
                   )}
                 </div>
                 <div className="sgg-body">

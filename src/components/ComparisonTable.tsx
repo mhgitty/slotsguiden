@@ -1,10 +1,8 @@
-'use client'
-
-import { useState } from 'react'
-import { BonusCard } from './BonusCard'
 import { BonusGridCard, type GridBonus } from './BonusGridCard'
 import { CasinoComparisonTable } from './CasinoComparisonTable'
-import { Icon } from './Icon'
+import { BonusRow } from './bonus/BonusRow'
+import { ShowMore } from './ShowMore'
+import { slotMatcher } from '@/lib/slotMatch'
 
 // Data comes from the comparisonTableTemplate document (expanded by the query)
 interface ComparisonTableData {
@@ -34,12 +32,10 @@ function toGridBonus(b: any): GridBonus {
   }
 }
 
-interface ComparisonTableProps {
-  data?: ComparisonTableData | null
-}
+// Campaigns whose end date has passed are left out of lists automatically.
+const live = (b: any) => !b?.kampagneSlut || new Date(b.kampagneSlut).getTime() >= Date.now()
 
-export function ComparisonTable({ data }: ComparisonTableProps) {
-  const [expanded, setExpanded] = useState(false)
+export async function ComparisonTable({ data }: { data?: ComparisonTableData | null }) {
   if (!data) return null
 
   const limit = data.showMoreButton && data.visibleCount && data.visibleCount > 0 ? data.visibleCount : undefined
@@ -58,63 +54,34 @@ export function ComparisonTable({ data }: ComparisonTableProps) {
 
   // ── Free spins til eksisterende kunder (grid card design) ────────────────────
   if (data.tableType === 'freeSpinsEksisterende') {
-    const all = (data.bonuses || []).map(toGridBonus)
+    const all = (data.bonuses || []).filter(live).map(toGridBonus)
     if (!all.length) return null
-    const visible = expanded || !limit ? all : all.slice(0, limit)
-    const hidden = all.length - visible.length
-    const moreFsLabel = data.moreButtonLabel?.trim() || 'Se flere free spins'
     return (
       <div id="sammenligning" className="scroll-anchor">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
-          {visible.map((b) => (
-            <BonusGridCard key={b._id} bonus={b} />
-          ))}
-        </div>
-        {hidden > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-            <button
-              onClick={() => setExpanded(true)}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: 'var(--bg-card)', border: '1px solid var(--btn)',
-                color: 'var(--green-dark)', fontWeight: 700, fontSize: '15px',
-                padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
-              }}
-            >
-              {moreFsLabel} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
-            </button>
-          </div>
-        )}
+        <ShowMore
+          items={all.map((b) => <BonusGridCard key={b._id} bonus={b} />)}
+          limit={limit}
+          label={data.moreButtonLabel?.trim() || 'Se flere free spins'}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'stretch' }}
+        />
       </div>
     )
   }
 
-  // ── Bonus list ──────────────────────────────────────────────────────────────
-  const items = data.bonuses || []
+  // ── Bonus / campaign list ───────────────────────────────────────────────────
+  const items = (data.bonuses || []).filter(live)
   if (!items.length) return null
-  const visible = expanded || !limit ? items : items.slice(0, limit)
-  const hidden = items.length - visible.length
-
+  const match = await slotMatcher()
   return (
-    <div id="sammenligning" className="scroll-anchor" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {visible.map((bonus: any, i: number) => (
-        <BonusCard key={bonus._id} {...bonus} rank={i + 1} />
-      ))}
-      {hidden > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '6px' }}>
-          <button
-            onClick={() => setExpanded(true)}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'var(--bg-card)', border: '1px solid var(--btn)',
-              color: 'var(--green-dark)', fontWeight: 700, fontSize: '15px',
-              padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
-            }}
-          >
-            {moreLabel} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
-          </button>
-        </div>
-      )}
+    <div id="sammenligning" className="scroll-anchor">
+      <ShowMore
+        className="br-list"
+        items={items.map((b: any, i: number) => (
+          <BonusRow key={b._id} b={b} rank={i + 1} slot={match(b.oddsBonusTitel || b.title)} />
+        ))}
+        limit={limit}
+        label={moreLabel}
+      />
     </div>
   )
 }

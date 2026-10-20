@@ -1,101 +1,108 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { getPosts, getRecentBonuses } from '@/lib/sanity'
+import { getPosts, getLatestCampaigns } from '@/lib/sanity'
+import { Icon } from '@/components/Icon'
+import { responsive, sized } from '@/lib/img'
 
 const FREE_SPINS_URL = '/free-spins-til-eksisterende-kunder/'
 const INDBETALINGSBONUS_URL = '/casino-bonus/indbetalingsbonus/'
+const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
 
-function formatDK(value?: string) {
+function when(value?: string) {
   if (!value) return ''
   const d = new Date(value)
   if (isNaN(d.getTime())) return ''
-  const dd = String(d.getDate()).padStart(2, '0')
-  const mm = String(d.getMonth() + 1).padStart(2, '0')
-  return `${dd}/${mm}/${d.getFullYear()}`
+  const days = Math.floor((Date.now() - d.getTime()) / 86400000)
+  if (days <= 0) return 'I dag'
+  if (days === 1) return 'I går'
+  return `${d.getDate()}. ${MONTHS[d.getMonth()]}${d.getFullYear() !== new Date().getFullYear() ? ` ${d.getFullYear()}` : ''}`
 }
 
-const btn: React.CSSProperties = {
-  display: 'block', textAlign: 'center', background: 'var(--btn)', color: '#fff',
-  padding: '13px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
-  textDecoration: 'none',
+const postHref = (p: any) => `/${p.slug?.current ?? ''}/`
+
+/** Branded stand-in when a post has no featured image */
+function Fallback({ label }: { label?: string }) {
+  return (
+    <span className="lc-fallback" aria-hidden="true">
+      <span className="lc-fb-mark"><span>slots</span><b>guiden</b></span>
+      {label && <span className="lc-fb-cat">{label}</span>}
+    </span>
+  )
 }
 
+/** "Nyt på Slotsguiden": latest news and live campaigns, shown above the footer. */
 export async function LatestContentBlock() {
-  const [posts, bonuses] = await Promise.all([
-    getPosts(1).catch(() => []),
-    getRecentBonuses(5).catch(() => []),
+  const [posts, campaigns] = await Promise.all([
+    getPosts(3).catch(() => []),
+    getLatestCampaigns(6).catch(() => []),
   ])
-  const post: any = Array.isArray(posts) ? posts[0] : null
-  const bonusList: any[] = Array.isArray(bonuses) ? bonuses : []
-
-  if (!post && bonusList.length === 0) return null
+  const list: any[] = Array.isArray(posts) ? posts : []
+  const camps: any[] = Array.isArray(campaigns) ? campaigns : []
+  if (!list.length && !camps.length) return null
+  const [lead, ...rest] = list
 
   return (
-    <section style={{ maxWidth: '1250px', margin: '64px auto 0', padding: '0 24px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-
-        {/* ── LEFT: latest blog post ── */}
-        {post && (
-          <div style={{ border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'relative' }}>
-              {post.featuredImage?.url ? (
-                <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9' }}>
-                  <Image src={post.featuredImage.url} alt={post.featuredImage.alt ?? post.title ?? ''} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 600px" />
-                </div>
-              ) : (
-                <div style={{ width: '100%', aspectRatio: '16/9', background: 'var(--bg-raised)' }} />
-              )}
-              <span style={{ position: 'absolute', top: '12px', left: '12px', background: 'var(--green)', color: '#fff', fontSize: '12px', fontWeight: 600, padding: '5px 12px', borderRadius: '6px' }}>
-                Seneste indlæg
+    <section className="lc" aria-labelledby="lc-title">
+      <h2 id="lc-title" className="lc-title">Nyt på Slotsguiden</h2>
+      <div className={`lc-grid${list.length && camps.length ? '' : ' one'}`}>
+        {lead && (
+          <div className="lc-col">
+            <div className="lc-h">
+              <span><Icon name="pen-new-square" size={18} />Seneste nyheder</span>
+              <Link href="/blog/">Alle nyheder <Icon name="alt-arrow-right" size={14} /></Link>
+            </div>
+            <Link href={postHref(lead)} className="lc-lead">
+              <span className="lc-media">
+                {lead.featuredImage?.url
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img {...responsive(lead.featuredImage.url, '(max-width: 900px) 100vw, 600px', [480, 760, 1200])} alt={lead.featuredImage.alt || lead.title || ''} width={1200} height={628} loading="lazy" decoding="async" />
+                  : <Fallback label={lead.category?.name} />}
               </span>
-            </div>
-            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <Link href={`/${post.slug?.current ?? ''}/`} style={{ textDecoration: 'none' }}>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 700, color: 'var(--text)', lineHeight: 1.3, margin: 0 }}>
-                  {post.title}
-                </h3>
+              <span className="lc-lead-body">
+                <span className="lc-meta">{lead.category?.name && <b>{lead.category.name}</b>}{when(lead.publishedAt)}</span>
+                <span className="lc-lead-t">{lead.title}</span>
+                {lead.excerpt && <span className="lc-ex">{lead.excerpt.length > 150 ? lead.excerpt.slice(0, 150).trimEnd() + '…' : lead.excerpt}</span>}
+              </span>
+            </Link>
+            {rest.map((p) => (
+              <Link key={p._id} href={postHref(p)} className="lc-row">
+                <span className="lc-thumb">
+                  {p.featuredImage?.url
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={sized(p.featuredImage.url, 240)} alt="" width={120} height={80} loading="lazy" decoding="async" />
+                    : <Fallback />}
+                </span>
+                <span className="lc-row-t"><b>{p.title}</b><small>{when(p.publishedAt)}</small></span>
               </Link>
-              {post.publishedAt && (
-                <div style={{ fontSize: '13px', color: 'var(--text-faint)', marginTop: '6px' }}>{formatDK(post.publishedAt)}</div>
-              )}
-              {post.excerpt && (
-                <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6, marginTop: '12px', marginBottom: 0 }}>
-                  {post.excerpt.length > 160 ? post.excerpt.slice(0, 160).trimEnd() + '…' : post.excerpt}
-                </p>
-              )}
-              <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
-                <Link href="/blog/" style={btn}>Se flere blogindlæg og nyheder</Link>
-              </div>
-            </div>
+            ))}
           </div>
         )}
 
-        {/* ── RIGHT: recent casino bonuses ── */}
-        {bonusList.length > 0 && (
-          <div style={{ border: '1px solid var(--border)', borderRadius: '14px', background: 'var(--bg-card)', padding: '24px', display: 'flex', flexDirection: 'column' }}>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 700, color: 'var(--text)', margin: '0 0 8px' }}>
-              Nyeste free spins og casino kampagner
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {bonusList.map((b) => {
-                const href = b.slug ? `/casino-kampagner/${b.slug}/` : (b.offerUrl || '#')
-                return (
-                  <div key={b._id} style={{ borderTop: '1px solid var(--border-faint)', padding: '14px 0' }}>
-                    <Link href={href} style={{ fontSize: '15.5px', fontWeight: 600, color: 'var(--text)', textDecoration: 'none', lineHeight: 1.35, display: 'block' }}>
-                      {b.title}
-                    </Link>
-                    {b.date && <div style={{ fontSize: '13px', color: 'var(--text-faint)', marginTop: '4px' }}>{formatDK(b.date)}</div>}
-                  </div>
-                )
-              })}
+        {camps.length > 0 && (
+          <div className="lc-col">
+            <div className="lc-h">
+              <span><Icon name="gift" size={18} />Nyeste kampagner</span>
+              <Link href="/casino-kampagner/">Alle kampagner <Icon name="alt-arrow-right" size={14} /></Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: 'auto', paddingTop: '20px' }}>
-              <Link href={FREE_SPINS_URL} style={btn}>Se alle free spins tilbud</Link>
-              <Link href={INDBETALINGSBONUS_URL} style={btn}>Indbetalingsbonusser</Link>
+            <ul className="lc-camps">
+              {camps.map((b) => (
+                <li key={b._id}>
+                  <Link href={b.slug ? `/casino-kampagner/${b.slug}/` : (b.offerUrl || '#')} className="lc-camp">
+                    {b.logo
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={b.logo} alt="" width={40} height={40} loading="lazy" />
+                      : <span className="lc-camp-ph">{(b.casino || b.title || '?').slice(0, 1)}</span>}
+                    <span className="lc-camp-t"><b>{b.title}</b><small>{when(b.date)}</small></span>
+                    <Icon name="alt-arrow-right" size={16} className="lc-go" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="lc-btns">
+              <Link href={FREE_SPINS_URL} className="sg-cta">Se alle free spins</Link>
+              <Link href={INDBETALINGSBONUS_URL} className="sg-btn-ghost">Indbetalingsbonusser</Link>
             </div>
           </div>
         )}
-
       </div>
     </section>
   )

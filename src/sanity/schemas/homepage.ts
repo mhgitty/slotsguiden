@@ -152,6 +152,46 @@ const sectionGameTypes = {
   preview: { select: { title: 'title' }, prepare: ({ title }: any) => ({ title: `🃏 ${title || 'Game Types'}` }) },
 }
 
+const sectionSlots = {
+  type: 'object' as const,
+  name: 'sectionSlots',
+  title: '🎰 Populære spillemaskiner',
+  fields: [
+    defineField({ name: 'title', title: 'Section title', type: 'string', initialValue: 'Populære spillemaskiner' }),
+    sectionIntroField,
+    defineField({
+      name: 'slots', title: 'Slots (in this order)', type: 'array',
+      of: [{ type: 'reference', weak: true, to: [{ type: 'spillemaskine' }] }],
+      description: 'Pick the slots to show. If you pick fewer than the number below, the newest slots with a free demo fill the rest.',
+    }),
+    defineField({ name: 'count', title: 'Number of slots', type: 'number', initialValue: 10, validation: (r: any) => r.min(2).max(30) }),
+  ],
+  preview: { select: { title: 'title' }, prepare: ({ title }: any) => ({ title: `🎰 ${title || 'Populære spillemaskiner'}` }) },
+}
+
+const sectionTrust = {
+  type: 'object' as const,
+  name: 'sectionTrust',
+  title: '✅ Trust strip',
+  fields: [
+    defineField({
+      name: 'items', title: 'Items', type: 'array', validation: (r: any) => r.max(5),
+      description: 'Short facts in a row. In "Value" you can write {casinos}, {slots} or {demos} to show the live count from Studio.',
+      of: [{
+        type: 'object', name: 'trustItem',
+        fields: [
+          defineField({ name: 'value', title: 'Value (bold)', type: 'string', validation: (r: any) => r.required() }),
+          defineField({ name: 'label', title: 'Label', type: 'string' }),
+          defineField({ name: 'icon', title: 'Solar icon name (e.g. "shield-check")', type: 'string' }),
+          defineField({ name: 'href', title: 'Link (optional)', type: 'string' }),
+        ],
+        preview: { select: { title: 'value', subtitle: 'label' } },
+      }],
+    }),
+  ],
+  preview: { select: { items: 'items' }, prepare: ({ items }: any) => ({ title: '✅ Trust strip', subtitle: (items || []).map((i: any) => i.value).join(' · ') }) },
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const homepageType = defineType({
@@ -212,6 +252,8 @@ export const homepageType = defineType({
         sectionCtaBanner,
         sectionHighlights,
         sectionGameTypes,
+        sectionSlots,
+        sectionTrust,
       ],
     }),
     // ── SEO ────────────────────────────────────────────────────────────────
