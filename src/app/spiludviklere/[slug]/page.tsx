@@ -73,7 +73,7 @@ export default async function SoftwareSlugPage({ params }: Props) {
       <Navbar />
 
       {/* Breadcrumbs */}
-      <div style={{ background: 'var(--bg-hero)', paddingTop: '32px', paddingBottom: '0' }}>
+      <div style={{ background: '#f3f8f5' /* matches the top of --bg-hero so the band below continues seamlessly */, paddingTop: '32px', paddingBottom: '0' }}>
         <div style={{ maxWidth: '1250px', margin: '0 auto', padding: '0 15px' }}>
           <Breadcrumbs crumbs={[
             { label: 'Hjem',     href: '/' },

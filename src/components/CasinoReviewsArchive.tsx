@@ -37,19 +37,6 @@ interface Props {
   initialCount?: number
 }
 
-function ScoreBadge({ score }: { score: number }) {
-  const color = score >= 8 ? 'var(--green)' : score >= 6 ? '#ca8a04' : '#dc2626'
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: '3px',
-      background: color, color: '#fff', fontSize: '12px', fontWeight: 800,
-      padding: '3px 8px', borderRadius: '16px', flexShrink: 0,
-    }}>
-      <Icon name="star" size={11} color="#fff" /> {score.toFixed(1)}
-    </span>
-  )
-}
-
 export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', title = 'Alle casinoanmeldelser', intro, seeAllHref, seeAllLabel = 'Se alle anmeldelser', showCount = true, initialCount }: Props) {
   const [query, setQuery] = useState('')
 
@@ -87,7 +74,7 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
               padding: '10px 14px 10px 38px',
               fontSize: '14px', color: 'var(--text)',
               background: 'var(--bg-card)', border: '1px solid var(--border)',
-              borderRadius: '10px', outline: 'none',
+              borderRadius: '12px', outline: 'none', boxShadow: 'var(--shadow-sm)',
             }}
           />
           {query && (
@@ -113,81 +100,56 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
           Ingen resultater for &ldquo;{query}&rdquo;.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '18px' }}>
+        <div className="sgc-grid">
           {filtered.map((c) => {
             const href = `${hrefPrefix}/${c.slug.current}/`
             const square = c.logoSquare?.url ? c.logoSquare : null
             const logo = square || (c.logo?.url ? c.logo : null)
             const isSquare = !!square
             return (
-              <div key={c._id} style={{
-                background: 'var(--bg-card)', border: '1px solid var(--border)',
-                borderRadius: '14px', overflow: 'hidden', display: 'flex', flexDirection: 'column',
-              }}>
-                <Link href={href} style={{
-                  background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '22px', minHeight: '104px', borderBottom: '1px solid var(--border)',
-                  textDecoration: 'none',
-                }}>
-                  {logo?.url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={logo.url} alt={logo.alt || c.name}
-                      style={isSquare
-                        ? { width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px', display: 'block' }
-                        : { maxWidth: '150px', maxHeight: '60px', objectFit: 'contain', borderRadius: '8px', display: 'block' }} />
-                  ) : (
-                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#1f2937' }}>{c.name}</span>
-                  )}
-                </Link>
-
-                <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '6px' }}>
-                    <Link href={href} style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 700, color: 'var(--text)', textDecoration: 'none' }}>
-                      {c.name}
-                    </Link>
-                    {c.score != null && <ScoreBadge score={c.score} />}
-                  </div>
-
-                  {c.usp && (
-                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 10px', lineHeight: 1.45 }}>
-                      {c.usp}
-                    </p>
-                  )}
-
-                  {c.indbetalingsbonus && (
-                    <div style={{ fontSize: '16px', color: 'var(--green-dark)', fontWeight: 800, marginBottom: '12px', lineHeight: 1.3 }}>
-                      {c.indbetalingsbonus}
-                    </div>
-                  )}
-
-                  <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {c.url && (
-                      <a href={c.url} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                        background: 'var(--btn)', color: '#fff',
-                        padding: '10px 14px', borderRadius: '8px',
-                        fontSize: '14px', fontWeight: 800, textDecoration: 'none',
-                      }}>
-                        Besøg casino <Icon name="arrow-right" size={15} color="#fff" />
-                      </a>
+              <div key={c._id} className="sgc-card">
+                <div className="sgc-card-head">
+                  <Link href={href} className={`sgc-card-logo${isSquare ? '' : ' is-wide'}`} tabIndex={-1} aria-hidden="true">
+                    {logo?.url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logo.url} alt={logo.alt || c.name} loading="lazy" />
+                    ) : (
+                      <span>{c.name.slice(0, 2)}</span>
                     )}
-                    <Link href={href} style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                      background: 'var(--bg-raised)', border: '1px solid var(--border)',
-                      color: 'var(--text)', padding: '9px 14px', borderRadius: '8px',
-                      fontSize: '13.5px', fontWeight: 600, textDecoration: 'none',
-                    }}>
-                      Læs anmeldelse
-                    </Link>
+                  </Link>
+                  <div className="sgc-card-id">
+                    <Link href={href} className="sgc-card-name">{c.name}</Link>
+                    {c.score != null && (
+                      <span className="sgc-rating">
+                        <Icon name="star" size={14} color="var(--gold)" />
+                        {c.score.toFixed(1)}<span>/10</span>
+                      </span>
+                    )}
                   </div>
+                </div>
 
-                  {/* Terms — required for compliance. Fixed height + scroll so
-                      cards stay aligned regardless of terms length. */}
-                  <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-faint)' }}>
-                    <div style={{ fontSize: '10px', color: 'var(--text-faint)', lineHeight: 1.4, maxHeight: '58px', overflowY: 'auto', paddingRight: '6px' }}>
-                      <Terms html={c.terms || DEFAULT_TERMS} />
-                    </div>
+                {c.usp && <p className="sgc-card-usp">{c.usp}</p>}
+
+                {c.indbetalingsbonus && (
+                  <div className="sgc-card-offer">
+                    <small>Velkomstbonus</small>
+                    <strong>{c.indbetalingsbonus}</strong>
                   </div>
+                )}
+
+                <div className="sgc-card-actions">
+                  {c.url && (
+                    <a href={c.url} target="_blank" rel="nofollow noopener noreferrer sponsored" className="sg-cta">
+                      Besøg casino <Icon name="arrow-right" size={16} color="#fff" />
+                    </a>
+                  )}
+                  <Link href={href} className="sgc-card-link">Læs anmeldelse</Link>
+                </div>
+
+                {/* Terms — required for compliance. Fixed height + scroll so
+                    cards stay aligned regardless of terms length. */}
+                <div className="sgc-card-terms">
+                  <Terms html={c.terms || DEFAULT_TERMS} />
                 </div>
               </div>
             )
@@ -197,12 +159,7 @@ export function CasinoReviewsArchive({ casinos, hrefPrefix = '/online-casino', t
 
       {seeAllHref && (
         <div style={{ textAlign: 'center', marginTop: '22px' }}>
-          <Link href={seeAllHref} style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'var(--bg-raised)', border: '1px solid var(--border)',
-            color: 'var(--text)', padding: '11px 20px', borderRadius: '10px',
-            fontSize: '14px', fontWeight: 600, textDecoration: 'none',
-          }}>
+          <Link href={seeAllHref} className="sg-btn-ghost">
             {seeAllLabel}
             <Icon name="arrow-right" size={16} />
           </Link>

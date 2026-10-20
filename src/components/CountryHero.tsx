@@ -25,10 +25,7 @@ export function CountryHero({ title, intro, heroCards, breadcrumbs }: CountryHer
   const hasIntro = Array.isArray(intro) ? intro.length > 0 : !!intro
 
   return (
-    <section className="hero-section country-hero" style={{
-      background: 'var(--bg-hero)',
-      borderBottom: '1px solid var(--border)',
-    }}>
+    <section className="hero-section country-hero">
       <div style={{ maxWidth: '1250px', margin: '0 auto' }}>
         <div className="country-hero-inner">
 
@@ -41,26 +38,17 @@ export function CountryHero({ title, intro, heroCards, breadcrumbs }: CountryHer
               </div>
             )}
 
-            <h1 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(28px, 3.8vw, 48px)',
-              fontWeight: 800,
-              color: 'var(--text)',
-              lineHeight: 1.1,
-              letterSpacing: '-0.03em',
-              marginBottom: hasIntro ? '16px' : '0',
-            }}>
+            <span className="hero-eyebrow">
+              <i aria-hidden="true" />
+              {replaceDateVars('Opdateret [month] [year]')}
+            </span>
+
+            <h1 className="country-hero-title" style={{ marginBottom: hasIntro ? '16px' : '0' }}>
               {replaceDateVars(title)}
             </h1>
 
             {hasIntro && (
-              <p style={{
-                fontSize: '15px',
-                color: 'var(--text-muted)',
-                lineHeight: 1.7,
-                margin: 0,
-                maxWidth: '640px',
-              }}>
+              <p className="country-hero-intro">
                 {typeof intro === 'string' ? replaceDateVars(intro) : <RichIntro value={intro} />}
               </p>
             )}
@@ -76,40 +64,16 @@ export function CountryHero({ title, intro, heroCards, breadcrumbs }: CountryHer
                     href={card.href}
                     className="country-hero-card"
                   >
-                    {/* Icon */}
-                    <div style={{ marginBottom: '16px' }}>
-                      {card.icon ? (
-                        <Icon name={card.icon} size={40} color="var(--green)" />
-                      ) : (
-                        <div style={{
-                          width: '40px', height: '40px',
-                          borderRadius: '10px',
-                          background: 'rgba(34,197,94,0.12)',
-                        }} />
-                      )}
-                    </div>
+                    <span className="country-hero-card-icon">
+                      {card.icon ? <Icon name={card.icon} size={22} color="var(--green)" /> : null}
+                    </span>
 
-                    {/* Title + arrow */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                      <span style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '19px',
-                        fontWeight: 700,
-                        color: 'var(--text)',
-                        lineHeight: 1.3,
-                      }}>
-                        {card.title}
+                    <span className="country-hero-card-row">
+                      <span className="country-hero-card-title">{card.title}</span>
+                      <span className="country-hero-card-arrow" aria-hidden="true">
+                        <Icon name="arrow-right" size={15} />
                       </span>
-                      <div style={{
-                        flexShrink: 0,
-                        width: '30px', height: '30px',
-                        borderRadius: '50%',
-                        background: 'var(--green)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <Icon name="alt-arrow-right" size={15} color="#fff" />
-                      </div>
-                    </div>
+                    </span>
                   </Link>
                 ))}
               </div>

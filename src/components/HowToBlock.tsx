@@ -32,7 +32,7 @@ function bodyToText(b?: StepBody): string {
 const stepBodyComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
-      <p style={{ fontSize: '14.5px', color: 'var(--text-muted)', lineHeight: 1.75, margin: '0 0 8px' }}>{children}</p>
+      <p>{children}</p>
     ),
   },
   marks: {
@@ -89,7 +89,7 @@ export function HowToBlock({ value }: HowToBlockProps) {
   } : null
 
   return (
-    <div id="how-to" className="scroll-anchor" style={{ margin: '32px 0' }}>
+    <div id="how-to" className="scroll-anchor sg-howto">
       {howToSchema && (
         <script
           type="application/ld+json"
@@ -97,109 +97,36 @@ export function HowToBlock({ value }: HowToBlockProps) {
         />
       )}
 
-      {(value.title || duration) && (
-        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: intro ? '10px' : '16px' }}>
-          {value.title && (
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(18px, 2.5vw, 24px)',
-              fontWeight: 700,
-              color: 'var(--text)',
-              letterSpacing: '-0.02em',
-              margin: 0,
-            }}>
-              {value.title}
-            </h2>
-          )}
+      <div className="sg-howto-head">
+        {value.title && <h2 className="sg-howto-title">{value.title}</h2>}
+        <div className="sg-howto-meta">
           {duration && (
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'var(--green-light)',
-              color: 'var(--green-dark)',
-              fontSize: '13px',
-              fontWeight: 700,
-              padding: '5px 12px',
-              borderRadius: '999px',
-              whiteSpace: 'nowrap',
-            }}>
-              <Icon name="clock-circle" size={15} color="var(--green-dark)" />
-              {duration}
-            </span>
+            <span><Icon name="clock-circle" size={15} />{duration}</span>
           )}
+          <span><Icon name="list-check" size={15} />{value.items.length} trin</span>
         </div>
-      )}
+        {intro && <p className="sg-howto-intro">{intro}</p>}
+      </div>
 
-      {intro && (
-        <p style={{
-          fontSize: '15.5px',
-          color: 'var(--text-muted)',
-          lineHeight: 1.7,
-          margin: '0 0 20px',
-          maxWidth: '760px',
-        }}>
-          {intro}
-        </p>
-      )}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <ol className="sg-steps">
         {value.items.map((item, i) => (
-          <div key={i} style={{
-            display: 'flex',
-            gap: '16px',
-            alignItems: 'flex-start',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            borderRadius: '14px',
-            padding: '22px 24px',
-          }}>
-            {/* Round number badge */}
-            <div style={{
-              width: '44px',
-              height: '44px',
-              background: 'var(--green)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <span style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '20px',
-                fontWeight: 800,
-                color: '#fff',
-                lineHeight: 1,
-              }}>
-                {i + 1}
-              </span>
-            </div>
-
-            {/* Title + description stacked; description lines up under the title */}
-            <div style={{ flex: 1, minWidth: 0, paddingTop: '2px' }}>
+          <li key={i} className="sg-step">
+            <span className="sg-step-marker" aria-hidden="true">{i + 1}</span>
+            <div className="sg-step-body">
               {item.title && (
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(17px, 2vw, 20px)',
-                  fontWeight: 800,
-                  color: 'var(--text)',
-                  margin: hasBody(item.body) ? '0 0 8px' : '0',
-                  letterSpacing: '-0.01em',
-                  lineHeight: 1.25,
-                }}>
-                  {item.title}
+                <h3 className="sg-step-title">
+                  <span className="visually-hidden">Trin {i + 1}: </span>{item.title}
                 </h3>
               )}
               {hasBody(item.body) && (
                 Array.isArray(item.body)
-                  ? <div style={{ marginBottom: '-8px' }}><PortableText value={item.body} components={stepBodyComponents} /></div>
-                  : <p style={{ fontSize: '14.5px', color: 'var(--text-muted)', lineHeight: 1.75, margin: 0 }}>{item.body as string}</p>
+                  ? <div className="sg-step-text"><PortableText value={item.body} components={stepBodyComponents} /></div>
+                  : <div className="sg-step-text"><p>{item.body as string}</p></div>
               )}
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   )
 }

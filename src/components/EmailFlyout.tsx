@@ -17,6 +17,7 @@ const CONSENT = '18+ | Ved tilmelding accepterer du vores vilkår og privatlivsp
 const PRIZE_IMAGE = ''
 
 const DELAY_MS = 15000
+const AFTER_POPUP_MS = 10000
 const DISMISS_KEY = 'sg-email-dismissed'
 const SUBSCRIBED_KEY = 'sg-email-subscribed'
 const KLAVIYO_REVISION = '2026-04-15'
@@ -41,8 +42,22 @@ export function EmailFlyout() {
       if (localStorage.getItem(SUBSCRIBED_KEY)) return
       if (sessionStorage.getItem(DISMISS_KEY)) return
     } catch { /* ignore */ }
-    const t = setTimeout(() => setOpen(true), DELAY_MS)
-    return () => clearTimeout(t)
+    // Never stack on top of the bonus pop-up: if it is showing when our timer
+    // fires, wait until it is closed and then give the reader a short break.
+    let t2: ReturnType<typeof setTimeout> | undefined
+    const onPopupClosed = () => { t2 = setTimeout(() => setOpen(true), AFTER_POPUP_MS) }
+    const t = setTimeout(() => {
+      if (document.querySelector('.bonus-popup-overlay')) {
+        window.addEventListener('sg-bonus-popup-closed', onPopupClosed, { once: true })
+      } else {
+        setOpen(true)
+      }
+    }, DELAY_MS)
+    return () => {
+      clearTimeout(t)
+      if (t2) clearTimeout(t2)
+      window.removeEventListener('sg-bonus-popup-closed', onPopupClosed)
+    }
   }, [inStudio])
 
   if (!open || inStudio) return null

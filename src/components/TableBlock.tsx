@@ -4,52 +4,38 @@ interface TableBlockValue {
   rows?: Array<{ cells?: string[] }>
 }
 
+// Content table (Portable Text block). Card-style frame, quiet uppercase header,
+// hover rows; scrolls sideways inside its frame on narrow screens.
 export function TableBlock({ value }: { value: TableBlockValue }) {
   const { title, headers, rows } = value
   const hasHeaders = (headers?.length ?? 0) > 0
+  const cols = Math.max(headers?.length ?? 0, ...(rows ?? []).map((r) => r.cells?.length ?? 0))
 
   return (
-    <div style={{ margin: '28px 0' }}>
-      {title && (
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
-          {title}
+    <figure className="sg-table">
+      {title && <figcaption className="sg-table-title">{title}</figcaption>}
+      <div className="sg-table-frame">
+        <div className="sg-table-scroll">
+          <table className={cols > 3 ? 'is-wide' : undefined}>
+            {hasHeaders && (
+              <thead>
+                <tr>
+                  {(headers ?? []).map((h, i) => <th key={i} scope="col">{h}</th>)}
+                </tr>
+              </thead>
+            )}
+            <tbody>
+              {(rows ?? []).map((row, ri) => (
+                <tr key={ri}>
+                  {(row.cells ?? []).map((cell, ci) => (
+                    <td key={ci} className={ci === 0 ? 'is-first' : undefined}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
-      <div style={{ overflowX: 'auto', borderRadius: '10px', border: '1px solid var(--border)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14.5px', color: 'var(--text-muted)' }}>
-          {hasHeaders && (
-            <thead>
-              <tr>
-                {(headers ?? []).map((h, i) => (
-                  <th key={i} style={{
-                    background: 'var(--bg-navbar)', borderBottom: '2px solid var(--border)',
-                    padding: '10px 16px', textAlign: 'left',
-                    fontFamily: 'var(--font-display)', fontWeight: 600, color: '#fff',
-                    whiteSpace: 'nowrap', fontSize: '13.5px',
-                  }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-          )}
-          <tbody>
-            {(rows ?? []).map((row, ri) => (
-              <tr key={ri} style={{ background: ri % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-raised)' }}>
-                {(row.cells ?? []).map((cell, ci) => (
-                  <td key={ci} style={{
-                    padding: '10px 16px',
-                    borderBottom: ri < (rows?.length ?? 0) - 1 ? '1px solid var(--border-faint)' : 'none',
-                    verticalAlign: 'top', lineHeight: 1.6,
-                  }}>
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
-    </div>
+    </figure>
   )
 }

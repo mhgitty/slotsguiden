@@ -50,6 +50,8 @@ export function BonusPopup({ bonus }: { bonus: PopupBonus | null }) {
   const close = () => {
     setOpen(false)
     try { sessionStorage.setItem(DISMISS_KEY, '1') } catch { /* ignore */ }
+    // Let the email flyout know it may now appear (it waits while this is open).
+    try { window.dispatchEvent(new Event('sg-bonus-popup-closed')) } catch { /* ignore */ }
   }
 
   const name = replaceDateVars(bonus.name || '')

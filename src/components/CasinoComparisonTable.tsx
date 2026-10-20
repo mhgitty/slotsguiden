@@ -60,7 +60,7 @@ export function ScoreBadge({ score }: { score: number }) {
       display: 'inline-flex', alignItems: 'center', gap: '4px',
       background: color, color: '#fff',
       fontSize: '13px', fontWeight: 800, lineHeight: 1,
-      padding: '5px 10px', borderRadius: '18px',
+      padding: '5px 10px', borderRadius: '999px',
     }}>
       <Icon name="star" size={13} color="#fff" /> {score.toFixed(1)}
     </span>
@@ -209,39 +209,15 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
   const terms = casino.terms || DEFAULT_TERMS
 
   return (
-    <div style={{
-      position: 'relative',
-      background: 'var(--bg-card)',
-      border: '1px solid var(--border)',
-      borderRadius: '12px',
-      padding: '16px 20px 14px',
-      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-    }}>
+    <div className={`cmp-row${rank === 1 ? ' is-top' : ''}`}>
       {/* Rank badge — top-left corner */}
       {rank != null && (
-        <div style={{
-          position: 'absolute', top: '-12px', left: '14px', zIndex: 2,
-          minWidth: '26px', height: '26px', padding: '0 7px',
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          background: rank === 1 ? 'var(--gold)' : 'var(--green)',
-          color: rank === 1 ? '#1a1a1a' : '#fff',
-          fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 800,
-          borderRadius: '13px', boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-        }}>
-          {rank}
-        </div>
+        <div className="cmp-rank">{rank}</div>
       )}
 
       {casino.usp && (
-        <span style={{
-          position: 'absolute', top: '-11px', left: '52px',
-          display: 'inline-flex', alignItems: 'center', gap: '5px',
-          background: 'var(--btn)', color: '#fff',
-          fontSize: '11.5px', fontWeight: 600, lineHeight: 1.3,
-          padding: '3px 12px', borderRadius: '20px',
-          maxWidth: 'calc(100% - 70px)',
-        }}>
-          <Icon name="cup-star" size={12} color="#fff" />
+        <span className="cmp-flag">
+          <Icon name="cup-star" size={13} color="var(--green)" />
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{casino.usp}</span>
         </span>
       )}
@@ -309,8 +285,8 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
         <div className="casino-cmp-bonus" style={{ gridArea: 'bonus', minWidth: 0 }}>
           {casino.indbetalingsbonus && (
             <>
-              <div style={{ ...LABEL, marginBottom: '3px' }}>Velkomstbonus</div>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text)', lineHeight: 1.15, overflowWrap: 'anywhere' }}>
+              <div style={{ ...LABEL, marginBottom: '3px', color: 'var(--green)', fontWeight: 800 }}>Velkomstbonus</div>
+              <div style={{ fontSize: '23px', fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, letterSpacing: '-0.02em', overflowWrap: 'anywhere' }}>
                 {casino.indbetalingsbonus}
               </div>
             </>
@@ -322,16 +298,11 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
           display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '6px',
         }}>
           {casino.url && (
-            <a href={casino.url} target="_blank" rel="nofollow noopener noreferrer sponsored" style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              background: 'var(--btn)', color: '#fff',
-              padding: '13px 24px', borderRadius: '9px',
-              fontSize: '16px', fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap',
-            }}>
+            <a href={casino.url} target="_blank" rel="nofollow noopener noreferrer sponsored" className="sg-cta sg-cta-lg">
               Hent bonus <Icon name="arrow-right" size={18} color="#fff" />
             </a>
           )}
-          <Link href={reviewHref} style={{ textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'none' }}>
+          <Link href={reviewHref} className="cmp-review-link">
             Læs casinoanmeldelse
           </Link>
         </div>
@@ -343,9 +314,8 @@ function CasinoRow({ casino, currency, rank }: { casino: Casino; currency: strin
         gridTemplateColumns: 'minmax(0, 1fr) 165px 165px',
         gridTemplateAreas: '"terms payments software"',
         alignItems: 'center', columnGap: '18px', rowGap: '14px',
-        marginTop: '12px', paddingTop: '11px', borderTop: '1px solid var(--border-faint)',
       }}>
-        <div className="casino-cmp-terms" style={{ gridArea: 'terms', minWidth: 0, fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.45 }}>
+        <div className="casino-cmp-terms" style={{ gridArea: 'terms', minWidth: 0, fontSize: '11px', color: 'var(--text-faint)', lineHeight: 1.5 }}>
           <Terms html={terms} />
         </div>
         <div style={{ gridArea: 'payments', minWidth: 0 }}>
@@ -385,7 +355,7 @@ export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = 
           {disclosure}
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
         {visible.map((c, i) => (
           <CasinoRow key={c._id} casino={c} currency={currency} rank={i + 1} />
         ))}
@@ -396,9 +366,10 @@ export function CasinoComparisonTable({ casinos, currency = 'kr.', disclosure = 
             onClick={() => setExpanded(true)}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'var(--bg-card)', border: '1px solid var(--btn)',
+              background: 'var(--bg-card)', border: '1px solid var(--mint-2)',
               color: 'var(--green-dark)', fontWeight: 700, fontSize: '15px',
-              padding: '13px 30px', borderRadius: '10px', cursor: 'pointer',
+              padding: '13px 30px', borderRadius: '12px', cursor: 'pointer',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             {moreLabel} ({hidden}) <Icon name="alt-arrow-down" size={16} color="var(--green)" />
