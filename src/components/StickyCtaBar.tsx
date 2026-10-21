@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Terms } from './Terms'
+import { Icon } from './Icon'
 
 interface StickyCtaBarProps {
   url: string
@@ -8,109 +9,66 @@ interface StickyCtaBarProps {
   logoUrl?: string | null
   logoAlt?: string | null
   bonus?: string | null
-  terms?: string | null
+  terms?: string | any[] | null
+  minDeposit?: number | string | null
+  wagering?: string | null
 }
 
-export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms }: StickyCtaBarProps) {
+/**
+ * Bonus bar fixed to the bottom of review pages. It slides in only once the
+ * reader has scrolled past the hero (the sentinel sits right under it), and
+ * hides again when they scroll back to the top.
+ */
+export function StickyCtaBar({ url, name, logoUrl, logoAlt, bonus, terms, minDeposit, wagering }: StickyCtaBarProps) {
   const [visible, setVisible] = useState(false)
+  const [openTerms, setOpenTerms] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const sentinel = sentinelRef.current
     if (!sentinel) return
+    // Visible only when the sentinel has left the screen through the TOP,
+    // i.e. the hero is scrolled past. Below the screen (page just opened) = hidden.
     const observer = new IntersectionObserver(
-      ([entry]) => setVisible(!entry.isIntersecting),
+      ([entry]) => setVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0),
       { threshold: 0 }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
   }, [])
 
+  const chips = [
+    minDeposit != null && minDeposit !== '' ? `Min. indbetaling ${typeof minDeposit === 'number' ? `${minDeposit} kr.` : minDeposit}` : null,
+    wagering && wagering.trim() !== '-' ? `Omsætningskrav ${wagering}` : null,
+  ].filter(Boolean) as string[]
+
   return (
     <>
       {/* Invisible sentinel placed at the bottom of the hero */}
-      <div ref={sentinelRef} style={{ height: 0 }} />
+      <div ref={sentinelRef} style={{ height: 0 }} aria-hidden="true" />
 
-      <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        zIndex: 50,
-        transform: visible ? 'translateY(0)' : 'translateY(100%)',
-        transition: 'transform 0.25s ease',
-        background: 'var(--bg-card)',
-        borderTop: '1px solid var(--border)',
-        boxShadow: '0 -4px 32px rgba(0,0,0,0.18)',
-      }}>
-        {/* Inner — matches body max-width */}
-        <div className="sticky-cta-inner">
-
-          {/* Logo + name + bonus */}
-          <div className="sticky-cta-main">
+      <div className={`scb${visible ? ' is-on' : ''}`} aria-hidden={!visible}>
+        <div className="scb-in">
+          <div className="scb-row">
             {logoUrl && (
-              <div style={{
-                width: '52px', height: '52px',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                background: '#1a1a2e',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <img
-                  src={logoUrl}
-                  alt={logoAlt || name}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                />
-              </div>
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="scb-logo" src={logoUrl} alt={logoAlt || name} width={48} height={48} />
             )}
-
-            <div style={{ minWidth: 0 }}>
-              <div style={{
-                fontSize: '16px', fontWeight: 700,
-                color: 'var(--text)',
-                lineHeight: 1.2,
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-              }}>
-                {name}
-              </div>
-              {bonus && (
-                <div style={{
-                  fontSize: 'clamp(20px, 5.5vw, 24px)', fontWeight: 800,
-                  color: 'var(--green)',
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1.15,
-                }}>
-                  {bonus}
-                </div>
-              )}
+            <div className="scb-id">
+              <span className="scb-name">{name}</span>
+              {bonus && <span className="scb-bonus">{bonus}</span>}
             </div>
+            {chips.length > 0 && (
+              <div className="scb-chips">{chips.map((c) => <span key={c}>{c}</span>)}</div>
+            )}
+            <a className="sg-cta scb-btn" href={url} target="_blank" rel="nofollow noopener noreferrer sponsored" tabIndex={visible ? 0 : -1}>
+              Spil nu <Icon name="arrow-right" size={16} color="#fff" />
+            </a>
           </div>
-
-          {/* Terms */}
-          <div className="sticky-cta-terms">
+          {/* Small print: two lines; tap to read all of it */}
+          <div className={`scb-terms${openTerms ? ' is-open' : ''}`} onClick={() => setOpenTerms((o) => !o)} title={openTerms ? undefined : 'Tryk for at læse alle vilkår'}>
             {terms ? <Terms html={terms} /> : '18+ | Kun nye spillere | Vilkår gælder'}
           </div>
-
-          {/* CTA button */}
-          <a
-            className="sticky-cta-btn"
-            href={url}
-            target="_blank"
-            rel="nofollow noopener noreferrer sponsored"
-            style={{
-              flexShrink: 0,
-              background: 'var(--btn)',
-              color: '#fff',
-              padding: '13px 26px',
-              borderRadius: '9px',
-              fontSize: '15px',
-              fontWeight: 800,
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-              letterSpacing: '0.03em',
-              boxShadow: '0 2px 12px rgba(10,95,62,0.3)',
-            }}
-          >
-            SPIL NU
-          </a>
         </div>
       </div>
     </>

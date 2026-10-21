@@ -49,7 +49,7 @@ export function CountryHero({ title, intro, heroCards, breadcrumbs }: CountryHer
 
             {hasIntro && (
               <p className="country-hero-intro">
-                {typeof intro === 'string' ? replaceDateVars(intro) : <RichIntro value={intro} />}
+                <RichIntro value={typeof intro === 'string' ? replaceDateVars(intro) : intro} maxWords={50} />
               </p>
             )}
           </div>

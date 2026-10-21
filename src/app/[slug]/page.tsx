@@ -168,7 +168,7 @@ export default async function SlugPage({ params }: Props) {
                   {replaceDateVars(post.title)}
                 </h1>
                 <AuthorBar author={author} updatedAt={post.lastUpdated || post.publishedAt} />
-                {post.excerpt && <ExcerptReadMore text={replaceDateVars(post.excerpt)} words={100} />}
+                {post.excerpt && <ExcerptReadMore text={replaceDateVars(post.excerpt)} words={50} />}
               </div>
               {post.featuredImage?.url && (
                 <div className="post-hero-media">

@@ -124,7 +124,7 @@ export default async function ReviewPage({ params }: Props) {
       <ReviewHero bm={bm} bonuses={relatedBonuses} />
 
       {bm.url && (
-        <StickyCtaBar url={bm.url} name={bm.name} logoUrl={bm.logo?.url ?? null} logoAlt={bm.logo?.alt ?? null} bonus={bm.indbetalingsbonus ?? null} terms={bm.terms ?? null} />
+        <StickyCtaBar url={bm.url} name={bm.name} logoUrl={bm.logoSquare?.url ?? bm.logo?.url ?? null} logoAlt={bm.logoSquare?.alt ?? bm.logo?.alt ?? null} bonus={bm.indbetalingsbonus ?? null} terms={bm.terms ?? null} minDeposit={bm.minIndbetaling ?? null} wagering={bm.gennemspilskrav ?? null} />
       )}
 
       <div className="article-layout">

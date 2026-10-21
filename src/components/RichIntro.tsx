@@ -1,5 +1,7 @@
 'use client'
 import { PortableText } from '@portabletext/react'
+import { truncatePT } from '@/lib/truncatePT'
+import { ReadMore } from '@/components/ReadMore'
 
 const components = {
   block: {
@@ -32,8 +34,15 @@ const components = {
  * Always renders inline (no wrapping block element) — the parent is
  * responsible for the <p> or container element and its styles.
  */
-export function RichIntro({ value }: { value: string | any[] | null | undefined }) {
-  if (!value) return null
+function Render({ value }: { value: string | any[] }) {
   if (typeof value === 'string') return <>{value}</>
   return <PortableText value={value} components={components} />
+}
+
+/** maxWords: show only the first N words, with a "Læs mere" button for the rest. */
+export function RichIntro({ value, maxWords }: { value: string | any[] | null | undefined; maxWords?: number }) {
+  if (!value) return null
+  const short = maxWords ? truncatePT(value, maxWords) : null
+  if (!short) return <Render value={value} />
+  return <ReadMore short={<Render value={short} />} full={<Render value={value} />} />
 }

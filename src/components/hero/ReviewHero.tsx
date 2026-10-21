@@ -83,7 +83,7 @@ export function ReviewHero({ bm, bonuses }: { bm: any; bonuses: any[] }) {
                   ? <img className={`mh-logo${isSquare ? '' : ' is-wide'}`} src={logo.url} alt={logo.alt || bm.name} width={84} height={84} />
                   : <span className="mh-logotile"><span>{bm.name.slice(0, 2)}</span></span>}
                 <div style={{ minWidth: 0 }}>
-                  <div className="mh-chips">
+                  <div className="mh-chips mh-chips-d">
                     <span className="mh-chip"><Icon name="shield-check" size={13} />Dansk licens</span>
                     <span className="mh-chip gold"><Icon name="verified-check" size={13} />Slotsguiden verificeret</span>
                   </div>
@@ -101,6 +101,12 @@ export function ReviewHero({ bm, bonuses }: { bm: any; bonuses: any[] }) {
                     <div><b>{bm.score.toFixed(1)}</b><small>SCORE</small></div>
                   </div>
                 )}
+              </div>
+
+              {/* Phones: the two badges in one row under the name instead of stacked above it */}
+              <div className="mh-chips mh-chips-m" aria-hidden="true">
+                <span className="mh-chip"><Icon name="shield-check" size={13} />Dansk licens</span>
+                <span className="mh-chip gold"><Icon name="verified-check" size={13} />Slotsguiden verificeret</span>
               </div>
 
               <div className="mh-offer">
