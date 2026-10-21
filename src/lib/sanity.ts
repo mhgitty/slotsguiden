@@ -576,7 +576,7 @@ export async function getSpillemaskiner() {
 /** Fields for the shared slot card (SlotCard). */
 export const SLOT_CARD = `
   "img": featuredImage.asset->url + "?fm=webp&fit=crop&w=480&h=360&q=72",
-  "hasDemo": defined(demoUrl), rtp, volatilitet,
+  "hasDemo": defined(demoUrl) || defined(demoEmbed), rtp, volatilitet,
   "provider": provider-> { name, "slug": slug.current }`
 
 export async function getSlotsByProvider(providerId: string) {
@@ -599,7 +599,9 @@ export async function getSpillemaskineBySlug(slug: string) {
   return client.fetch(
     `*[_type == "spillemaskine" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, _updatedAt, name, titel, slug, metaTitle, metaDescription, publishedAt, lastUpdated,
-      demoUrl, rtp, volatilitet, maksGevinst, layout, gevinstsystem, indsats, udgivet, funktioner,
+      demoUrl, demoEmbed, demoTitel, rtp, volatilitet, maksGevinst, layout, gevinstsystem, mekanik, tema,
+      indsats, minIndsats, maksIndsats, bonusBuy, jackpot, hitFrekvens, udgivet, funktioner,
+      "highlight": highlightCasino-> ${SLOT_CASINO},
       "provider": provider-> { name, "slug": slug.current },
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },

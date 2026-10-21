@@ -55,7 +55,7 @@ function CasinoListSection({ bookmakers, section, reviewBase, listBase }: {
 
   return (
     <div className="section">
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 700, marginBottom: '16px', color: 'var(--text)' }}>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, marginBottom: '16px', color: 'var(--text)' }}>
         {title}
       </h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -199,7 +199,7 @@ function HighlightsSection({ section }: { section: SectionHighlights }) {
   return (
     <div className="section">
       {section.title && (
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 700, color: 'var(--text)', marginBottom: section.intro ? '8px' : '20px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: section.intro ? '8px' : '20px', textAlign: 'center' }}>
           {section.title}
         </h2>
       )}
@@ -244,7 +244,7 @@ function GameTypesSection({ section }: { section: SectionGameTypes }) {
   return (
     <div className="section">
       {section.title && (
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 700, color: 'var(--text)', marginBottom: '20px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', marginBottom: '20px', textAlign: 'center' }}>
           {section.title}
         </h2>
       )}
@@ -312,7 +312,7 @@ function ProviderCardsSection({
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px', marginBottom: section.intro ? '12px' : '20px', flexWrap: 'wrap' }}>
         {section.title && (
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
             {section.title}
           </h2>
         )}

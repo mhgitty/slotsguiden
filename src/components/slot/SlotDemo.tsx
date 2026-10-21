@@ -4,6 +4,8 @@ import { Icon } from '@/components/Icon'
 
 interface Props {
   demoUrl?: string | null
+  /** Text in the bar above the game; default "Gratis demo" */
+  title?: string | null
   name: string
   poster?: string | null
   providerName?: string | null
@@ -17,7 +19,7 @@ const DESKTOP = '(min-width: 761px)'
  * The demo box. On desktop the game starts loading as soon as the page is
  * ready; on phones it starts when the box scrolls into view (games are heavy).
  */
-export function SlotDemo({ demoUrl, name, poster, providerName, fallbackCta }: Props) {
+export function SlotDemo({ demoUrl, title, name, poster, providerName, fallbackCta }: Props) {
   const boxRef = useRef<HTMLDivElement>(null)
   const [start, setStart] = useState(false)
   const [ready, setReady] = useState(false)
@@ -92,7 +94,7 @@ export function SlotDemo({ demoUrl, name, poster, providerName, fallbackCta }: P
   return (
     <div className={`sl-demo${full ? ' is-full' : ''}${nativeFs ? ' is-native-fs' : ''}`} ref={boxRef} id="demo">
       <div className="sl-dbar">
-        <span className="sl-live"><i aria-hidden="true" />Gratis demo</span>
+        <span className="sl-live"><i aria-hidden="true" />{title?.trim() || 'Gratis demo'}</span>
         <small>Spillepenge · ingen indbetaling · ingen konto</small>
         <div className="sl-dbtn">
           <button type="button" onClick={restart} aria-label="Genstart demo"><Icon name="restart" size={16} /><span>Genstart</span></button>

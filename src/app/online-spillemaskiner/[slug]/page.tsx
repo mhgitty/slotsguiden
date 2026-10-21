@@ -11,7 +11,7 @@ import { Terms } from '@/components/Terms'
 import { SlotDemo } from '@/components/slot/SlotDemo'
 import { SlotPicker, type PickerCasino } from '@/components/slot/SlotPicker'
 import { SlotCard } from '@/components/slot/SlotCard'
-import { slotName, pickCasinos, offerOf, minDeposit } from '@/components/slot/slotUtils'
+import { slotName, pickCasinos, offerOf, minDeposit, demoSrc, featureList } from '@/components/slot/slotUtils'
 import { getSpillemaskineBySlug, client } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
@@ -51,16 +51,33 @@ const SPECS: { key: string; label: string; icon: string }[] = [
   { key: 'volatilitet', label: 'Volatilitet', icon: 'graph-up' },
   { key: 'maksGevinst', label: 'Maks. gevinst', icon: 'cup-star' },
   { key: 'layout', label: 'Hjul / rækker', icon: 'widget' },
-  { key: 'gevinstsystem', label: 'Gevinstsystem', icon: 'layers' },
-  { key: 'indsats', label: 'Indsats', icon: 'wallet-money' },
+  { key: 'gevinstsystem', label: 'Gevinstlinjer', icon: 'layers' },
+  { key: 'mekanik', label: 'Mekanik', icon: 'settings' },
+  { key: 'tema', label: 'Tema', icon: 'palette' },
+  { key: 'indsats', label: 'Indsats pr. spin', icon: 'wallet-money' },
+  { key: 'hitFrekvens', label: 'Hit-frekvens', icon: 'target' },
+  { key: 'bonusBuy', label: 'Bonus buy', icon: 'cart-large-2' },
+  { key: 'jackpot', label: 'Jackpot', icon: 'crown-star' },
   { key: 'udgivet', label: 'Udgivet', icon: 'calendar' },
 ]
 
+/** Value shown in a spec tile, or null to skip the tile. */
+function specValue(g: any, key: string): string | null {
+  if (key === 'provider') return g.provider?.name || null
+  if (key === 'indsats') {
+    const lo = g.minIndsats?.trim(); const hi = g.maksIndsats?.trim()
+    if (lo || hi) return [lo, hi].filter(Boolean).join(' – ')
+    return g.indsats || null
+  }
+  if (key === 'bonusBuy') return g.bonusBuy === true ? 'Ja (ikke i DK)' : g.bonusBuy === false ? 'Nej' : null
+  if (key === 'jackpot') return g.jackpot === true ? 'Ja' : null
+  return g[key] || null
+}
+
 function SlotSpecs({ g, id }: { g: any; id?: string }) {
-  const tiles = SPECS
-    .map((s) => ({ ...s, value: s.key === 'provider' ? g.provider?.name : g[s.key] }))
-    .filter((s) => s.value)
-  if (!tiles.length && !g.funktioner) return null
+  const tiles = SPECS.map((s) => ({ ...s, value: specValue(g, s.key) })).filter((s) => s.value)
+  const features = featureList(g.funktioner)
+  if (!tiles.length && !features.length) return null
   return (
     <div className="sl-specs-wrap" id={id}>
       {tiles.length > 0 && (
@@ -76,11 +93,11 @@ function SlotSpecs({ g, id }: { g: any; id?: string }) {
           ))}
         </div>
       )}
-      {g.funktioner && (
+      {features.length > 0 && (
         <div className="sl-spec sl-spec-wide">
           <Icon name="stars" size={20} />
           <small>Bonusfunktioner</small>
-          <b>{g.funktioner}</b>
+          <span className="sl-feats">{features.map((f) => <span key={f}>{f}</span>)}</span>
         </div>
       )}
     </div>
@@ -108,7 +125,8 @@ export default async function SpillemaskinePage({ params }: Props) {
   const canonical = `${BASE}/online-spillemaskiner/${slug}/`
   const body: any[] = g.body || []
   const specsAt = body.findIndex((b) => b?._type === 'slotSpecsBlock')
-  const hasSpecs = !!(g.provider?.name || SPECS.some((x) => g[x.key]) || g.funktioner)
+  const hasSpecs = SPECS.some((x) => specValue(g, x.key)) || featureList(g.funktioner).length > 0
+  const demo = demoSrc(g)
   const poster = g.featuredImage?.url ? sized(g.featuredImage.url, 600) : null
   const thumb = g.featuredImage?.thumb || null
   const providerHref = g.provider?.slug ? `/spiludviklere/${g.provider.slug}/` : null
@@ -156,7 +174,7 @@ export default async function SpillemaskinePage({ params }: Props) {
         gamePlatform: ['Web', 'Mobil'],
         operatingSystem: 'HTML5',
         inLanguage: 'da',
-        ...(g.demoUrl ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'DKK', availability: 'https://schema.org/InStock', description: 'Gratis demo' } } : {}),
+        ...(demo ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'DKK', availability: 'https://schema.org/InStock', description: 'Gratis demo' } } : {}),
       },
     ],
   }
@@ -206,7 +224,8 @@ export default async function SpillemaskinePage({ params }: Props) {
 
           <div className={`sl-play${casinos.length ? '' : ' no-pick'}`}>
             <SlotDemo
-              demoUrl={g.demoUrl}
+              demoUrl={demo}
+              title={g.demoTitel}
               name={name}
               poster={poster}
               providerName={g.provider?.name}

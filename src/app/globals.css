@@ -2329,7 +2329,7 @@ a.bk-name:hover { color: var(--green); }
 
 /* ══ "Nyt på Slotsguiden" (above the footer) ═════════════════════════════ */
 .lc { max-width: 1250px; margin: 64px auto 0; padding: 0 15px; }
-.lc-title { font-family: var(--font-display); font-size: clamp(22px, 2.6vw, 28px); font-weight: 800; letter-spacing: -0.02em; color: var(--text); margin: 0 0 16px; }
+.lc-title { font-family: var(--font-display); font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; letter-spacing: normal; color: var(--text); margin: 0 0 16px; }
 .lc-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
 .lc-grid.one { grid-template-columns: minmax(0, 1fr); }
 .lc-col { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-card, 18px); box-shadow: var(--shadow-sm); padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -2391,7 +2391,7 @@ a.bk-name:hover { color: var(--green); }
 
 /* ══ Homepage: slot row and trust strip ══════════════════════════════════ */
 .hs-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; margin-bottom: 16px; }
-.hs-head h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); margin: 0; }
+.hs-head h2 { font-family: var(--font-display); font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; color: var(--text); margin: 0; }
 .hs-head a { display: inline-flex; align-items: center; gap: 3px; font-size: 14px; font-weight: 700; color: var(--green); text-decoration: none; }
 .hs-head a:hover { text-decoration: underline; }
 .hs-intro { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin: -6px 0 18px; }
@@ -2474,3 +2474,9 @@ a.br-name:hover { color: var(--green); }
   .br-title { font-size: 17px; }
   .br-terms { padding: 10px 14px 12px; }
 }
+
+/* Slot specs: feature chips, long demo titles */
+.sl-feats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.sl-feats span { font-size: 12.5px; font-weight: 700; color: var(--green); background: var(--green-light); border: 1px solid var(--mint-2); border-radius: 999px; padding: 3px 10px; }
+.sl-spec-wide .sl-feats { grid-column: 2; }
+.sl-live { min-width: 0; overflow: hidden; text-overflow: ellipsis; }

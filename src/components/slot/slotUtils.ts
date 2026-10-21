@@ -31,12 +31,27 @@ export function slotName(name: string = ''): string {
 export function pickCasinos(g: any, max = 6): SlotCasino[] {
   const ok = (l?: SlotCasino[] | null) => (l || []).filter((c) => c && c.url)
   const own = ok(g?.ownCasinos)
-  if (own.length) return own.slice(0, max)
   const std = ok(g?.defaultCasinos)
-  if (std.length) return std.slice(0, max)
-  return ok(g?.providerCasinos)
-    .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, max)
+  const list = own.length ? own
+    : std.length ? std
+    : ok(g?.providerCasinos).sort((a, b) => (b.score || 0) - (a.score || 0))
+  // "Fremhævet casino" goes first (pre-selected), without duplicates
+  const hl = g?.highlight?.url ? [g.highlight as SlotCasino] : []
+  return [...hl, ...list.filter((c) => c._id !== hl[0]?._id)].slice(0, max)
+}
+
+/** Demo link: the Demo URL field, else the src taken from pasted embed code. */
+export function demoSrc(g: any): string | null {
+  if (g?.demoUrl) return g.demoUrl
+  const m = String(g?.demoEmbed || '').match(/<iframe[^>]*\ssrc=["']([^"']+)["']/i)
+  return m ? m[1].replace(/&#0?38;|&amp;/g, '&').trim() : null
+}
+
+/** Bonus features as a list; older entries stored them as one comma-separated text. */
+export function featureList(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map((x) => String(x).trim()).filter(Boolean)
+  if (typeof v === 'string') return v.split(/\s*[,;]\s*/).map((x) => x.trim()).filter(Boolean)
+  return []
 }
 
 /** The offer line for a casino: deposit bonus, else free spins. */
