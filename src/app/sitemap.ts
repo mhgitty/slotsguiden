@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ).catch(() => []),
 
     client.fetch<Array<{ slug: { current: string }; _updatedAt?: string }>>(
-      `*[_type == "spillemaskine" && defined(slug.current) && (market == "global" || !defined(market))] { slug, _updatedAt }`
+      `*[_type == "slotmachine" && defined(slug.current) && (market == "global" || !defined(market))] { slug, _updatedAt }`
     ).catch(() => []),
 
     client.fetch<Array<{ slug: { current: string }; _updatedAt?: string }>>(

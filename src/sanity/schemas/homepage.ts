@@ -161,7 +161,7 @@ const sectionSlots = {
     sectionIntroField,
     defineField({
       name: 'slots', title: 'Slots (in this order)', type: 'array',
-      of: [{ type: 'reference', weak: true, to: [{ type: 'spillemaskine' }] }],
+      of: [{ type: 'reference', weak: true, to: [{ type: 'slotmachine' }] }],
       description: 'Pick the slots to show. If you pick fewer than the number below, the newest slots with a free demo fill the rest.',
     }),
     defineField({ name: 'count', title: 'Number of slots', type: 'number', initialValue: 10, validation: (r: any) => r.min(2).max(30) }),

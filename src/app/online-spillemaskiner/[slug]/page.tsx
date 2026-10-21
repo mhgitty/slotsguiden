@@ -11,7 +11,7 @@ import { Terms } from '@/components/Terms'
 import { SlotDemo } from '@/components/slot/SlotDemo'
 import { SlotPicker, type PickerCasino } from '@/components/slot/SlotPicker'
 import { SlotCard } from '@/components/slot/SlotCard'
-import { slotName, pickCasinos, offerOf, minDeposit, demoSrc, featureList } from '@/components/slot/slotUtils'
+import { slotName, pickCasinos, offerOf, minDeposit, demoSrc, featureList, volDa } from '@/components/slot/slotUtils'
 import { getSpillemaskineBySlug, client } from '@/lib/sanity'
 import { replaceDateVars, blocksToPlainText } from '@/lib/dateVars'
 import { notFound } from 'next/navigation'
@@ -23,7 +23,7 @@ const BASE = 'https://slotsguiden.dk'
 
 export async function generateStaticParams() {
   const items = await client.fetch<Array<{ slug: string }>>(
-    `*[_type == "spillemaskine" && defined(slug.current)]{ "slug": slug.current }`
+    `*[_type == "slotmachine" && defined(slug.current)]{ "slug": slug.current }`
   ).catch(() => [])
   return items.map((s) => ({ slug: s.slug }))
 }
@@ -48,35 +48,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const SPECS: { key: string; label: string; icon: string }[] = [
   { key: 'provider', label: 'Udvikler', icon: 'gamepad' },
   { key: 'rtp', label: 'RTP', icon: 'pie-chart-2' },
-  { key: 'volatilitet', label: 'Volatilitet', icon: 'graph-up' },
-  { key: 'maksGevinst', label: 'Maks. gevinst', icon: 'cup-star' },
-  { key: 'layout', label: 'Hjul / rækker', icon: 'widget' },
-  { key: 'gevinstsystem', label: 'Gevinstlinjer', icon: 'layers' },
-  { key: 'mekanik', label: 'Mekanik', icon: 'settings' },
-  { key: 'tema', label: 'Tema', icon: 'palette' },
-  { key: 'indsats', label: 'Indsats pr. spin', icon: 'wallet-money' },
-  { key: 'hitFrekvens', label: 'Hit-frekvens', icon: 'target' },
-  { key: 'bonusBuy', label: 'Bonus buy', icon: 'cart-large-2' },
-  { key: 'jackpot', label: 'Jackpot', icon: 'crown-star' },
-  { key: 'udgivet', label: 'Udgivet', icon: 'calendar' },
+  { key: 'volatility', label: 'Volatilitet', icon: 'graph-up' },
+  { key: 'maxWin', label: 'Maks. gevinst', icon: 'cup-star' },
+  { key: 'grid', label: 'Hjul / rækker', icon: 'widget' },
+  { key: 'paylines', label: 'Gevinstlinjer', icon: 'layers' },
+  { key: 'mechanic', label: 'Mekanik', icon: 'settings' },
+  { key: 'theme', label: 'Tema', icon: 'palette' },
+  { key: 'bet', label: 'Indsats pr. spin', icon: 'wallet-money' },
+  { key: 'hitFrequencyPercent', label: 'Hit-frekvens', icon: 'target' },
+  { key: 'hasBonusBuy', label: 'Bonus buy', icon: 'cart-large-2' },
+  { key: 'hasJackpot', label: 'Jackpot', icon: 'crown-star' },
+  { key: 'releaseYear', label: 'Udgivet', icon: 'calendar' },
 ]
 
 /** Value shown in a spec tile, or null to skip the tile. */
 function specValue(g: any, key: string): string | null {
   if (key === 'provider') return g.provider?.name || null
-  if (key === 'indsats') {
-    const lo = g.minIndsats?.trim(); const hi = g.maksIndsats?.trim()
-    if (lo || hi) return [lo, hi].filter(Boolean).join(' – ')
-    return g.indsats || null
+  if (key === 'bet') {
+    const lo = g.minBetPerSpin?.trim(); const hi = g.maxBetPerSpin?.trim()
+    return lo || hi ? [lo, hi].filter(Boolean).join(' – ') : null
   }
-  if (key === 'bonusBuy') return g.bonusBuy === true ? 'Ja (ikke i DK)' : g.bonusBuy === false ? 'Nej' : null
-  if (key === 'jackpot') return g.jackpot === true ? 'Ja' : null
+  if (key === 'volatility') return volDa(g.volatility)
+  if (key === 'hasBonusBuy') return g.hasBonusBuy === true ? 'Ja (ikke i DK)' : null
+  if (key === 'hasJackpot') return g.hasJackpot === true ? 'Ja' : null
   return g[key] || null
 }
 
 function SlotSpecs({ g, id }: { g: any; id?: string }) {
   const tiles = SPECS.map((s) => ({ ...s, value: specValue(g, s.key) })).filter((s) => s.value)
-  const features = featureList(g.funktioner)
+  const features = featureList(g.features)
   if (!tiles.length && !features.length) return null
   return (
     <div className="sl-specs-wrap" id={id}>
@@ -125,7 +125,7 @@ export default async function SpillemaskinePage({ params }: Props) {
   const canonical = `${BASE}/online-spillemaskiner/${slug}/`
   const body: any[] = g.body || []
   const specsAt = body.findIndex((b) => b?._type === 'slotSpecsBlock')
-  const hasSpecs = SPECS.some((x) => specValue(g, x.key)) || featureList(g.funktioner).length > 0
+  const hasSpecs = SPECS.some((x) => specValue(g, x.key)) || featureList(g.features).length > 0
   const demo = demoSrc(g)
   const poster = g.featuredImage?.url ? sized(g.featuredImage.url, 600) : null
   const thumb = g.featuredImage?.thumb || null
@@ -145,9 +145,9 @@ export default async function SpillemaskinePage({ params }: Props) {
 
   const chips = [
     g.rtp && { icon: 'pie-chart-2', label: 'RTP', value: g.rtp },
-    g.volatilitet && { icon: 'graph-up', label: 'Volatilitet', value: g.volatilitet },
-    maxChip(g.maksGevinst) && { icon: 'cup-star', label: 'Maks.', value: maxChip(g.maksGevinst)!, hot: true },
-    gridChip(g.layout) && { icon: 'widget', label: '', value: gridChip(g.layout)! },
+    g.volatility && { icon: 'graph-up', label: 'Volatilitet', value: volDa(g.volatility)! },
+    maxChip(g.maxWin) && { icon: 'cup-star', label: 'Maks.', value: maxChip(g.maxWin)!, hot: true },
+    gridChip(g.grid) && { icon: 'widget', label: '', value: gridChip(g.grid)! },
   ].filter(Boolean) as { icon: string; label: string; value: string; hot?: boolean }[]
 
   const jsonLd = {
@@ -201,13 +201,13 @@ export default async function SpillemaskinePage({ params }: Props) {
             )}
             <div className="sl-title">
               <h1>{name}</h1>
-              {(g.provider?.name || g.udgivet) && (
+              {(g.provider?.name || g.releaseYear) && (
                 <div className="sl-by">
                   {g.provider?.name && (
                     <span>Spillemaskine fra {providerHref ? <Link href={providerHref}>{g.provider.name}</Link> : <b>{g.provider.name}</b>}</span>
                   )}
-                  {g.provider?.name && g.udgivet && <span className="sep" aria-hidden="true">·</span>}
-                  {g.udgivet && <span className="d">Udgivet {g.udgivet.toLowerCase()}</span>}
+                  {g.provider?.name && g.releaseYear && <span className="sep" aria-hidden="true">·</span>}
+                  {g.releaseYear && <span className="d">Udgivet {String(g.releaseYear).toLowerCase()}</span>}
                 </div>
               )}
             </div>
@@ -225,7 +225,7 @@ export default async function SpillemaskinePage({ params }: Props) {
           <div className={`sl-play${casinos.length ? '' : ' no-pick'}`}>
             <SlotDemo
               demoUrl={demo}
-              title={g.demoTitel}
+              title={g.demoIframeTitle}
               name={name}
               poster={poster}
               providerName={g.provider?.name}

@@ -84,9 +84,9 @@ export default defineConfig({
               ),
             S.listItem()
               .title('🎰 Online Spillemaskiner')
-              .schemaType('spillemaskine')
+              .schemaType('slotmachine')
               .child(
-                S.documentTypeList('spillemaskine')
+                S.documentTypeList('slotmachine')
                   .title('Online Spillemaskiner')
               ),
             S.listItem()
@@ -156,7 +156,7 @@ export default defineConfig({
 
   document: {
     actions: (prev, ctx) => {
-      const PREVIEW_TYPES = ['homepage', 'post', 'page', 'bookmaker', 'bonus', 'paymentMethod', 'software', 'casinoGame', 'casinoGuide']
+      const PREVIEW_TYPES = ['homepage', 'post', 'page', 'bookmaker', 'bonus', 'paymentMethod', 'software', 'casinoGame', 'casinoGuide', 'slotmachine']
       if (PREVIEW_TYPES.includes(ctx.schemaType)) {
         return [previewAction, ...prev]
       }

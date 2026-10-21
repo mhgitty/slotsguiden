@@ -12,7 +12,7 @@ let cache: { at: number; list: (MatchedSlot & { key: string })[] } | null = null
 async function slotIndex() {
   if (cache && Date.now() - cache.at < 10 * 60 * 1000) return cache.list
   const rows: any[] = await client.fetch(
-    `*[_type == "spillemaskine" && defined(slug.current) && !(_id in path("drafts.**"))]{ name, "slug": slug.current, ${SLOT_CARD} }`
+    `*[_type == "slotmachine" && defined(slug.current) && !(_id in path("drafts.**"))]{ name, "slug": slug.current, ${SLOT_CARD} }`
   ).catch(() => [])
   const list = rows
     .map((r) => ({ name: slotName(r.name), slug: r.slug, img: r.img, hasDemo: r.hasDemo, key: norm(slotName(r.name)) }))

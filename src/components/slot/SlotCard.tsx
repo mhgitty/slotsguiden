@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { slotName } from './slotUtils'
+import { slotName, volDa, VOL_LEVEL } from './slotUtils'
 
 export interface SlotCardData {
   _id: string
@@ -8,12 +8,11 @@ export interface SlotCardData {
   img?: string | null
   hasDemo?: boolean
   rtp?: string | null
-  volatilitet?: string | null
+  volatility?: string | null
   provider?: { name?: string; slug?: string } | null
   date?: string
 }
 
-const VOL_LEVEL: Record<string, number> = { 'Lav': 1, 'Lav-middel': 1, 'Middel': 2, 'Middel-høj': 2, 'Høj': 3, 'Meget høj': 3 }
 
 const Play = ({ s = 12 }: { s?: number }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -24,7 +23,8 @@ const Play = ({ s = 12 }: { s?: number }) => (
 /** One slot in a grid: art, demo badge, name, provider, RTP and volatility. */
 export function SlotCard({ g, showProvider = true }: { g: SlotCardData; showProvider?: boolean }) {
   const name = slotName(g.name)
-  const lvl = g.volatilitet ? VOL_LEVEL[g.volatilitet] : 0
+  const lvl = g.volatility ? VOL_LEVEL[g.volatility] || 0 : 0
+  const vol = volDa(g.volatility)
   return (
     <Link href={`/online-spillemaskiner/${g.slug}/`} className="sc">
       <span className="sc-media">
@@ -42,8 +42,8 @@ export function SlotCard({ g, showProvider = true }: { g: SlotCardData; showProv
           <span className="sc-meta">
             {g.rtp && <span>RTP <b>{g.rtp}</b></span>}
             {lvl > 0 && (
-              <span className="sc-vol" title={`Volatilitet: ${g.volatilitet}`}>
-                <i className="sc-bars" data-l={lvl}><i /><i /><i /></i>{g.volatilitet}
+              <span className="sc-vol" title={`Volatilitet: ${vol}`}>
+                <i className="sc-bars" data-l={lvl}><i /><i /><i /></i>{vol}
               </span>
             )}
           </span>

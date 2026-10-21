@@ -30,7 +30,7 @@ export async function GET() {
     "guides": *[_type == "casinoGuide" && defined(slug.current)] { title, "slug": slug.current },
     "payments": *[_type == "paymentMethod" && defined(slug.current)] { name, "slug": slug.current, "n": count(*[_type == "bookmaker" && references(^._id) && defined(score)]) },
     "providers": *[_type == "software" && defined(slug.current)] { name, "slug": slug.current },
-    "slots": *[_type == "spillemaskine" && defined(slug.current) && (market == "global" || !defined(market))] [0...400] { "title": coalesce(name, title), "slug": slug.current }
+    "slots": *[_type == "slotmachine" && defined(slug.current) && (market == "global" || !defined(market))] [0...400] { "title": coalesce(name, title), "slug": slug.current }
   }`
   const d: any = await client.fetch(q).catch(() => null)
   if (!d) return NextResponse.json([], { status: 200 })

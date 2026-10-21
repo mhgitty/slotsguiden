@@ -357,7 +357,7 @@ export async function getRecentBonuses(limit = 5) {
 /** Newest slots with a demo, for filling the homepage slot row. */
 export async function getNewestDemoSlots(limit = 10) {
   return client.fetch(
-    `*[_type == "spillemaskine" && defined(demoUrl) && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
+    `*[_type == "slotmachine" && defined(demoIframe) && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
       | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] { _id, name, "slug": slug.current, ${SLOT_CARD} }`,
     { limit }
   )
@@ -367,8 +367,8 @@ export async function getNewestDemoSlots(limit = 10) {
 export async function getSiteCounts() {
   return client.fetch(`{
     "casinos": count(*[_type == "bookmaker" && defined(score) && !(_id in path("drafts.**"))]),
-    "slots": count(*[_type == "spillemaskine" && !(_id in path("drafts.**"))]),
-    "demos": count(*[_type == "spillemaskine" && defined(demoUrl) && !(_id in path("drafts.**"))])
+    "slots": count(*[_type == "slotmachine" && !(_id in path("drafts.**"))]),
+    "demos": count(*[_type == "slotmachine" && defined(demoIframe) && !(_id in path("drafts.**"))])
   }`)
 }
 
@@ -564,10 +564,10 @@ export async function getPaymentMethodBySlug(slug: string) {
 
 export async function getSpillemaskiner() {
   return client.fetch(
-    `*[_type == "spillemaskine" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) {
+    `*[_type == "slotmachine" && (market == "global" || !defined(market))] | order(coalesce(publishedAt, _createdAt) desc) {
       _id, name, titel, "slug": slug.current,
       "date": coalesce(publishedAt, _createdAt),
-      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "featuredImage": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       ${SLOT_CARD}
     }`
   )
@@ -575,14 +575,14 @@ export async function getSpillemaskiner() {
 
 /** Fields for the shared slot card (SlotCard). */
 export const SLOT_CARD = `
-  "img": featuredImage.asset->url + "?fm=webp&fit=crop&w=480&h=360&q=72",
-  "hasDemo": defined(demoUrl) || defined(demoEmbed), rtp, volatilitet,
+  "img": logo.asset->url + "?fm=webp&fit=crop&w=480&h=360&q=72",
+  "hasDemo": defined(demoIframe), rtp, volatility,
   "provider": provider-> { name, "slug": slug.current }`
 
 export async function getSlotsByProvider(providerId: string) {
   return client.fetch(
-    `*[_type == "spillemaskine" && provider._ref == $id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
-      | order(defined(demoUrl) desc, coalesce(publishedAt, _createdAt) desc) {
+    `*[_type == "slotmachine" && provider._ref == $id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
+      | order(defined(demoIframe) desc, coalesce(publishedAt, _createdAt) desc) {
       _id, name, "slug": slug.current, "date": coalesce(publishedAt, _createdAt), ${SLOT_CARD}
     }`,
     { id: providerId }
@@ -597,21 +597,21 @@ const SLOT_CASINO = `{
 
 export async function getSpillemaskineBySlug(slug: string) {
   return client.fetch(
-    `*[_type == "spillemaskine" && slug.current == $slug && (market == "global" || !defined(market))][0] {
+    `*[_type == "slotmachine" && slug.current == $slug && (market == "global" || !defined(market))][0] {
       _id, _updatedAt, name, titel, slug, metaTitle, metaDescription, publishedAt, lastUpdated,
-      demoUrl, demoEmbed, demoTitel, rtp, volatilitet, maksGevinst, layout, gevinstsystem, mekanik, tema,
-      indsats, minIndsats, maksIndsats, bonusBuy, jackpot, hitFrekvens, udgivet, funktioner,
+      demoIframe, demoIframeTitle, rtp, volatility, maxWin, grid, paylines, mechanic, theme,
+      minBetPerSpin, maxBetPerSpin, hasBonusBuy, hasJackpot, hitFrequencyPercent, releaseYear, features,
       "highlight": highlightCasino-> ${SLOT_CASINO},
       "provider": provider-> { name, "slug": slug.current },
       "intro": intro[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
       "body": body[] { ..., _type == "image" => { ..., "url": asset->url + "?fm=webp&fit=max&w=1200&q=75" } },
-      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", "thumb": asset->url + "?fm=webp&fit=crop&w=200&h=200&q=80", alt },
+      "featuredImage": logo { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", "thumb": asset->url + "?fm=webp&fit=crop&w=200&h=200&q=80", alt },
       "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       "ownCasinos": casinos[]-> ${SLOT_CASINO},
       "defaultCasinos": *[_type == "siteSettings"][0].slotCasinos[]-> ${SLOT_CASINO},
       "providerCasinos": provider->casinos[]-> ${SLOT_CASINO},
-      "related": *[_type == "spillemaskine" && defined(^.provider._ref) && provider._ref == ^.provider._ref && _id != ^._id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
-        | order(defined(demoUrl) desc, coalesce(publishedAt, _createdAt) desc)[0...5] {
+      "related": *[_type == "slotmachine" && defined(^.provider._ref) && provider._ref == ^.provider._ref && _id != ^._id && !(_id in path("drafts.**")) && (market == "global" || !defined(market))]
+        | order(defined(demoIframe) desc, coalesce(publishedAt, _createdAt) desc)[0...5] {
           _id, name, "slug": slug.current, ${SLOT_CARD}
         }
     }`,

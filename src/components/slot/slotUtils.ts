@@ -42,10 +42,20 @@ export function pickCasinos(g: any, max = 6): SlotCasino[] {
 
 /** Demo link: the Demo URL field, else the src taken from pasted embed code. */
 export function demoSrc(g: any): string | null {
-  if (g?.demoUrl) return g.demoUrl
-  const m = String(g?.demoEmbed || '').match(/<iframe[^>]*\ssrc=["']([^"']+)["']/i)
-  return m ? m[1].replace(/&#0?38;|&amp;/g, '&').trim() : null
+  const raw = String(g?.demoIframe || '').trim()
+  if (!raw) return null
+  const m = raw.match(/<iframe[^>]*\ssrc=["']([^"']+)["']/i)
+  const url = (m ? m[1] : raw).replace(/&#0?38;|&amp;/g, '&').trim()
+  return /^https:\/\//.test(url) ? url : null
 }
+
+/** Volatility is stored in English (shared schema); shown in Danish. */
+const VOL_DA: Record<string, string> = { 'Low': 'Lav', 'Medium-Low': 'Lav-middel', 'Medium': 'Middel', 'Medium-High': 'Middel-høj', 'High': 'Høj', 'Very High': 'Meget høj' }
+export function volDa(v?: string | null): string | null {
+  if (!v) return null
+  return VOL_DA[v.trim()] || v
+}
+export const VOL_LEVEL: Record<string, number> = { 'Low': 1, 'Medium-Low': 1, 'Medium': 2, 'Medium-High': 2, 'High': 3, 'Very High': 3 }
 
 /** Bonus features as a list; older entries stored them as one comma-separated text. */
 export function featureList(v: unknown): string[] {
