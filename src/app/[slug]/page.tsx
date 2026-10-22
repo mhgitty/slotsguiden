@@ -14,6 +14,7 @@ import { MobileToc } from '@/components/MobileToc'
 import { AuthorMeta } from '@/components/AuthorMeta'
 import { ExcerptReadMore } from '@/components/ExcerptReadMore'
 import { JsonLd } from '@/components/JsonLd'
+import { isNewsCategory, articleImages } from '@/lib/news'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { RelatedPages } from '@/components/RelatedPages'
 import { BonusGrid } from '@/components/BonusGrid'
@@ -107,6 +108,9 @@ export default async function SlugPage({ params }: Props) {
   if (post) {
     const author = post.author ?? settings?.defaultAuthor ?? null
     const canonical = `${BASE}/${slug}/`
+    // Posts in a news category get NewsArticle (Google News / Top stories)
+    const isNews = isNewsCategory(post.category)
+    const images = articleImages(post.featuredImage?.rawUrl)
 
     const jsonLdGraph: object[] = [
       {
@@ -117,10 +121,10 @@ export default async function SlugPage({ params }: Props) {
         ],
       },
       {
-        '@type': 'Article',
+        '@type': isNews ? 'NewsArticle' : 'Article',
         '@id': `${canonical}#article`,
-        headline: post.title,
-        description: post.excerpt || '',
+        headline: replaceDateVars(post.title).slice(0, 110),
+        description: replaceDateVars(post.metaDescription || post.excerpt || ''),
         url: canonical,
         datePublished: post.publishedAt,
         dateModified: post.lastUpdated || post.publishedAt,
@@ -129,6 +133,7 @@ export default async function SlugPage({ params }: Props) {
           ? {
               '@type': 'Person',
               name: author.name,
+              ...(author.slug?.current ? { url: `${BASE}/redaktion/${author.slug.current}/` } : {}),
               ...(author.linkedin || author.x ? {
                 sameAs: [author.linkedin, author.x].filter(Boolean),
               } : {}),
@@ -141,7 +146,9 @@ export default async function SlugPage({ params }: Props) {
           logo: { '@type': 'ImageObject', url: `${BASE}/logo.webp` },
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-        ...(post.featuredImage?.url ? { image: post.featuredImage.url } : {}),
+        ...(images ? { image: images } : post.featuredImage?.url ? { image: post.featuredImage.url } : {}),
+        ...(post.category?.name ? { articleSection: post.category.name } : {}),
+        isAccessibleForFree: true,
       },
     ]
 

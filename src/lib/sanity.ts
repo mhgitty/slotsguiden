@@ -127,10 +127,10 @@ export async function getPostBySlug(slug: string) {
         ...,
         ${CARD_BLOCKS}
       },
-      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
+      "featuredImage": featuredImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", "rawUrl": asset->url, alt },
       "ogImage": ogImage { "url": asset->url + "?fm=webp&fit=max&w=1200&q=75", alt },
       metaTitle, metaDescription,
-      category-> { name, slug, emoji },
+      category-> { name, slug, emoji, isNews },
       author-> { name, slug, bio, linkedin, "imageUrl": image.asset->url + "?fm=webp&fit=max&w=240&q=75" }
     }`,
     { slug }
