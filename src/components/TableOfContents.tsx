@@ -11,9 +11,9 @@ interface Heading {
 function extractHeadings(body: any[]): Heading[] {
   if (!body?.length) return []
   return body
-    .filter((block: any) => block._type === 'block' && block.style === 'h2')
+    .filter((block: any) => (block._type === 'block' && block.style === 'h2') || (block._type === 'authorOpinionBlock' && block.level === 'h2' && block.title))
     .map((block: any) => {
-      const text = block.children?.map((c: any) => c.text).join('') || ''
+      const text = block._type === 'authorOpinionBlock' ? block.title : block.children?.map((c: any) => c.text).join('') || ''
       return { id: headingId(text), text }
     })
     .filter((h) => h.text.length > 0)

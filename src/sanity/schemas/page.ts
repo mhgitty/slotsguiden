@@ -968,6 +968,29 @@ export const bodyField = defineField({
         prepare({ title, email }: any) { return { title: `✉️ ${title || 'Contact card'}`, subtitle: email } },
       },
     },
+    {
+      type: 'object',
+      name: 'authorOpinionBlock',
+      title: '🗣️ Author opinion',
+      fields: [
+        { name: 'title', title: 'Heading', type: 'string', description: 'E.g. "Betinia casino anmeldelse og vurdering af Slotsguiden.dk"' },
+        {
+          name: 'level', title: 'Heading level', type: 'string', initialValue: 'h3',
+          options: { list: [{ title: 'H2 (shown in the table of contents)', value: 'h2' }, { title: 'H3', value: 'h3' }], layout: 'radio', direction: 'horizontal' },
+        },
+        {
+          name: 'author', title: 'Author', type: 'reference', to: [{ type: 'author' }],
+          description: 'Leave empty to use the default author from Site Settings',
+        },
+        { name: 'body', title: 'Opinion', type: 'array', of: inlineRichTextOf() },
+      ],
+      preview: {
+        select: { title: 'title', author: 'author.name' },
+        prepare({ title, author }: any) {
+          return { title: title || 'Author opinion', subtitle: `🗣️ ${author || 'Default author'}` }
+        },
+      },
+    },
   ],
 })
 

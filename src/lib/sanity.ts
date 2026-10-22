@@ -450,7 +450,7 @@ export const getSiteSettings = cache(async () => {
       "logoUrl": logo.asset->url + "?fm=webp&fit=max&w=360&q=75",
       "logoWhiteUrl": logoWhite.asset->url + "?fm=webp&fit=max&w=360&q=75",
       "defaultAuthor": defaultAuthor-> {
-        _id, name, slug, bio, linkedin, x, facebook,
+        _id, name, slug, role, bio, linkedin, x, facebook,
         "imageUrl": image.asset->url + "?fm=webp&fit=max&w=240&q=75"
       },
       ${headerNavProjection()},

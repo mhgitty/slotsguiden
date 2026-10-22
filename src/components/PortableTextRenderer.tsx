@@ -16,6 +16,7 @@ import { CasinoKort } from './CasinoKort'
 import { StatsBlock, TimelineBlock, StepCardsBlock, FeatureCardsBlock, TeamBlock, ContactCardBlock } from './ContentBlocks'
 import { BonusKort } from './BonusKort'
 import { HowToBlock } from './HowToBlock'
+import { AuthorOpinionBlock } from './AuthorOpinionBlock'
 import { DropdownBlock } from './DropdownBlock'
 import { HtmlBlock } from './HtmlBlock'
 
@@ -172,6 +173,7 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
       contactCardBlock: ({ value }: any) => <ContactCardBlock value={value} />,
       bonusKortBlock: ({ value }: any) => <BonusKort value={value} />,
       howToBlock: ({ value }: any) => <HowToBlock value={value} />,
+      authorOpinionBlock: ({ value }: any) => <AuthorOpinionBlock value={value} />,
       latestPostsBlock: ({ value: blockValue }: any) =>
         posts ? <LatestPostsBlock value={blockValue} posts={posts} /> : null,
       image: ({ value }: any) => {
