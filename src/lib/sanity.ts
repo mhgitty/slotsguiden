@@ -57,6 +57,13 @@ const CARD_BLOCKS = `
         "logoAlt": coalesce(logoSquare.alt, logo.alt),
       }
     },
+    _type == "teamBlock" => {
+      ...,
+      "members": members[] {
+        _key, role, blurb,
+        "author": author-> { name, role, "slug": slug.current, "imageUrl": image.asset->url }
+      }
+    },
     _type == "bonusKortBlock" => {
       ...,
       "imageUrl": image.asset->url + "?fm=webp&fit=max&w=1200&q=75",

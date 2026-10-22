@@ -13,6 +13,7 @@ import { TableBlock } from './TableBlock'
 import { headingId } from '@/lib/headingId'
 import { responsive } from '@/lib/img'
 import { CasinoKort } from './CasinoKort'
+import { StatsBlock, TimelineBlock, StepCardsBlock, FeatureCardsBlock, TeamBlock, ContactCardBlock } from './ContentBlocks'
 import { BonusKort } from './BonusKort'
 import { HowToBlock } from './HowToBlock'
 import { DropdownBlock } from './DropdownBlock'
@@ -163,6 +164,12 @@ export function PortableTextRenderer({ value, posts }: { value: any[]; posts?: P
       pageLinksBlock: ({ value }: any) => <PageLinksBlock value={value} />,
       tableBlock: ({ value }: any) => <TableBlock value={value} />,
       casinoKortBlock: ({ value }: any) => <CasinoKort value={value} />,
+      statsBlock: ({ value }: any) => <StatsBlock value={value} />,
+      timelineBlock: ({ value }: any) => <TimelineBlock value={value} />,
+      stepCardsBlock: ({ value }: any) => <StepCardsBlock value={value} />,
+      featureCardsBlock: ({ value }: any) => <FeatureCardsBlock value={value} />,
+      teamBlock: ({ value }: any) => <TeamBlock value={value} />,
+      contactCardBlock: ({ value }: any) => <ContactCardBlock value={value} />,
       bonusKortBlock: ({ value }: any) => <BonusKort value={value} />,
       howToBlock: ({ value }: any) => <HowToBlock value={value} />,
       latestPostsBlock: ({ value: blockValue }: any) =>
