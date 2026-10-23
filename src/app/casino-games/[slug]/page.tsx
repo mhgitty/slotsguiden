@@ -1,6 +1,4 @@
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { truncatePT } from '@/lib/truncatePT'
-import { ReadMore } from '@/components/ReadMore'
 import { JsonLd } from '@/components/JsonLd'
 import { HreflangLinks } from '@/components/HreflangLinks'
 import { PortableTextRenderer } from '@/components/PortableTextRenderer'
@@ -85,9 +83,7 @@ export default async function CasinoGamePage({ params }: Props) {
       {/* Intro */}
       {game.intro && game.intro.length > 0 && (
         <div className="section" style={{ maxWidth: '860px', margin: '0 auto' }}>
-          {truncatePT(game.intro, 50)
-            ? <ReadMore inline={false} short={<PortableTextRenderer value={truncatePT(game.intro, 50)} />} full={<PortableTextRenderer value={game.intro} />} />
-            : <PortableTextRenderer value={game.intro} />}
+          <PortableTextRenderer value={game.intro} />
         </div>
       )}
 

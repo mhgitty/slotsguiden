@@ -1,6 +1,4 @@
 import { Navbar } from '@/components/Navbar'
-import { truncatePT } from '@/lib/truncatePT'
-import { ReadMore } from '@/components/ReadMore'
 import { sized } from '@/lib/img'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -248,9 +246,7 @@ export default async function SpillemaskinePage({ params }: Props) {
           <MobileToc body={body} />
           {g.intro?.length > 0 && (
             <div className="sl-intro">
-              {truncatePT(g.intro, 50)
-                ? <ReadMore inline={false} short={<PortableTextRenderer value={truncatePT(g.intro, 50)} />} full={<PortableTextRenderer value={g.intro} />} />
-                : <PortableTextRenderer value={g.intro} />}
+              <PortableTextRenderer value={g.intro} />
             </div>
           )}
           {specsAt < 0 && hasSpecs && (

@@ -59,7 +59,7 @@ export function HeroSection({ title, intro, eyebrow, updatedAt, narrow = false, 
 
         {hasIntro && (
           <p style={{ fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.7, width: '100%', margin: 0 }}>
-            <RichIntro value={typeof intro === 'string' ? replaceDateVars(intro) : intro} maxWords={50} />
+            <RichIntro value={typeof intro === 'string' ? replaceDateVars(intro) : intro} />
           </p>
         )}
 

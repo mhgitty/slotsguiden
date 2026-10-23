@@ -12,7 +12,6 @@ import { PortableTextRenderer } from '@/components/PortableTextRenderer'
 import { TableOfContents } from '@/components/TableOfContents'
 import { MobileToc } from '@/components/MobileToc'
 import { AuthorMeta } from '@/components/AuthorMeta'
-import { ExcerptReadMore } from '@/components/ExcerptReadMore'
 import { JsonLd } from '@/components/JsonLd'
 import { isNewsCategory, articleImages } from '@/lib/news'
 import { HreflangLinks } from '@/components/HreflangLinks'
@@ -175,7 +174,7 @@ export default async function SlugPage({ params }: Props) {
                   {replaceDateVars(post.title)}
                 </h1>
                 <AuthorBar author={author} updatedAt={post.lastUpdated || post.publishedAt} />
-                {post.excerpt && <ExcerptReadMore text={replaceDateVars(post.excerpt)} words={50} />}
+                {post.excerpt && <p style={{ maxWidth: '640px', fontSize: '16px', color: 'var(--text-muted)', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-line' }}>{replaceDateVars(post.excerpt)}</p>}
               </div>
               {post.featuredImage?.url && (
                 <div className="post-hero-media">

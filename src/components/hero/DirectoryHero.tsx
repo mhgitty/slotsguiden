@@ -64,7 +64,7 @@ export function DirectoryHero({ kind, name, title, logo, intro, stats, cats, top
                 </div>
               </div>
               {hasIntro && (
-                <p className="mh-intro"><RichIntro value={typeof intro === 'string' ? replaceDateVars(intro) : intro} maxWords={50} /></p>
+                <p className="mh-intro"><RichIntro value={typeof intro === 'string' ? replaceDateVars(intro) : intro} /></p>
               )}
               {shown.length > 0 && (
                 <div className="mh-stats">
