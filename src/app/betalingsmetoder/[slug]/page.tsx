@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = replaceDateVars(pm.metaTitle || pm.titel || pm.name)
   const description = replaceDateVars(pm.metaDescription || blocksToPlainText(pm.intro))
   const canonical = `${BASE}/betalingsmetoder/${slug}/`
-  return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: pm.logo?.url ? [{ url: pm.logo.url }] : [{ url: `${BASE}/og.png` }] } }
+  return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: pm.logo?.url ? [{ url: pm.logo.url }] : [{ url: `${BASE}/og.webp` }] } }
 }
 
 export default async function PaymentMethodPage({ params }: Props) {

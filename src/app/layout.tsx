@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     url: BASE + '/',
     title: 'Slotsguiden — Din danske casinoguide',
     description: 'Find de bedste onlinecasinoer og casinobonusser.',
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: 'Slotsguiden.dk' }],
+    images: [{ url: `${BASE}/og.webp`, width: 1200, height: 628, type: 'image/webp', alt: 'Slotsguiden.dk' }],
   },
   twitter: { card: 'summary_large_image' },
   robots: {

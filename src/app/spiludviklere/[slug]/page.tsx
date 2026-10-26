@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = replaceDateVars(provider.metaDescription || `Find de bedste onlinecasinoer, der drives af ${provider.name}. Sammenlign bonusser og vurderinger.`)
   const canonical = `${BASE}/spiludviklere/${slug}/`
   const logo = provider.logo
-  return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: logo?.url ? [{ url: logo.url }] : [{ url: `${BASE}/og.png` }] } }
+  return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical, type: 'article', images: logo?.url ? [{ url: logo.url }] : [{ url: `${BASE}/og.webp` }] } }
 }
 
 export default async function SoftwareSlugPage({ params }: Props) {

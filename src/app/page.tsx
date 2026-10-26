@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: BASE + '/' },
     openGraph: {
       title, description, url: BASE + '/', type: 'website',
-      images: img ? [{ url: img }] : [{ url: `${BASE}/og.png` }],
+      images: img ? [{ url: img }] : [{ url: `${BASE}/og.webp` }],
     },
   }
 }

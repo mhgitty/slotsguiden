@@ -1,6 +1,6 @@
 // Social-share (Open Graph / Twitter) image helper.
 const BASE = 'https://slotsguiden.dk'
-export const DEFAULT_OG_IMAGE = `${BASE}/og.png`
+export const DEFAULT_OG_IMAGE = `${BASE}/og.webp`
 
 /**
  * Returns a link-unfurl-safe image URL.
