@@ -1,12 +1,9 @@
 import { PortableText } from '@portabletext/react'
 import Link from 'next/link'
 import { Icon } from '@/components/Icon'
-import { Terms } from '@/components/Terms'
 import { CardFold } from '@/components/CardFold'
-import { cardBodyComponents, ptLength } from '@/components/cardBody'
+import { cardBodyComponents } from '@/components/cardBody'
 import { replaceDateVars } from '@/lib/dateVars'
-
-const FOLD_AT = 420
 
 interface BonusKortData {
   customTitle?: string
@@ -65,19 +62,15 @@ export function BonusKort({ value }: { value: BonusKortData }) {
           </div>
         )}
         {hasBody && (
-          <CardFold fold={ptLength(value.customBody) > FOLD_AT}>
+          <CardFold>
             <PortableText value={value.customBody!} components={cardBodyComponents} />
           </CardFold>
         )}
       </div>
       <aside className="bk-side">
-        {b.offerUrl && (
-          <a className="sg-cta" href={b.offerUrl} target="_blank" rel="nofollow noopener noreferrer sponsored">
-            Hent bonus <Icon name="arrow-right" size={16} color="#fff" />
-          </a>
-        )}
-        {b.slug && <Link className="kc-review" href={`/casino-kampagner/${b.slug}/`}>Se kampagnen <Icon name="arrow-right" size={14} /></Link>}
-        {b.terms && <div className="bk-terms"><Terms html={b.terms} /></div>}
+        {b.reviewSlug
+          ? <Link className="sg-cta" href={`/online-casino/${b.reviewSlug}/`}>Gå til casino <Icon name="arrow-right" size={16} color="#fff" /></Link>
+          : b.offerUrl && <a className="sg-cta" href={b.offerUrl} target="_blank" rel="nofollow noopener noreferrer sponsored">Gå til casino <Icon name="arrow-right" size={16} color="#fff" /></a>}
       </aside>
     </article>
   )

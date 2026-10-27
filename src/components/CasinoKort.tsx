@@ -2,13 +2,10 @@ import { PortableText } from '@portabletext/react'
 import { responsive } from '@/lib/img'
 import Link from 'next/link'
 import { Icon } from '@/components/Icon'
-import { Terms } from '@/components/Terms'
 import { CardFold } from '@/components/CardFold'
-import { cardBodyComponents, ptLength } from '@/components/cardBody'
+import { cardBodyComponents } from '@/components/cardBody'
 import { replaceDateVars } from '@/lib/dateVars'
 
-const DEFAULT_TERMS = '18+ | Regler og vilkår gælder | Spil ansvarligt | Selvudelukkelse via ROFUS | StopSpillet.dk'
-const FOLD_AT = 480 // characters of body text before "Læs mere" kicks in
 
 interface CasinoKortData {
   customTitle?: string
@@ -37,7 +34,9 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
   const bm = value.bookmaker
   if (!bm) return null
 
-  const title = replaceDateVars(value.customTitle || bm.name)
+  // The rank number is part of the H3 text ("1. CasinoMoto – …"), as it was
+  // before the sections became cards. Strip a number already in the title.
+  const title = replaceDateVars(value.customTitle || bm.name).replace(/^\s*\d+\s*[.)]\s*/, '')
   const reviewHref = bm.slug ? `/online-casino/${bm.slug}/` : null
   const hasPros = (value.pros?.length ?? 0) > 0
   const hasCons = (value.cons?.length ?? 0) > 0
@@ -56,11 +55,10 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
             // eslint-disable-next-line @next/next/no-img-element
             ? <img src={bm.logoUrl} alt={bm.logoAlt || bm.name} width={64} height={64} loading="lazy" />
             : <span className="kc-logo-fallback">{bm.name.slice(0, 2)}</span>}
-          {value.rank != null && <span className="kc-rank">{value.rank}</span>}
         </div>
         <div className="kc-id">
           {value.label && <span className="kc-tag"><Icon name="cup-star" size={13} />{replaceDateVars(value.label)}</span>}
-          <h3 className="kc-title">{title}</h3>
+          <h3 className="kc-title">{value.rank != null && <span className="kc-num">{value.rank}. </span>}{title}</h3>
           <div className="kc-sub">
             {bm.score != null && (
               <span className="kc-stars"><Icon name="star" size={14} color="var(--gold)" />{bm.score.toFixed(1)}<span>/10</span></span>
@@ -79,11 +77,11 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
       <div className={`kc-stats${stats.length ? '' : ' no-stats'}`}>
         <div className="kc-stat is-offer"><small>Velkomstbonus</small><b>{replaceDateVars(bm.indbetalingsbonus || 'Se tilbud')}</b></div>
         {stats.map((s) => <div key={s.k} className="kc-stat"><small>{s.k}</small><b>{s.v}</b></div>)}
-        {bm.url && (
+        {(reviewHref || bm.url) && (
           <div className="kc-ctabox">
-            <a className="sg-cta kc-cta" href={bm.url} target="_blank" rel="nofollow noopener noreferrer sponsored">
-              Hent bonus <Icon name="arrow-right" size={16} color="#fff" />
-            </a>
+            {reviewHref
+              ? <Link className="sg-cta kc-cta" href={reviewHref}>Gå til casino <Icon name="arrow-right" size={16} color="#fff" /></Link>
+              : <a className="sg-cta kc-cta" href={bm.url} target="_blank" rel="nofollow noopener noreferrer sponsored">Gå til casino <Icon name="arrow-right" size={16} color="#fff" /></a>}
           </div>
         )}
       </div>
@@ -91,7 +89,7 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
       {(hasBody || value.imageUrl) && (
         <div className={`kc-body${value.imageUrl ? '' : ' no-media'}`}>
           {hasBody && (
-            <CardFold fold={ptLength(value.customBody) > FOLD_AT}>
+            <CardFold>
               <PortableText value={value.customBody!} components={cardBodyComponents} />
             </CardFold>
           )}
@@ -122,11 +120,6 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
           )}
         </div>
       )}
-
-      <div className="kc-foot">
-        <div className="kc-terms"><Terms html={bm.terms || DEFAULT_TERMS} /></div>
-        {reviewHref && <Link className="kc-review" href={reviewHref}>Anmeldelse af {bm.name} <Icon name="arrow-right" size={14} /></Link>}
-      </div>
     </article>
   )
 }

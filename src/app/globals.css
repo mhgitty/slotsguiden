@@ -2744,3 +2744,7 @@ a.op-name:hover { color: var(--green); }
   .op-body { padding-left: 14px; }
   .op-body p, .op-body p:first-child { font-size: 15px; }
 }
+
+/* Rank number inside the casino card heading ("1. CasinoMoto …") */
+.kc-num { color: var(--green); font-weight: 800; }
+.kc.is-top .kc-num { color: var(--gold-ink); }
