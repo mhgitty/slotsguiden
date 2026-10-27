@@ -63,8 +63,6 @@ export function CasinoKort({ value }: { value: CasinoKortData }) {
             {bm.score != null && (
               <span className="kc-stars"><Icon name="star" size={14} color="var(--gold)" />{bm.score.toFixed(1)}<span>/10</span></span>
             )}
-            {bm.score != null && reviewHref && <span aria-hidden="true">·</span>}
-            {reviewHref && <Link href={reviewHref}>Læs anmeldelse</Link>}
           </div>
         </div>
         {bm.score != null && (
