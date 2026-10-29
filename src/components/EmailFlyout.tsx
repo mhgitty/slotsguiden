@@ -7,7 +7,7 @@ import { Icon } from '@/components/Icon'
 
 // ── Copy (edit freely) ──────────────────────────────────────────────────────
 const LEAD = 'Tilmeld dig nu og modtag'
-const HEADLINE = '350 gratis spins uden indbetaling'
+const HEADLINE = '280 gratis spins uden indbetaling'
 const CTA = 'Modtag Gratis Spins'
 const SUCCESS = 'Tak! Tjek din indbakke for at bekræfte.'
 const CONSENT = '18+ | Ved tilmelding accepterer du vores vilkår og privatlivspolitik.'

@@ -1,8 +1,7 @@
 import { BonusGridCard, type GridBonus } from './BonusGridCard'
 import { CasinoComparisonTable } from './CasinoComparisonTable'
-import { BonusRow } from './bonus/BonusRow'
+import { BonusCard } from './BonusCard'
 import { ShowMore } from './ShowMore'
-import { slotMatcher } from '@/lib/slotMatch'
 
 // Data comes from the comparisonTableTemplate document (expanded by the query)
 interface ComparisonTableData {
@@ -71,16 +70,14 @@ export async function ComparisonTable({ data }: { data?: ComparisonTableData | n
   // ── Bonus / campaign list ───────────────────────────────────────────────────
   const items = (data.bonuses || []).filter(live)
   if (!items.length) return null
-  const match = await slotMatcher()
+  // Original list design (BonusCard): no game picture, no game-page links.
   return (
     <div id="sammenligning" className="scroll-anchor">
       <ShowMore
-        className="br-list"
-        items={items.map((b: any, i: number) => (
-          <BonusRow key={b._id} b={b} rank={i + 1} slot={match(b.oddsBonusTitel || b.title)} />
-        ))}
+        items={items.map((b: any, i: number) => <BonusCard key={b._id} {...b} rank={i + 1} />)}
         limit={limit}
         label={moreLabel}
+        style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
       />
     </div>
   )
